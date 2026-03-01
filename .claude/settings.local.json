@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__bonsai__get_scene_info",
+      "mcp__bonsai__ensure_ifc_knowledge_ready",
+      "mcp__bonsai__get_door_properties",
+      "mcp__bonsai__execute_ifc_code_tool",
+      "mcp__bonsai__create_door",
+      "mcp__bonsai__search_ifc_knowledge",
+      "mcp__bonsai__get_ifc_scene_overview",
+      "mcp__bonsai__create_wall",
+      "mcp__bonsai__create_slab",
+      "mcp__bonsai__capture_blender_3dviewport_screenshot",
+      "WebSearch",
+      "mcp__bonsai__find_ifc_function",
+      "mcp__bonsai__get_ifc_function_details",
+      "mcp__bonsai__get_trimesh_examples",
+      "mcp__bonsai__create_trimesh_ifc",
+      "mcp__bonsai__create_mesh_ifc",
+      "Bash(cat /home/edgar/.claude/projects/-home-edgar-projects-bim-eskd/0a92c9b6-3d20-4cb2-8e2b-3b98f0e705b3/tool-results/mcp-bonsai-get_scene_info-1772370048526.txt | python3 -c \"\nimport json, sys\ndata = json.loads\\(json.loads\\(sys.stdin.read\\(\\)\\)['result']\\)\nobjects = data.get\\('objects', []\\)\n\n# Collect shelves \\(IfcPlate\\) and shelf frames \\(IfcMember with 'Shelf' in name\\)\nplates = [o for o in objects if o.get\\('ifc_class'\\) == 'IfcPlate']\nmembers = [o for o in objects if o.get\\('ifc_class'\\) == 'IfcMember']\nminers = [o for o in objects if 'Miner' in o.get\\('name', ''\\) or 'miner' in o.get\\('name', ''\\).lower\\(\\) or 'Antminer' in o.get\\('name', ''\\)]\nproxies = [o for o in objects if o.get\\('ifc_class'\\) == 'IfcBuildingElementProxy']\n\nprint\\('=== IfcPlate \\(полки\\) ==='\\)\nfor p in sorted\\(plates, key=lambda x: x.get\\('name', ''\\)\\):\n    print\\(f\\\\\"  {p.get\\('name'\\)}: z={p.get\\('z', 'N/A'\\)}\\\\\"\\)\n\nprint\\(\\)\nprint\\('=== IfcMember \\(стойки/ригели/рамки\\) ==='\\)\nfor m in sorted\\(members, key=lambda x: x.get\\('name', ''\\)\\):\n    print\\(f\\\\\"  {m.get\\('name'\\)}: z={m.get\\('z', 'N/A'\\)}\\\\\"\\)\n\nprint\\(\\)\nprint\\(f'=== IfcBuildingElementProxy \\(всего {len\\(proxies\\)}\\) ==='\\)\n# Show a few samples\nnames = sorted\\(set\\(p.get\\('name', ''\\) for p in proxies\\)\\)\nprint\\(f'  Unique names: {len\\(names\\)}'\\)\nfor n in names[:5]:\n    print\\(f'  {n}'\\)\nprint\\(f'  ...'\\)\nfor n in names[-5:]:\n    print\\(f'  {n}'\\)\n\")"
+    ]
+  }
+}

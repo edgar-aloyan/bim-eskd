@@ -1,0 +1,28 @@
+{
+  "projects": [
+    {
+      "project": "001_server_container",
+      "title": "Серверный контейнер 40ft",
+      "sheets": [
+        {
+          "id": "001",
+          "title": "План 1:50",
+          "file": "sheet_001_plan.svg",
+          "format": "A3"
+        },
+        {
+          "id": "002",
+          "title": "Фасад 1:50",
+          "file": "sheet_002_front.svg",
+          "format": "A3"
+        },
+        {
+          "id": "003",
+          "title": "Спецификация",
+          "file": "sheet_003_spec.svg",
+          "format": "A3"
+        }
+      ]
+    }
+  ]
+}

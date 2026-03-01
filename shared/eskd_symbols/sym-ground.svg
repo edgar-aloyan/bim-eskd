@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Заземление / Ground (ГОСТ 2.751-73)
+     3 горизонтальных линии уменьшающейся длины -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8" width="12mm" height="8mm">
+  <g id="symbol" data-cx="6" data-top-y="0" data-bottom-y="8">
+    <!-- Lead-in -->
+    <line x1="6" y1="0" x2="6" y2="2" stroke="black" stroke-width="0.5"/>
+    <!-- Ground lines (decreasing width) -->
+    <line x1="1" y1="2" x2="11" y2="2" stroke="black" stroke-width="0.5"/>
+    <line x1="2.5" y1="4" x2="9.5" y2="4" stroke="black" stroke-width="0.5"/>
+    <line x1="4" y1="6" x2="8" y2="6" stroke="black" stroke-width="0.5"/>
+  </g>
+</svg>

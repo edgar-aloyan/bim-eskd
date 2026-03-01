@@ -8,7 +8,8 @@ import re
 
 from lxml import etree
 
-from .frame import create_eskd_frame, get_working_area, SVG_NS, NSMAP
+from .frame import create_eskd_frame, get_working_area
+from .svg_primitives import SVG_NS, NSMAP
 
 
 def compose_sheet(

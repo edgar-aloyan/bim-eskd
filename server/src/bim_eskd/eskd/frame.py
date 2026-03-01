@@ -14,6 +14,10 @@ Title block (основная надпись):
 
 from lxml import etree
 
+from .svg_primitives import (
+    SVG_NS, NSMAP, rect as _rect, line as _line, text as _text,
+)
+
 # Sheet formats: (width_mm, height_mm) in portrait orientation
 FORMATS = {
     "A4": (210, 297),
@@ -29,9 +33,6 @@ MARGIN_OTHER = 5
 STAMP_WIDTH = 185
 STAMP_FORM1_HEIGHT = 55
 STAMP_FORM2A_HEIGHT = 15
-
-SVG_NS = "http://www.w3.org/2000/svg"
-NSMAP = {None: SVG_NS}
 
 
 def create_eskd_frame(
@@ -211,10 +212,9 @@ def _draw_stamp_form1(root, ix, iy, iw, ih, data):
     _line(g, right_x + 70, title_y, right_x + 70, by, stroke_width=0.25)
 
     # --- Labels (small, gray) ---
-    font_label = {"font-size": "2.5", "fill": "#666", "font-family": "sans-serif"}
-    font_data = {"font-size": "3.5", "fill": "black", "font-family": "sans-serif"}
-    font_title = {"font-size": "5", "fill": "black", "font-family": "sans-serif",
-                  "font-weight": "bold"}
+    font_label = {"font_size": 2.5, "fill": "#666"}
+    font_data = {"font_size": 3.5}
+    font_title = {"font_size": 5, "font_weight": "bold"}
 
     # Row labels (left column, 7mm wide)
     _text(g, sx + 1, sy + 4, "Изм.", **font_label)
@@ -309,8 +309,8 @@ def _draw_stamp_form2a(root, ix, iy, iw, ih, data):
     right_x = sx + left_total
     _line(g, right_x + 70, sy, right_x + 70, sy + sh, stroke_width=0.25)
 
-    font_data = {"font-size": "3.5", "fill": "black", "font-family": "sans-serif"}
-    font_label = {"font-size": "2.5", "fill": "#666", "font-family": "sans-serif"}
+    font_data = {"font_size": 3.5}
+    font_label = {"font_size": 2.5, "fill": "#666"}
 
     _text(g, sx + 1, sy + 10, "Изм.", **font_label)
     _text(g, sx + 8, sy + 10, "Лист", **font_label)
@@ -323,39 +323,3 @@ def _draw_stamp_form2a(root, ix, iy, iw, ih, data):
               text_anchor="middle", **font_data)
 
 
-# --- SVG primitive helpers ---
-
-def _rect(parent, x, y, w, h, fill="none", stroke="black",
-          stroke_width=0.5):
-    el = etree.SubElement(parent, "rect")
-    el.set("x", f"{x:.3f}")
-    el.set("y", f"{y:.3f}")
-    el.set("width", f"{w:.3f}")
-    el.set("height", f"{h:.3f}")
-    el.set("fill", fill)
-    if stroke != "none":
-        el.set("stroke", stroke)
-        el.set("stroke-width", str(stroke_width))
-    return el
-
-
-def _line(parent, x1, y1, x2, y2, stroke="black", stroke_width=0.25):
-    el = etree.SubElement(parent, "line")
-    el.set("x1", f"{x1:.3f}")
-    el.set("y1", f"{y1:.3f}")
-    el.set("x2", f"{x2:.3f}")
-    el.set("y2", f"{y2:.3f}")
-    el.set("stroke", stroke)
-    el.set("stroke-width", str(stroke_width))
-    return el
-
-
-def _text(parent, x, y, content, text_anchor="start", **attrs):
-    el = etree.SubElement(parent, "text")
-    el.set("x", f"{x:.3f}")
-    el.set("y", f"{y:.3f}")
-    el.set("text-anchor", text_anchor)
-    for k, v in attrs.items():
-        el.set(k.replace("_", "-"), str(v))
-    el.text = content
-    return el

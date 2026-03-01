@@ -10,7 +10,7 @@ from collections import Counter
 
 from lxml import etree
 
-from .frame import SVG_NS, NSMAP
+from .svg_primitives import SVG_NS, NSMAP, rect as _rect, line as _line, text as _text
 
 # Table layout constants (mm)
 COL_WIDTHS = {
@@ -150,8 +150,7 @@ def _draw_header(parent, x, y):
     _rect(parent, x, y, TABLE_WIDTH, HEADER_HEIGHT,
           fill="#f0f0f0", stroke="black", stroke_width=0.25)
 
-    font = {"font-size": "3", "fill": "black", "font-family": "sans-serif",
-            "font-weight": "bold"}
+    font = {"font_size": 3, "font_weight": "bold"}
     headers = ["№", "Наименование", "Тип/Марка", "Кол.", "Масса,кг", "Примечание"]
 
     cx = x
@@ -171,7 +170,7 @@ def _draw_row(parent, x, y, num, row):
     # Horizontal line at top of row
     _line(parent, x, y, x + TABLE_WIDTH, y)
 
-    font = {"font-size": "2.8", "fill": "black", "font-family": "sans-serif"}
+    font = {"font_size": 2.8}
 
     values = [
         str(num),
@@ -197,35 +196,3 @@ def _draw_row(parent, x, y, num, row):
         cx += cw
 
 
-# --- SVG helpers (local copies to avoid circular imports) ---
-
-def _rect(parent, x, y, w, h, fill="none", stroke="black", stroke_width=0.25):
-    el = etree.SubElement(parent, "rect")
-    el.set("x", f"{x:.3f}")
-    el.set("y", f"{y:.3f}")
-    el.set("width", f"{w:.3f}")
-    el.set("height", f"{h:.3f}")
-    el.set("fill", fill)
-    if stroke != "none":
-        el.set("stroke", stroke)
-        el.set("stroke-width", str(stroke_width))
-
-
-def _line(parent, x1, y1, x2, y2, stroke="black", stroke_width=0.25):
-    el = etree.SubElement(parent, "line")
-    el.set("x1", f"{x1:.3f}")
-    el.set("y1", f"{y1:.3f}")
-    el.set("x2", f"{x2:.3f}")
-    el.set("y2", f"{y2:.3f}")
-    el.set("stroke", stroke)
-    el.set("stroke-width", str(stroke_width))
-
-
-def _text(parent, x, y, content, text_anchor="start", **attrs):
-    el = etree.SubElement(parent, "text")
-    el.set("x", f"{x:.3f}")
-    el.set("y", f"{y:.3f}")
-    el.set("text-anchor", text_anchor)
-    for k, v in attrs.items():
-        el.set(k.replace("_", "-"), str(v))
-    el.text = content

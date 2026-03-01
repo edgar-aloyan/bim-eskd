@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Трансформатор двухобмоточный / 2-winding transformer (ГОСТ 2.723-68)
+     Две окружности, касающиеся друг друга -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 18" width="12mm" height="18mm">
+  <g id="symbol" data-cx="6" data-top-y="0" data-bottom-y="18">
+    <!-- Upper (primary) winding -->
+    <circle cx="6" cy="5" r="4" fill="none" stroke="black" stroke-width="0.5"/>
+    <!-- Lower (secondary) winding, overlapping by 1mm -->
+    <circle cx="6" cy="12" r="4" fill="none" stroke="black" stroke-width="0.5"/>
+    <!-- Connection stubs -->
+    <line x1="6" y1="0" x2="6" y2="1" stroke="black" stroke-width="0.5"/>
+    <line x1="6" y1="16" x2="6" y2="18" stroke="black" stroke-width="0.5"/>
+  </g>
+</svg>

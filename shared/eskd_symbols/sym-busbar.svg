@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Шина сборная / Busbar
+     Толстая горизонтальная линия с вертикальными отводами -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 6" width="60mm" height="6mm">
+  <g id="symbol" data-cx="30" data-top-y="0" data-bottom-y="6">
+    <!-- Lead-in from top -->
+    <line x1="30" y1="0" x2="30" y2="2" stroke="black" stroke-width="0.5"/>
+    <!-- Busbar (thick line) -->
+    <line x1="0" y1="2" x2="60" y2="2" stroke="black" stroke-width="1.5"/>
+    <!-- Lead-out from bottom -->
+    <line x1="30" y1="2" x2="30" y2="6" stroke="black" stroke-width="0.5"/>
+  </g>
+</svg>

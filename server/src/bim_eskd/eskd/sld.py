@@ -10,10 +10,13 @@ from lxml import etree
 import ifcopenshell
 import ifcopenshell.util.element
 
-logger = logging.getLogger(__name__)
+from .svg_primitives import (
+    SVG_NS, NSMAP, LINE_W, THIN_W, FONT_LABEL, FONT_SMALL,
+    rect, line, line_v, text,
+)
+from . import symbols
 
-SVG_NS = "http://www.w3.org/2000/svg"
-NSMAP = {None: SVG_NS}
+logger = logging.getLogger(__name__)
 
 # Diagram dimensions (mm) — fits A3 landscape working area
 DIAGRAM_W = 340
@@ -21,11 +24,6 @@ DIAGRAM_H = 180
 
 # Layout constants
 CENTER_X = DIAGRAM_W / 2  # 170
-LINE_W = 0.5
-THIN_W = 0.35
-FONT_LABEL = 3.5
-FONT_SMALL = 2.8
-FONT_PROPS = 2.5
 SYMBOL_GAP = 4  # vertical gap between symbols
 
 
@@ -46,11 +44,11 @@ def create_single_line_diagram(ifc_file) -> str:
     root.set("viewBox", f"0 0 {DIAGRAM_W} {DIAGRAM_H}")
 
     # White background
-    _rect(root, 0, 0, DIAGRAM_W, DIAGRAM_H, fill="white", stroke="none")
+    rect(root, 0, 0, DIAGRAM_W, DIAGRAM_H, fill="white", stroke="none")
 
     # Title
-    _text(root, CENTER_X, 6, "Однолинейная схема электроснабжения",
-           font_size=5, font_weight="bold", text_anchor="middle")
+    text(root, CENTER_X, 6, "Однолинейная схема электроснабжения",
+         font_size=5, font_weight="bold", text_anchor="middle")
 
     y = 14
     y = _draw_topology(root, topology, CENTER_X, y)
@@ -293,119 +291,60 @@ def _draw_topology(root, topology: list[dict], cx: float, y: float) -> float:
 
 def _draw_transformer(parent, cx, y, label, sub) -> float:
     """Two tangent circles (ГОСТ 2.723). Returns y_next."""
-    r = 4
-    _line_v(parent, cx, y, y + 2)
-    cy1 = y + 2 + r
-    cy2 = cy1 + r * 2 - 1  # slightly overlapping
-    _circle(parent, cx, cy1, r)
-    _circle(parent, cx, cy2, r)
-    _text(parent, cx + r + 2, cy1, label, font_size=FONT_LABEL)
-    if sub:
-        _text(parent, cx + r + 2, cy1 + FONT_SMALL + 1, sub,
-              font_size=FONT_SMALL, fill="#444")
-    y_next = cy2 + r + 1
-    _line_v(parent, cx, y_next, y_next + 2)
-    return y_next + 2 + SYMBOL_GAP
+    return symbols.draw_transformer(parent, cx, y, label, sub)
 
 
 def _draw_circuit_breaker(parent, cx, y, label, sub) -> float:
-    """Rectangle + X (ГОСТ 2.755). Returns y_next."""
-    w, h = 6, 8
-    _line_v(parent, cx, y, y + 2)
-    ry = y + 2
-    _rect(parent, cx - w/2, ry, w, h, fill="none")
-    _line_el(parent, cx - w/2, ry, cx + w/2, ry + h, width=THIN_W)
-    _line_el(parent, cx + w/2, ry, cx - w/2, ry + h, width=THIN_W)
-    _text(parent, cx + w/2 + 2, ry + h/2, label, font_size=FONT_LABEL)
-    if sub:
-        _text(parent, cx + w/2 + 2, ry + h/2 + FONT_SMALL + 1, sub,
-              font_size=FONT_SMALL, fill="#444")
-    y_next = ry + h
-    _line_v(parent, cx, y_next, y_next + 2)
-    return y_next + 2 + SYMBOL_GAP
+    """Tilted contact + rectangle (ГОСТ 2.755). Returns y_next."""
+    return symbols.draw_circuit_breaker(parent, cx, y, label, sub)
 
 
 def _draw_cable_symbol(parent, cx, y, label, sub) -> float:
     """Dashed vertical line with label."""
     length = 10
-    _line_v(parent, cx, y, y + length, dash="2,1")
-    _text(parent, cx + 3, y + length/2, label, font_size=FONT_LABEL)
+    line_v(parent, cx, y, y + length, dash="2,1")
+    text(parent, cx + 3, y + length/2, label, font_size=FONT_LABEL)
     if sub:
-        _text(parent, cx + 3, y + length/2 + FONT_SMALL + 1, sub,
-              font_size=FONT_SMALL, fill="#444")
+        text(parent, cx + 3, y + length/2 + FONT_SMALL + 1, sub,
+             font_size=FONT_SMALL, fill="#444")
     return y + length + SYMBOL_GAP
 
 
 def _draw_boundary(parent, cx, y, label) -> float:
     """Horizontal dashed line representing container boundary."""
     w = 80
-    _line_el(parent, cx - w/2, y, cx + w/2, y, width=THIN_W, dash="4,2")
-    _text(parent, cx + w/2 + 2, y + 1, label,
-          font_size=FONT_SMALL, fill="#666")
+    line(parent, cx - w/2, y, cx + w/2, y, stroke_width=THIN_W, dash="4,2")
+    text(parent, cx + w/2 + 2, y + 1, label,
+         font_size=FONT_SMALL, fill="#666")
     return y + SYMBOL_GAP
 
 
 def _draw_surge_arrester(parent, cx, y, label, sub) -> float:
-    """Zigzag + ground (ГОСТ 2.727.2)."""
-    _line_v(parent, cx, y, y + 2)
-    # Zigzag
-    zy = y + 2
-    zw = 3
-    zh = 8
-    points = []
-    steps = 4
-    for i in range(steps + 1):
-        px = cx + (zw if i % 2 else -zw)
-        if i == 0:
-            px = cx
-        py = zy + zh * i / steps
-        points.append(f"{px:.1f},{py:.1f}")
-    _polyline(parent, points)
-
-    # Ground symbol at bottom
-    gy = zy + zh + 1
-    _draw_ground(parent, cx, gy)
-
-    _text(parent, cx + zw + 3, zy + zh/2, label, font_size=FONT_LABEL)
-    if sub:
-        _text(parent, cx + zw + 3, zy + zh/2 + FONT_SMALL + 1, sub,
-              font_size=FONT_SMALL, fill="#444")
-
-    # Continue main line (arrester is a branch)
-    return y + 2 + SYMBOL_GAP
+    """Zigzag + ground (ГОСТ 2.727.2). Returns y_next."""
+    return symbols.draw_surge_arrester(parent, cx, y, label, sub)
 
 
 def _draw_ground(parent, cx, y):
     """Ground symbol — 3 horizontal lines decreasing in width."""
-    for i, (w, dy) in enumerate([(5, 0), (3.5, 1.5), (2, 3)]):
-        _line_el(parent, cx - w, y + dy, cx + w, y + dy, width=LINE_W)
+    symbols.draw_ground(parent, cx, y)
 
 
 def _draw_busbar(parent, cx, y, label, sub) -> float:
-    """Thick horizontal line (busbar)."""
-    w = 60
-    _line_v(parent, cx, y, y + 2)
-    by = y + 2
-    _line_el(parent, cx - w/2, by, cx + w/2, by, width=1.5)
-    _text(parent, cx + w/2 + 2, by + 1, label, font_size=FONT_LABEL)
-    if sub:
-        _text(parent, cx + w/2 + 2, by + FONT_SMALL + 2, sub,
-              font_size=FONT_SMALL, fill="#444")
-    _line_v(parent, cx, by, by + 2)
-    return by + 2 + SYMBOL_GAP
+    """Thick horizontal line (busbar). Returns y_next."""
+    return symbols.draw_busbar(parent, cx, y, label, sub)
 
 
 def _draw_load_group(parent, cx, y, label, sub) -> float:
     """Rectangle with description (load group)."""
     w, h = 30, 10
-    _line_v(parent, cx, y, y + 2)
+    line_v(parent, cx, y, y + 2)
     ry = y + 2
-    _rect(parent, cx - w/2, ry, w, h, fill="#f0f0f0")
-    _text(parent, cx, ry + h/2 - 1, label,
-          font_size=FONT_LABEL, text_anchor="middle")
+    rect(parent, cx - w/2, ry, w, h, fill="#f0f0f0")
+    text(parent, cx, ry + h/2 - 1, label,
+         font_size=FONT_LABEL, text_anchor="middle")
     if sub:
-        _text(parent, cx, ry + h/2 + FONT_SMALL, sub,
-              font_size=FONT_SMALL, text_anchor="middle", fill="#444")
+        text(parent, cx, ry + h/2 + FONT_SMALL, sub,
+             font_size=FONT_SMALL, text_anchor="middle", fill="#444")
     return ry + h + SYMBOL_GAP
 
 
@@ -419,9 +358,9 @@ def _draw_branch(parent, cx, y, branch: dict) -> float:
     rx = cx + spread
 
     # Horizontal lines from center to branches
-    _line_el(parent, lx, y, rx, y, width=LINE_W)
-    _line_v(parent, lx, y, y + 2)
-    _line_v(parent, rx, y, y + 2)
+    line(parent, lx, y, rx, y, stroke_width=LINE_W)
+    line_v(parent, lx, y, y + 2)
+    line_v(parent, rx, y, y + 2)
 
     # Draw left branch
     ly = y + 2
@@ -444,68 +383,3 @@ def _draw_branch(parent, cx, y, branch: dict) -> float:
     return max(ly, ry)
 
 
-# ── SVG primitives ───────────────────────────────────────────────────
-
-
-def _rect(parent, x, y, w, h, fill="none", stroke="black", stroke_width=LINE_W):
-    el = etree.SubElement(parent, "rect")
-    el.set("x", f"{x:.2f}")
-    el.set("y", f"{y:.2f}")
-    el.set("width", f"{w:.2f}")
-    el.set("height", f"{h:.2f}")
-    el.set("fill", fill)
-    el.set("stroke", stroke)
-    el.set("stroke-width", f"{stroke_width:.2f}")
-    return el
-
-
-def _line_el(parent, x1, y1, x2, y2, width=LINE_W, dash=None):
-    el = etree.SubElement(parent, "line")
-    el.set("x1", f"{x1:.2f}")
-    el.set("y1", f"{y1:.2f}")
-    el.set("x2", f"{x2:.2f}")
-    el.set("y2", f"{y2:.2f}")
-    el.set("stroke", "black")
-    el.set("stroke-width", f"{width:.2f}")
-    if dash:
-        el.set("stroke-dasharray", dash)
-    return el
-
-
-def _line_v(parent, x, y1, y2, dash=None):
-    """Vertical line at x from y1 to y2."""
-    return _line_el(parent, x, y1, x, y2, dash=dash)
-
-
-def _circle(parent, cx, cy, r):
-    el = etree.SubElement(parent, "circle")
-    el.set("cx", f"{cx:.2f}")
-    el.set("cy", f"{cy:.2f}")
-    el.set("r", f"{r:.2f}")
-    el.set("fill", "none")
-    el.set("stroke", "black")
-    el.set("stroke-width", f"{LINE_W:.2f}")
-    return el
-
-
-def _polyline(parent, points: list[str]):
-    el = etree.SubElement(parent, "polyline")
-    el.set("points", " ".join(points))
-    el.set("fill", "none")
-    el.set("stroke", "black")
-    el.set("stroke-width", f"{LINE_W:.2f}")
-    return el
-
-
-def _text(parent, x, y, content, font_size=FONT_LABEL,
-          text_anchor="start", font_weight="normal", fill="black"):
-    el = etree.SubElement(parent, "text")
-    el.set("x", f"{x:.2f}")
-    el.set("y", f"{y:.2f}")
-    el.set("font-family", "sans-serif")
-    el.set("font-size", f"{font_size:.1f}")
-    el.set("font-weight", font_weight)
-    el.set("fill", fill)
-    el.set("text-anchor", text_anchor)
-    el.text = content
-    return el

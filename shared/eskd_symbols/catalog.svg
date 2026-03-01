@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Каталог условных графических обозначений (УГО) для SLD
+     ГОСТ 2.702, 2.721, 2.723, 2.727, 2.751, 2.755 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" width="200mm" height="120mm">
+  <rect x="0" y="0" width="200" height="120" fill="white" stroke="none"/>
+
+  <!-- Title -->
+  <text x="100" y="8" font-family="sans-serif" font-size="5" font-weight="bold"
+        text-anchor="middle" fill="black">Каталог символов SLD (ГОСТ)</text>
+
+  <!-- ═══ 1. Автоматический выключатель (QF) ═══ -->
+  <g transform="translate(20, 18)">
+    <!-- Symbol -->
+    <circle cx="5" cy="1" r="0.8" fill="black" stroke="none"/>
+    <line x1="5" y1="11" x2="3" y2="1" stroke="black" stroke-width="0.7"/>
+    <rect x="3" y="5" width="3" height="2" fill="none" stroke="black" stroke-width="0.5"/>
+    <circle cx="5" cy="11" r="0.8" fill="black" stroke="none"/>
+    <line x1="5" y1="0" x2="5" y2="1" stroke="black" stroke-width="0.5"/>
+    <line x1="5" y1="11" x2="5" y2="14" stroke="black" stroke-width="0.5"/>
+    <!-- Label -->
+    <text x="14" y="5" font-family="sans-serif" font-size="3.5" fill="black">Автоматический</text>
+    <text x="14" y="9" font-family="sans-serif" font-size="3.5" fill="black">выключатель (QF)</text>
+    <text x="14" y="13" font-family="sans-serif" font-size="2.5" fill="#666">ГОСТ 2.755-87</text>
+  </g>
+
+  <!-- ═══ 2. Трансформатор 2-обмоточный ═══ -->
+  <g transform="translate(100, 18)">
+    <circle cx="6" cy="5" r="4" fill="none" stroke="black" stroke-width="0.5"/>
+    <circle cx="6" cy="12" r="4" fill="none" stroke="black" stroke-width="0.5"/>
+    <line x1="6" y1="0" x2="6" y2="1" stroke="black" stroke-width="0.5"/>
+    <line x1="6" y1="16" x2="6" y2="18" stroke="black" stroke-width="0.5"/>
+    <!-- Label -->
+    <text x="14" y="7" font-family="sans-serif" font-size="3.5" fill="black">Трансформатор</text>
+    <text x="14" y="11" font-family="sans-serif" font-size="3.5" fill="black">2-обмоточный</text>
+    <text x="14" y="15" font-family="sans-serif" font-size="2.5" fill="#666">ГОСТ 2.723-68</text>
+  </g>
+
+  <!-- ═══ 3. ОПН / Разрядник ═══ -->
+  <g transform="translate(20, 48)">
+    <line x1="6" y1="0" x2="6" y2="2" stroke="black" stroke-width="0.5"/>
+    <polyline points="6,2 9,4 3,6 9,8 3,10 6,12"
+              fill="none" stroke="black" stroke-width="0.5"/>
+    <line x1="6" y1="12" x2="6" y2="14" stroke="black" stroke-width="0.5"/>
+    <line x1="1" y1="14" x2="11" y2="14" stroke="black" stroke-width="0.5"/>
+    <line x1="2.5" y1="15.5" x2="9.5" y2="15.5" stroke="black" stroke-width="0.5"/>
+    <line x1="4" y1="17" x2="8" y2="17" stroke="black" stroke-width="0.5"/>
+    <!-- Label -->
+    <text x="14" y="7" font-family="sans-serif" font-size="3.5" fill="black">ОПН / Разрядник</text>
+    <text x="14" y="11" font-family="sans-serif" font-size="2.5" fill="#666">ГОСТ 2.727.2</text>
+  </g>
+
+  <!-- ═══ 4. Заземление ═══ -->
+  <g transform="translate(100, 48)">
+    <line x1="6" y1="0" x2="6" y2="2" stroke="black" stroke-width="0.5"/>
+    <line x1="1" y1="2" x2="11" y2="2" stroke="black" stroke-width="0.5"/>
+    <line x1="2.5" y1="4" x2="9.5" y2="4" stroke="black" stroke-width="0.5"/>
+    <line x1="4" y1="6" x2="8" y2="6" stroke="black" stroke-width="0.5"/>
+    <!-- Label -->
+    <text x="14" y="3" font-family="sans-serif" font-size="3.5" fill="black">Заземление</text>
+    <text x="14" y="7" font-family="sans-serif" font-size="2.5" fill="#666">ГОСТ 2.751-73</text>
+  </g>
+
+  <!-- ═══ 5. Шина сборная ═══ -->
+  <g transform="translate(20, 85)">
+    <line x1="0" y1="0" x2="0" y2="2" stroke="black" stroke-width="0.5"/>
+    <line x1="-20" y1="2" x2="20" y2="2" stroke="black" stroke-width="1.5"/>
+    <line x1="0" y1="2" x2="0" y2="6" stroke="black" stroke-width="0.5"/>
+    <!-- Label -->
+    <text x="24" y="2" font-family="sans-serif" font-size="3.5" fill="black">Шина сборная</text>
+    <text x="24" y="6" font-family="sans-serif" font-size="2.5" fill="#666">(Busbar)</text>
+  </g>
+
+  <!-- Border -->
+  <rect x="0.5" y="0.5" width="199" height="119" fill="none" stroke="black" stroke-width="0.25"/>
+</svg>

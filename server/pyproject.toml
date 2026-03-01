@@ -15,10 +15,6 @@ dependencies = [
     # IFC
     "ifcopenshell>=0.8.0",
 
-    # Web server
-    "fastapi>=0.111.0",
-    "uvicorn>=0.30.0",
-
     # RAG
     "langchain>=0.1.0",
     "langchain-community>=0.1.0",
@@ -31,9 +27,8 @@ dependencies = [
     "pymupdf>=1.24.0",
     "pdfplumber>=0.11.0",
 
-    # SVG rendering
+    # SVG / XML
     "lxml>=5.0.0",
-    "cairosvg>=2.7.0",
 
     # Utilities
     "requests>=2.31.0",

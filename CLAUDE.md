@@ -10,9 +10,9 @@
 
 Рабочий процесс:
 - Инженер промптит Claude Code
-- Claude Code через Bonsai-mcp генерирует IFC модель в Blender/Bonsai
-- Bonsai экспортирует PDF (ЕСКД комплект) и валидный .IFC
-- Заказчику отправляются .ifc + .pdf
+- Claude Code через standalone сервер или Bonsai-mcp генерирует IFC модель
+- Сервер рендерит SVG виды (ifcopenshell.draw, HLR), собирает ЕСКД листы, публикует на GitHub Pages
+- Заказчику отправляются .ifc + .pdf (Print→PDF из viewer)
 
 Каждый проект — самостоятельная единица с номером. Новые проекты ссылаются на предыдущие как на референсы.
 
@@ -23,10 +23,10 @@
 | Инструмент | Роль |
 |---|---|
 | Claude Code | LLM-агент |
-| Blender 4.5+ | BIM среда |
-| Bonsai (Blender аддон) | IFC моделирование, черчение, PDF экспорт |
-| ifcopenshell | Python API для IFC (внутри Bonsai) |
-| ifc-bonsai-mcp (форк) | MCP сервер, 50+ инструментов, RAG по ifcopenshell, Trimesh геометрия |
+| **bim-eskd server** | Standalone MCP-сервер (29 инструментов), IFC CRUD, SVG рендер, ЕСКД листы |
+| ifcopenshell | Python API для IFC + ifcopenshell.draw (HLR рендер) |
+| Blender 4.5+ / Bonsai | BIM среда (опционально, для визуальной работы) |
+| ifc-bonsai-mcp (форк) | MCP сервер Blender, 50+ инструментов, RAG по ifcopenshell |
 
 Форк: `git@github.com:edgar-aloyan/ifc-bonsai-mcp.git`
 Upstream: `https://github.com/Show2Instruct/ifc-bonsai-mcp`
@@ -115,7 +115,7 @@ find ~/.config/blender/4.5/scripts/addons/blender_addon -name "__pycache__" -exe
 │   └── src/bim_eskd/
 │       ├── main.py                  ← MCP entry point (29 инструментов)
 │       ├── ifc_engine/              ← IFC CRUD (wall, slab, door, window, roof, feature)
-│       ├── svg_renderer/            ← IFC → SVG (план, фасад, разрез)
+│       ├── svg_renderer/            ← IFC → SVG через ifcopenshell.draw (HLR)
 │       ├── eskd/                    ← Phase 3: ЕСКД рамки, штампы, компоновка листов
 │       ├── rag/                     ← RAG: standards (ПУЭ, ГОСТ, IEC)
 │       └── mcp_tools/               ← MCP tool definitions
@@ -181,7 +181,7 @@ in-progress / done
 
 ## ЕСКД требования (ГОСТ 2.104-2006)
 
-Штампы живут в `shared/eskd_stamps/` как SVG файлы, генерируются LLM, прикрепляются к листам в Bonsai.
+Штампы генерируются динамически в `eskd/frame.py` (ГОСТ 2.104-2006, формы 1 и 2а).
 
 Обязательные поля основной надписи:
 - Наименование изделия / документа
@@ -292,7 +292,10 @@ BIM_ESKD_IFC_PATH=../projects/001_server_container/model.ifc .venv/bin/python -m
 render_view(output_path, view="plan|front|back|left|right", scale=50)
 ```
 
-Генерирует SVG-проекции из IFC-модели через ifcopenshell.geom.
+Генерирует SVG-проекции из IFC-модели через `ifcopenshell.draw` (hidden-line removal).
+Требует `IfcBuildingStorey.Elevation != None` — рендерер выставляет автоматически.
+Plan: `auto_floorplan=True`, elevation: `auto_elevation=True` (все 4 фасада в одном SVG).
+Время: ~8с на вид (320 продуктов).
 
 ### ЕСКД чертежи (Phase 3)
 
@@ -355,6 +358,6 @@ PDF → JSONL чанки (текст + таблицы в markdown). Таблиц
 
 | # | Название | Раздел | Refs | Статус |
 |---|---|---|---|---|
-| 001 | server_container | — | — | in-progress |
+| 001 | server_container | ЭОМ | — | in-progress |
 
 _Обновлять при добавлении каждого нового проекта._

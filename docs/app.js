@@ -1,8 +1,7 @@
-/* bim-eskd drawing viewer */
+/* bim-eskd drawing viewer — PDF-like continuous scroll */
 
 const BASE = (() => {
   const path = location.pathname;
-  // Support both root and subdirectory deployments
   if (path.includes("/bim-eskd/")) {
     return path.substring(0, path.indexOf("/bim-eskd/") + "/bim-eskd/".length);
   }
@@ -12,13 +11,9 @@ const BASE = (() => {
 let state = {
   projects: [],
   currentProject: null,
-  currentSheet: null,
   zoom: 1,
-  panX: 0,
-  panY: 0,
-  isPanning: false,
-  startX: 0,
-  startY: 0,
+  pages: [],       // DOM elements for each page
+  activePageIdx: 0, // currently visible page index
 };
 
 // ── Init ──
@@ -34,43 +29,36 @@ async function loadProjects() {
   sidebar.innerHTML = '<div class="loading">Loading...</div>';
 
   try {
-    // Load project index
     const res = await fetch(BASE + "projects/index.json");
-    if (!res.ok) throw new Error("No projects/index.json");
+    if (!res.ok) throw new Error("No index");
     const index = await res.json();
     state.projects = index.projects || [];
   } catch {
-    // Fallback: try to detect projects from known manifest paths
     state.projects = [];
-    const knownProjects = ["001_server_container"];
-    for (const pid of knownProjects) {
+    for (const pid of ["001_server_container"]) {
       try {
         const res = await fetch(BASE + `projects/${pid}/manifest.json`);
-        if (res.ok) {
-          const manifest = await res.json();
-          state.projects.push(manifest);
-        }
+        if (res.ok) state.projects.push(await res.json());
       } catch { /* skip */ }
     }
   }
 
   renderSidebar();
-
   if (state.projects.length > 0) {
     selectProject(state.projects[0].project);
   }
 }
 
-// ── Sidebar ──
+// ── Sidebar (document outline) ──
 
 function renderSidebar() {
   const sidebar = document.getElementById("sidebar-content");
   if (state.projects.length === 0) {
-    sidebar.innerHTML = '<div class="sidebar-heading">No projects found</div>';
+    sidebar.innerHTML = '<div class="sidebar-heading">No projects</div>';
     return;
   }
 
-  let html = '<div class="sidebar-heading">Projects</div>';
+  let html = '<div class="sidebar-heading">Document outline</div>';
 
   for (const proj of state.projects) {
     const isActive = state.currentProject === proj.project;
@@ -80,36 +68,31 @@ function renderSidebar() {
              </div>`;
 
     if (isActive && proj.sheets) {
-      for (const sheet of proj.sheets) {
-        const sheetActive = state.currentSheet === sheet.file;
-        html += `<div class="sheet-item ${sheetActive ? "active" : ""}"
-                      data-project="${proj.project}"
-                      data-sheet="${sheet.file}">
+      proj.sheets.forEach((sheet, i) => {
+        const cls = state.activePageIdx === i ? "active" : "";
+        html += `<div class="sheet-item ${cls}" data-page="${i}">
                    ${sheet.title || sheet.file}
-                   <span class="sheet-format">${sheet.format || ""}</span>
+                   <span class="sheet-page-num">${i + 1}</span>
                  </div>`;
-      }
+      });
     }
   }
 
   sidebar.innerHTML = html;
 
-  // Bind clicks
+  // Clicks
   sidebar.querySelectorAll(".project-item").forEach((el) => {
     el.addEventListener("click", () => selectProject(el.dataset.project));
   });
   sidebar.querySelectorAll(".sheet-item").forEach((el) => {
-    el.addEventListener("click", () =>
-      loadSheet(el.dataset.project, el.dataset.sheet)
-    );
+    el.addEventListener("click", () => scrollToPage(parseInt(el.dataset.page)));
   });
 }
 
 async function selectProject(projectId) {
   state.currentProject = projectId;
-  state.currentSheet = null;
+  state.activePageIdx = 0;
 
-  // Find or load manifest
   let proj = state.projects.find((p) => p.project === projectId);
   if (!proj || !proj.sheets) {
     try {
@@ -126,146 +109,168 @@ async function selectProject(projectId) {
   renderSidebar();
 
   if (proj && proj.sheets && proj.sheets.length > 0) {
-    loadSheet(projectId, proj.sheets[0].file);
+    await loadAllSheets(proj);
   } else {
-    showEmpty("No sheets in this project");
+    showEmpty("No sheets");
   }
 }
 
-// ── Sheet viewer ──
+// ── Load all sheets as continuous pages ──
 
-async function loadSheet(projectId, sheetFile) {
-  state.currentSheet = sheetFile;
-  state.currentProject = projectId;
-  renderSidebar();
+async function loadAllSheets(proj) {
+  const scroll = document.getElementById("viewer-scroll");
+  scroll.innerHTML = '<div class="loading">Loading sheets...</div>';
+  state.pages = [];
 
-  const viewer = document.getElementById("viewer-content");
-  viewer.innerHTML = '<div class="loading">Loading sheet...</div>';
+  const fragments = [];
 
-  try {
-    const url = BASE + `projects/${projectId}/sheets/${sheetFile}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  for (let i = 0; i < proj.sheets.length; i++) {
+    const sheet = proj.sheets[i];
+    const url = BASE + `projects/${proj.project}/sheets/${sheet.file}`;
 
-    const svgText = await res.text();
-    viewer.innerHTML = svgText;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const svgText = await res.text();
 
-    // Reset zoom/pan
-    resetView();
-  } catch (e) {
-    viewer.innerHTML = `<div class="empty-state">
-      <p>Could not load sheet: ${e.message}</p>
-    </div>`;
+      const page = document.createElement("div");
+      page.className = "page";
+      page.dataset.pageIdx = i;
+      page.innerHTML = svgText;
+      fragments.push(page);
+    } catch (e) {
+      const page = document.createElement("div");
+      page.className = "page";
+      page.dataset.pageIdx = i;
+      page.innerHTML = `<div class="empty-state">Sheet ${i + 1}: ${e.message}</div>`;
+      fragments.push(page);
+    }
   }
+
+  scroll.innerHTML = "";
+  for (const page of fragments) {
+    scroll.appendChild(page);
+    state.pages.push(page);
+  }
+
+  applyZoom();
+  updatePageIndicator();
 }
 
 function showEmpty(msg) {
-  const viewer = document.getElementById("viewer-content");
-  viewer.innerHTML = `<div class="empty-state"><p>${msg}</p></div>`;
+  const scroll = document.getElementById("viewer-scroll");
+  scroll.innerHTML = `<div class="empty-state"><p>${msg}</p></div>`;
 }
 
-// ── Zoom & Pan ──
+// ── Scroll tracking — highlight active page in sidebar ──
 
-function resetView() {
+function setupScrollTracking() {
   const viewer = document.querySelector(".viewer");
-  const content = document.getElementById("viewer-content");
-  const svg = content.querySelector("svg");
-  if (!svg) return;
+  viewer.addEventListener("scroll", onScroll);
+}
 
-  // Fit SVG to viewer
-  const vw = viewer.clientWidth;
-  const vh = viewer.clientHeight;
-  const sw = svg.viewBox.baseVal.width || svg.clientWidth;
-  const sh = svg.viewBox.baseVal.height || svg.clientHeight;
+function onScroll() {
+  const viewer = document.querySelector(".viewer");
+  const viewerTop = viewer.scrollTop + viewer.clientHeight * 0.3;
 
-  if (sw <= 0 || sh <= 0) {
-    state.zoom = 1;
-  } else {
-    state.zoom = Math.min(vw / (sw + 40), vh / (sh + 40));
+  let active = 0;
+  for (let i = 0; i < state.pages.length; i++) {
+    const page = state.pages[i];
+    if (page.offsetTop <= viewerTop) {
+      active = i;
+    }
   }
 
-  state.panX = (vw - sw * state.zoom) / 2;
-  state.panY = (vh - sh * state.zoom) / 2;
-  applyTransform();
+  if (active !== state.activePageIdx) {
+    state.activePageIdx = active;
+    updateSidebarActive();
+    updatePageIndicator();
+  }
 }
 
-function applyTransform() {
-  const content = document.getElementById("viewer-content");
-  content.style.transform =
-    `translate(${state.panX}px, ${state.panY}px) scale(${state.zoom})`;
+function updateSidebarActive() {
+  document.querySelectorAll(".sheet-item").forEach((el) => {
+    const idx = parseInt(el.dataset.page);
+    el.classList.toggle("active", idx === state.activePageIdx);
+  });
+}
+
+function updatePageIndicator() {
+  const el = document.getElementById("page-indicator");
+  if (el && state.pages.length > 0) {
+    el.textContent = `${state.activePageIdx + 1} / ${state.pages.length}`;
+  }
+}
+
+function scrollToPage(idx) {
+  if (idx < 0 || idx >= state.pages.length) return;
+  const page = state.pages[idx];
+  const viewer = document.querySelector(".viewer");
+  viewer.scrollTo({ top: page.offsetTop - 20, behavior: "smooth" });
+}
+
+// ── Zoom ──
+
+function applyZoom() {
+  const scroll = document.getElementById("viewer-scroll");
+  scroll.style.transform = `scale(${state.zoom})`;
+  // Adjust width so horizontal scroll works correctly
+  scroll.style.width = state.zoom !== 1 ? `${100 / state.zoom}%` : "";
   document.getElementById("zoom-level").textContent =
     Math.round(state.zoom * 100) + "%";
 }
 
 function zoomIn() {
-  zoomTo(state.zoom * 1.25);
+  state.zoom = Math.min(5, state.zoom * 1.2);
+  applyZoom();
 }
 
 function zoomOut() {
-  zoomTo(state.zoom / 1.25);
-}
-
-function zoomTo(newZoom) {
-  const viewer = document.querySelector(".viewer");
-  const cx = viewer.clientWidth / 2;
-  const cy = viewer.clientHeight / 2;
-
-  const oldZoom = state.zoom;
-  state.zoom = Math.max(0.1, Math.min(10, newZoom));
-
-  // Zoom toward center
-  state.panX = cx - (cx - state.panX) * (state.zoom / oldZoom);
-  state.panY = cy - (cy - state.panY) * (state.zoom / oldZoom);
-  applyTransform();
+  state.zoom = Math.max(0.2, state.zoom / 1.2);
+  applyZoom();
 }
 
 function zoomFit() {
-  resetView();
+  // Fit page width to viewer width
+  const viewer = document.querySelector(".viewer");
+  const page = state.pages[0];
+  if (!page) return;
+  const svg = page.querySelector("svg");
+  if (!svg) return;
+
+  const svgW = svg.viewBox.baseVal.width || svg.clientWidth || 420;
+  const viewerW = viewer.clientWidth - 40; // padding
+  state.zoom = Math.min(2, viewerW / svgW);
+  applyZoom();
 }
 
 function setupControls() {
   const viewer = document.querySelector(".viewer");
 
-  // Wheel zoom
+  // Ctrl+wheel = zoom, plain wheel = scroll (natural PDF behavior)
   viewer.addEventListener("wheel", (e) => {
-    e.preventDefault();
-    const factor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
-    const rect = viewer.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
-
-    const oldZoom = state.zoom;
-    state.zoom = Math.max(0.1, Math.min(10, state.zoom * factor));
-
-    state.panX = mx - (mx - state.panX) * (state.zoom / oldZoom);
-    state.panY = my - (my - state.panY) * (state.zoom / oldZoom);
-    applyTransform();
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? 1.08 : 1 / 1.08;
+      state.zoom = Math.max(0.2, Math.min(5, state.zoom * factor));
+      applyZoom();
+    }
+    // Otherwise: default scroll behavior
   }, { passive: false });
 
-  // Pan with mouse drag
-  viewer.addEventListener("mousedown", (e) => {
-    if (e.button !== 0) return;
-    state.isPanning = true;
-    state.startX = e.clientX - state.panX;
-    state.startY = e.clientY - state.panY;
-  });
-
-  window.addEventListener("mousemove", (e) => {
-    if (!state.isPanning) return;
-    state.panX = e.clientX - state.startX;
-    state.panY = e.clientY - state.startY;
-    applyTransform();
-  });
-
-  window.addEventListener("mouseup", () => {
-    state.isPanning = false;
-  });
-
-  // Keyboard shortcuts
+  // Keyboard
   window.addEventListener("keydown", (e) => {
-    if (e.key === "+" || e.key === "=") zoomIn();
-    else if (e.key === "-") zoomOut();
-    else if (e.key === "0") zoomFit();
+    if ((e.ctrlKey || e.metaKey) && (e.key === "=" || e.key === "+")) {
+      e.preventDefault(); zoomIn();
+    } else if ((e.ctrlKey || e.metaKey) && e.key === "-") {
+      e.preventDefault(); zoomOut();
+    } else if ((e.ctrlKey || e.metaKey) && e.key === "0") {
+      e.preventDefault(); zoomFit();
+    } else if (e.key === "PageDown") {
+      scrollToPage(state.activePageIdx + 1);
+    } else if (e.key === "PageUp") {
+      scrollToPage(state.activePageIdx - 1);
+    }
   });
 
   // Buttons
@@ -275,25 +280,8 @@ function setupControls() {
   document.getElementById("btn-print").addEventListener("click", () => window.print());
   document.getElementById("btn-theme").addEventListener("click", toggleTheme);
 
-  // Prev/next sheet navigation
-  document.getElementById("btn-prev").addEventListener("click", navigatePrev);
-  document.getElementById("btn-next").addEventListener("click", navigateNext);
-}
-
-// ── Navigation ──
-
-function navigatePrev() {
-  const proj = state.projects.find((p) => p.project === state.currentProject);
-  if (!proj || !proj.sheets) return;
-  const idx = proj.sheets.findIndex((s) => s.file === state.currentSheet);
-  if (idx > 0) loadSheet(proj.project, proj.sheets[idx - 1].file);
-}
-
-function navigateNext() {
-  const proj = state.projects.find((p) => p.project === state.currentProject);
-  if (!proj || !proj.sheets) return;
-  const idx = proj.sheets.findIndex((s) => s.file === state.currentSheet);
-  if (idx < proj.sheets.length - 1) loadSheet(proj.project, proj.sheets[idx + 1].file);
+  // Scroll tracking
+  setupScrollTracking();
 }
 
 // ── Theme ──

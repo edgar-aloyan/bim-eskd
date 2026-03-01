@@ -1,9 +1,9 @@
-/* bim-eskd drawing viewer */
+/* bim-eskd drawing viewer — PDF-like continuous scroll */
 
 :root {
-  --bg: #f5f5f5;
+  --bg: #525659;
   --bg-sidebar: #ffffff;
-  --bg-viewer: #e0e0e0;
+  --bg-page: white;
   --text: #1a1a1a;
   --text-secondary: #666;
   --border: #ddd;
@@ -13,12 +13,14 @@
   --item-active: #dbeafe;
   --header-bg: #1e293b;
   --header-text: #f1f5f9;
+  --page-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  --page-gap: 12px;
 }
 
 [data-theme="dark"] {
-  --bg: #0f172a;
+  --bg: #2a2a2a;
   --bg-sidebar: #1e293b;
-  --bg-viewer: #0f172a;
+  --bg-page: #ffffff;
   --text: #e2e8f0;
   --text-secondary: #94a3b8;
   --border: #334155;
@@ -28,6 +30,7 @@
   --item-active: #1e40af;
   --header-bg: #0f172a;
   --header-text: #e2e8f0;
+  --page-shadow: 0 2px 12px rgba(0,0,0,0.5);
 }
 
 * {
@@ -51,39 +54,42 @@ body {
   background: var(--header-bg);
   color: var(--header-text);
   padding: 0 16px;
-  height: 48px;
+  height: 44px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   flex-shrink: 0;
   z-index: 10;
 }
 
 .header h1 {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
 
-.header-spacer {
-  flex: 1;
-}
+.header-spacer { flex: 1; }
 
 .header-btn {
   background: none;
   border: 1px solid rgba(255,255,255,0.2);
   color: var(--header-text);
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  font-size: 12px;
 }
 
 .header-btn:hover {
   background: rgba(255,255,255,0.1);
+}
+
+.page-indicator {
+  font-size: 13px;
+  color: var(--header-text);
+  opacity: 0.8;
+  min-width: 60px;
+  text-align: center;
 }
 
 /* Main layout */
@@ -93,119 +99,132 @@ body {
   overflow: hidden;
 }
 
-/* Sidebar */
+/* Sidebar — document outline */
 .sidebar {
-  width: 240px;
+  width: 220px;
   background: var(--bg-sidebar);
   border-right: 1px solid var(--border);
   overflow-y: auto;
   flex-shrink: 0;
-}
-
-.sidebar-section {
-  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-heading {
-  padding: 8px 16px 4px;
+  padding: 12px 16px 6px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   color: var(--text-secondary);
 }
 
-.project-item, .sheet-item {
+.project-item {
   padding: 8px 16px;
   cursor: pointer;
   font-size: 13px;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   border-left: 3px solid transparent;
+  color: var(--text);
 }
 
-.project-item:hover, .sheet-item:hover {
-  background: var(--item-hover);
-}
-
+.project-item:hover { background: var(--item-hover); }
 .project-item.active {
+  border-left-color: var(--accent);
+  color: var(--accent);
+}
+
+.sheet-item {
+  padding: 6px 16px 6px 28px;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-left: 3px solid transparent;
+  color: var(--text);
+}
+
+.sheet-item:hover { background: var(--item-hover); }
+.sheet-item.active {
   background: var(--item-active);
   border-left-color: var(--accent);
   font-weight: 600;
 }
 
-.sheet-item.active {
-  background: var(--item-active);
-  border-left-color: var(--accent);
-}
-
-.sheet-item {
-  padding-left: 32px;
-}
-
-.sheet-format {
+.sheet-page-num {
   font-size: 10px;
   color: var(--text-secondary);
   margin-left: auto;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Viewer */
+/* Viewer — continuous vertical scroll */
 .viewer {
   flex: 1;
-  background: var(--bg-viewer);
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: auto;
+  background: var(--bg);
   position: relative;
+  scroll-behavior: smooth;
+}
+
+.viewer-scroll {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding: 20px 0;
+  min-height: 100%;
+  transform-origin: center top;
 }
 
-.viewer-content {
-  transform-origin: 0 0;
-  cursor: grab;
+/* Individual page */
+.page {
+  background: var(--bg-page);
+  box-shadow: var(--page-shadow);
+  margin-bottom: var(--page-gap);
+  flex-shrink: 0;
 }
 
-.viewer-content:active {
-  cursor: grabbing;
-}
-
-.viewer-content svg {
+.page svg {
   display: block;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+
+.page-label {
+  display: none; /* hidden, used for scroll tracking */
 }
 
 /* Empty state */
 .empty-state {
   text-align: center;
-  color: var(--text-secondary);
+  color: #999;
   font-size: 14px;
-}
-
-.empty-state p {
-  margin-top: 8px;
+  padding: 40px;
 }
 
 /* Zoom controls */
 .zoom-controls {
-  position: absolute;
+  position: fixed;
   bottom: 16px;
   right: 16px;
   display: flex;
-  gap: 4px;
-  background: var(--bg-sidebar);
-  border: 1px solid var(--border);
+  gap: 2px;
+  background: var(--header-bg);
   border-radius: 6px;
   padding: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  z-index: 20;
 }
 
 .zoom-btn {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border: none;
   background: none;
-  color: var(--text);
+  color: var(--header-text);
   cursor: pointer;
   border-radius: 4px;
   font-size: 16px;
@@ -214,56 +233,47 @@ body {
   justify-content: center;
 }
 
-.zoom-btn:hover {
-  background: var(--item-hover);
-}
+.zoom-btn:hover { background: rgba(255,255,255,0.15); }
 
 .zoom-level {
-  font-size: 12px;
-  min-width: 48px;
+  font-size: 11px;
+  min-width: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-secondary);
+  color: rgba(255,255,255,0.7);
 }
 
 /* Loading */
 .loading {
   color: var(--text-secondary);
   font-size: 14px;
+  padding: 16px;
 }
 
-/* Print styles */
+/* Print styles — each page on its own printed page */
 @media print {
-  .header, .sidebar, .zoom-controls {
-    display: none !important;
-  }
-  .main {
-    display: block;
-  }
+  .header, .sidebar, .zoom-controls { display: none !important; }
+  body, .main { display: block; height: auto; overflow: visible; }
   .viewer {
-    position: static;
     overflow: visible;
     background: white;
   }
-  .viewer-content {
+  .viewer-scroll {
     transform: none !important;
-    cursor: default;
+    padding: 0;
   }
-  .viewer-content svg {
+  .page {
     box-shadow: none;
-    width: 100%;
-    height: auto;
+    margin: 0;
+    page-break-after: always;
   }
-  body {
-    height: auto;
-    overflow: visible;
-  }
+  .page:last-child { page-break-after: auto; }
+  .page svg { width: 100%; height: auto; }
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .sidebar {
-    width: 180px;
-  }
+  .sidebar { width: 160px; }
+  .sheet-item { padding-left: 20px; }
 }

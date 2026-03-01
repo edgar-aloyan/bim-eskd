@@ -10,9 +10,8 @@
   <div class="header">
     <h1>bim-eskd</h1>
     <div class="header-spacer"></div>
-    <button class="header-btn" id="btn-prev" title="Previous sheet">&#9664;</button>
-    <button class="header-btn" id="btn-next" title="Next sheet">&#9654;</button>
-    <button class="header-btn" id="btn-print" title="Print">Print</button>
+    <span class="page-indicator" id="page-indicator"></span>
+    <button class="header-btn" id="btn-print" title="Print all (Ctrl+P)">Print</button>
     <button class="header-btn" id="btn-theme" title="Toggle theme">Theme</button>
   </div>
 
@@ -24,19 +23,19 @@
     </div>
 
     <div class="viewer">
-      <div class="viewer-content" id="viewer-content">
+      <div class="viewer-scroll" id="viewer-scroll">
         <div class="empty-state">
-          <p>Select a sheet from the sidebar</p>
+          <p>Loading documents...</p>
         </div>
       </div>
-
-      <div class="zoom-controls">
-        <button class="zoom-btn" id="btn-zoom-out" title="Zoom out">-</button>
-        <span class="zoom-level" id="zoom-level">100%</span>
-        <button class="zoom-btn" id="btn-zoom-in" title="Zoom in">+</button>
-        <button class="zoom-btn" id="btn-zoom-fit" title="Fit to view">&#8862;</button>
-      </div>
     </div>
+  </div>
+
+  <div class="zoom-controls">
+    <button class="zoom-btn" id="btn-zoom-out" title="Zoom out (Ctrl+-)">-</button>
+    <span class="zoom-level" id="zoom-level">100%</span>
+    <button class="zoom-btn" id="btn-zoom-in" title="Zoom in (Ctrl++)">+</button>
+    <button class="zoom-btn" id="btn-zoom-fit" title="Fit width (Ctrl+0)">&#8596;</button>
   </div>
 
   <script src="app.js"></script>

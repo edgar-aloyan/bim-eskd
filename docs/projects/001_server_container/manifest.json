@@ -19,6 +19,12 @@
       "title": "Specification",
       "file": "sheet_003_spec.svg",
       "format": "A3"
+    },
+    {
+      "id": "004",
+      "title": "Single-line diagram",
+      "file": "sheet_004_sld.svg",
+      "format": "A3"
     }
   ]
 }

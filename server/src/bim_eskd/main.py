@@ -49,6 +49,7 @@ from .mcp_tools import ifc_tools  # noqa: F401, E402
 from .mcp_tools import svg_tools  # noqa: F401, E402
 from .mcp_tools import rag_tools  # noqa: F401, E402
 from .mcp_tools import eskd_tools  # noqa: F401, E402
+from .mcp_tools import electrical_tools  # noqa: F401, E402
 from .mcp_tools import publish_tools  # noqa: F401, E402
 
 

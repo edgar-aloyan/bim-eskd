@@ -251,6 +251,95 @@ def list_sheets(project_id: str) -> str:
 
 
 @mcp.tool()
+def generate_sld(
+    project_id: str,
+    format: str = "A3",
+    orientation: str = "landscape",
+    title: str = "Однолинейная схема электроснабжения",
+    designation: str = "",
+    organization: str = "",
+    developed_by: str = "",
+    checked_by: str = "",
+    approved_by: str = "",
+    date: str = "",
+    sheet_number: int = 4,
+    total_sheets: int = 4,
+    output_name: Optional[str] = None,
+) -> str:
+    """Generate a single-line diagram (SLD) from IFC electrical data.
+
+    Reads IfcDistributionSystem elements, builds topology, draws ГОСТ symbols,
+    wraps in ЕСКД frame.
+
+    Args:
+        project_id: Project folder name (e.g. "001_server_container").
+        format: Sheet format — "A4", "A3", "A1".
+        orientation: Sheet orientation.
+        title: Drawing title.
+        designation: Document designation.
+        organization: Organization name.
+        developed_by: Developer name.
+        checked_by: Checker name.
+        approved_by: Approver name.
+        date: Date string.
+        sheet_number: Current sheet number.
+        total_sheets: Total sheets.
+        output_name: Output filename (without extension).
+    """
+    try:
+        from ..eskd.sld import create_single_line_diagram
+        from ..eskd import compose_sheet
+
+        if not project_manager.is_open():
+            return _json({"error": "No IFC project open"})
+
+        project_dir = Path("projects") / project_id / "drawings"
+        project_dir.mkdir(parents=True, exist_ok=True)
+
+        if not output_name:
+            output_name = f"sheet_{sheet_number:03d}_sld"
+        output_path = project_dir / f"{output_name}.svg"
+
+        # Generate SLD SVG from IFC model
+        ifc_file = project_manager.ifc
+        sld_svg = create_single_line_diagram(ifc_file)
+
+        # Compose with ЕСКД frame
+        stamp_data = {
+            "title": title,
+            "designation": designation,
+            "organization": organization,
+            "developed_by": developed_by,
+            "checked_by": checked_by,
+            "approved_by": approved_by,
+            "date": date,
+            "sheet_number": sheet_number,
+            "total_sheets": total_sheets,
+        }
+
+        form = 1 if sheet_number == 1 else 2
+        sheet_svg = compose_sheet(
+            view_svg=sld_svg,
+            format=format,
+            orientation=orientation,
+            stamp_data=stamp_data,
+            form=form,
+        )
+
+        output_path.write_text(sheet_svg, encoding="utf-8")
+
+        return _json({
+            "status": "generated",
+            "path": str(output_path),
+            "type": "sld",
+            "format": format,
+            "sheet": f"{sheet_number}/{total_sheets}",
+        })
+    except Exception as e:
+        return _json({"error": str(e)})
+
+
+@mcp.tool()
 def get_sheet(project_id: str, sheet_name: str) -> str:
     """Get the SVG content of a specific drawing sheet.
 

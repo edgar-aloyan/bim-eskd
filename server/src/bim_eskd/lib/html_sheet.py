@@ -50,6 +50,7 @@ def generate_docs(output_dir: str | Path) -> list[str]:
     renderer = IFCSVGRenderer(project_manager.path)
 
     paths = []
+    pages = []  # (width_mm, height_mm, frame_svg, drawing_svg, stamp_html) per sheet
     for sheet in sheets:
         view = sheet.get("view", "plan")
         name = sheet.get("name", "sheet")
@@ -57,7 +58,6 @@ def generate_docs(output_dir: str | Path) -> list[str]:
         orient = sheet.get("orientation", "landscape")
         scale_str = sheet.get("scale", "1:50")
         section_h = sheet.get("section_height", "")
-        lang = sheet.get("lang", "ru")
         form = int(sheet.get("form", "1"))
 
         # Parse scale
@@ -108,23 +108,38 @@ def generate_docs(output_dir: str | Path) -> list[str]:
                        "date", "sheet_number", "total_sheets", "scale")
         }
 
-        # Generate HTML
-        html_path = output_dir / f"{name}.html"
-        _render_html_sheet(
-            view_svg=view_svg,
-            stamp_data=stamp_data,
-            output=html_path,
-            format=fmt,
-            orientation=orient,
-            form=form,
-            lang=lang,
-        )
-        paths.append(str(html_path))
-        logger.info(f"Generated {html_path.name}")
+        # Compute page geometry
+        w, h = FORMATS.get(fmt, FORMATS["A3"])
+        if orient == "landscape" and w < h:
+            w, h = h, w
+        elif orient == "portrait" and w > h:
+            w, h = h, w
+
+        stamp_h = STAMP_FORM1_HEIGHT if form == 1 else STAMP_FORM2A_HEIGHT
+        ix, iy = MARGIN_LEFT, MARGIN_OTHER
+        iw = w - MARGIN_LEFT - MARGIN_OTHER
+        ih = h - MARGIN_OTHER * 2
+        draw_h = ih - stamp_h
+
+        frame_svg = _build_frame_svg(w, h, ix, iy, iw, ih, stamp_h, form)
+        stamp_html = _build_stamp_html(ix, iy, iw, ih, stamp_h, stamp_data, form)
+
+        pages.append({
+            "w": w, "h": h, "ix": ix, "iy": iy, "iw": iw,
+            "draw_h": draw_h, "frame_svg": frame_svg,
+            "drawing_svg": view_svg, "stamp_html": stamp_html,
+            "title": stamp_data.get("title", name),
+        })
+        logger.info(f"Prepared sheet {name}")
 
     # Clean up intermediate SVGs
     for svg in output_dir.glob("_view_*.svg"):
         svg.unlink()
+
+    # Generate combined document (all sheets in one scrollable HTML)
+    combined_path = output_dir / "document.html"
+    _generate_combined(combined_path, pages)
+    paths.append(str(combined_path))
 
     return paths
 
@@ -306,6 +321,245 @@ def _build_stamp_html(ix, iy, iw, ih, stamp_h, data, form):
             _div(rx + 70, sy, 50, 15, f"Лист {data['sheet_number']}")
 
     return "\n    ".join(parts)
+
+
+def _generate_combined(output: Path, pages: list[dict]):
+    """Generate a single multi-page HTML document (scroll like PDF)."""
+    page_divs = []
+    nav_items = []
+    for i, p in enumerate(pages):
+        pid = f"p{i+1}"
+        num = i + 1
+        page_divs.append(f'''<div class="page" id="{pid}" style="width:{p['w']}mm;height:{p['h']}mm;">
+  <div class="frame"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {p['w']} {p['h']}">{p['frame_svg']}</svg></div>
+  <div class="drawing" style="left:{p['ix']}mm;top:{p['iy']}mm;width:{p['iw']}mm;height:{p['draw_h']}mm;">{p['drawing_svg']}</div>
+  {p['stamp_html']}
+</div>''')
+        nav_items.append(f'<a href="#{pid}" class="nav-item" data-page="{pid}">'
+                         f'<span class="nav-num">{num}</span>{p["title"]}</a>')
+
+    html = _COMBINED_TEMPLATE.format(
+        pages="\n".join(page_divs),
+        nav_items="\n    ".join(nav_items),
+        total=len(pages),
+    )
+    output.write_text(html, encoding="utf-8")
+
+
+_COMBINED_TEMPLATE = """\
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Комплект документов</title>
+<style>
+  * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+  body {{
+    background: #525659;
+  }}
+  /* ── Sidebar ── */
+  .sidebar {{
+    position: fixed;
+    top: 0; left: 0;
+    width: 240px;
+    height: 100vh;
+    background: #2b2d30;
+    color: #ccc;
+    overflow-y: auto;
+    z-index: 100;
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+  }}
+  .sidebar.hidden {{
+    transform: translateX(-240px);
+  }}
+  .sidebar-header {{
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #999;
+    border-bottom: 1px solid #3c3e42;
+    flex-shrink: 0;
+  }}
+  .nav-item {{
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    color: #ccc;
+    text-decoration: none;
+    font-size: 13px;
+    border-left: 3px solid transparent;
+    transition: background 0.15s;
+  }}
+  .nav-item:hover {{
+    background: #36383c;
+  }}
+  .nav-item.active {{
+    background: #37373d;
+    color: #fff;
+    border-left-color: #4a9eff;
+  }}
+  .nav-num {{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    background: #3c3e42;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }}
+  .nav-item.active .nav-num {{
+    background: #4a9eff;
+    color: #fff;
+  }}
+  /* ── Toggle button ── */
+  .toggle-btn {{
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 200;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: none;
+    background: #2b2d30;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: left 0.2s, background 0.15s;
+  }}
+  .toggle-btn:hover {{
+    background: #3c3e42;
+  }}
+  .toggle-btn.shifted {{
+    left: 252px;
+  }}
+  /* ── Pages ── */
+  .pages {{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 0;
+    margin-left: 240px;
+    transition: margin-left 0.2s;
+  }}
+  .pages.full {{
+    margin-left: 0;
+  }}
+  .page {{
+    position: relative;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    overflow: hidden;
+    flex-shrink: 0;
+    font-family: 'ISOCPEUR', 'GOST type A', 'PT Sans', Arial, sans-serif;
+  }}
+  .frame {{
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+  }}
+  .frame svg {{ width: 100%; height: 100%; }}
+  .drawing {{
+    position: absolute;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }}
+  .drawing svg {{ max-width: 100%; max-height: 100%; }}
+  .stamp-cell {{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3mm;
+    overflow: hidden;
+  }}
+  .stamp-label {{
+    position: absolute;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    font-size: 2mm;
+    color: #666;
+    overflow: hidden;
+  }}
+  .stamp-title {{ font-size: 4.5mm; font-weight: 700; }}
+  @media print {{
+    .sidebar, .toggle-btn {{ display: none !important; }}
+    .pages {{ margin-left: 0 !important; gap: 0; padding: 0; }}
+    body {{ background: white; }}
+    .page {{ box-shadow: none; page-break-after: always; }}
+    .page:last-child {{ page-break-after: auto; }}
+  }}
+</style>
+</head>
+<body>
+
+<button class="toggle-btn shifted" id="toggleBtn" title="Toggle sidebar">&#9776;</button>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">ЛИСТЫ &middot; {total}</div>
+  {nav_items}
+</nav>
+
+<div class="pages" id="pages">
+{pages}
+</div>
+
+<script>
+(function() {{
+  const btn = document.getElementById('toggleBtn');
+  const sidebar = document.getElementById('sidebar');
+  const pages = document.getElementById('pages');
+  const items = document.querySelectorAll('.nav-item');
+
+  btn.addEventListener('click', function() {{
+    sidebar.classList.toggle('hidden');
+    pages.classList.toggle('full');
+    btn.classList.toggle('shifted');
+  }});
+
+  // Highlight current page on scroll
+  const observer = new IntersectionObserver(function(entries) {{
+    entries.forEach(function(e) {{
+      if (e.isIntersecting) {{
+        items.forEach(function(a) {{ a.classList.remove('active'); }});
+        const link = document.querySelector('.nav-item[data-page="' + e.target.id + '"]');
+        if (link) link.classList.add('active');
+      }}
+    }});
+  }}, {{ threshold: 0.3 }});
+
+  document.querySelectorAll('.page').forEach(function(p) {{ observer.observe(p); }});
+
+  // Smooth scroll on nav click
+  items.forEach(function(a) {{
+    a.addEventListener('click', function(ev) {{
+      ev.preventDefault();
+      const target = document.getElementById(a.dataset.page);
+      if (target) target.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
+    }});
+  }});
+
+  if (items.length > 0) items[0].classList.add('active');
+}})();
+</script>
+</body>
+</html>
+"""
 
 
 _TEMPLATE = """\

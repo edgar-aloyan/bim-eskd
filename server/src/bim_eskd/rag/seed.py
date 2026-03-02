@@ -28,6 +28,9 @@ def generate_seeds() -> list[RAGRecord]:
     # ── Category 2: Working scripts ───────────────────────────────
     records.extend(_script_patterns())
 
+    # ── Category 4: Glossary ─────────────────────────────────────
+    records.extend(_glossary_terms())
+
     # ── Category 5: Templates & constants ─────────────────────────
     records.extend(_template_patterns())
 
@@ -334,6 +337,92 @@ result = {"system": system.GlobalId, "board": board.GlobalId}""",
             description="Complete script: electrical system with board and devices",
             source="ifc_engine/electrical.py",
             tags=["electrical", "system", "board", "device", "complete"],
+        ),
+    ]
+
+
+def _glossary_terms() -> list[RAGRecord]:
+    """Multilingual glossary: en/ru/hy terms with IFC mapping."""
+    return [
+        RAGRecord(
+            id="gloss_wall",
+            category=RAGCategory.GLOSSARY,
+            content="Wall | Стена | Պատ\nIFC: IfcWall\nA vertical building element that encloses or divides spaces.",
+            description="Wall — multilingual term + IFC class",
+            tags=["wall", "building_element"],
+        ),
+        RAGRecord(
+            id="gloss_slab",
+            category=RAGCategory.GLOSSARY,
+            content="Slab / Floor | Плита / Перекрытие | Սալ\nIFC: IfcSlab\nA horizontal building element (floor, roof deck).",
+            description="Slab — multilingual term + IFC class",
+            tags=["slab", "floor", "building_element"],
+        ),
+        RAGRecord(
+            id="gloss_door",
+            category=RAGCategory.GLOSSARY,
+            content="Door | Дверь | Դուռ\nIFC: IfcDoor\nA building element for passage through a wall.",
+            description="Door — multilingual term + IFC class",
+            tags=["door", "building_element"],
+        ),
+        RAGRecord(
+            id="gloss_window",
+            category=RAGCategory.GLOSSARY,
+            content="Window | Окно | Պատուհան\nIFC: IfcWindow\nAn opening element for light and ventilation.",
+            description="Window — multilingual term + IFC class",
+            tags=["window", "building_element"],
+        ),
+        RAGRecord(
+            id="gloss_distribution_board",
+            category=RAGCategory.GLOSSARY,
+            content="Distribution Board / Switchboard | Распределительный щит (РЩ) / ГРЩ | Բաշխանական վահան\nIFC: IfcElectricDistributionBoard\nAn enclosure for circuit breakers and electrical distribution.",
+            description="Distribution board — multilingual + IFC",
+            tags=["electrical", "distribution_board", "switchboard"],
+        ),
+        RAGRecord(
+            id="gloss_circuit_breaker",
+            category=RAGCategory.GLOSSARY,
+            content="Circuit Breaker (CB) | Автоматический выключатель (АВ) | Անջատիչ\nIFC: IfcProtectiveDevice\nA device that automatically interrupts current flow on fault.",
+            description="Circuit breaker — multilingual + IFC",
+            tags=["electrical", "protective_device", "circuit_breaker"],
+        ),
+        RAGRecord(
+            id="gloss_cable",
+            category=RAGCategory.GLOSSARY,
+            content="Cable | Кабель | Մալուխ\nIFC: IfcCableSegment\nA conductor for transmitting electrical energy.",
+            description="Cable — multilingual + IFC",
+            tags=["electrical", "cable"],
+        ),
+        RAGRecord(
+            id="gloss_grounding",
+            category=RAGCategory.GLOSSARY,
+            content="Grounding / Earthing | Заземление | Հողակապում\nIFC: IfcSystem (EARTHING)\nRU: ПУЭ гл.1.7 | US: NEC Article 250 | AM: based on ГОСТ Р + local amendments\nConnection of electrical system to earth for safety.",
+            description="Grounding — multilingual + cross-jurisdiction refs",
+            equivalent_rules="RU:ПУЭ 1.7|US:NEC 250",
+            tags=["electrical", "grounding", "earthing", "safety"],
+        ),
+        RAGRecord(
+            id="gloss_title_block",
+            category=RAGCategory.GLOSSARY,
+            content="Title Block | Основная надпись (штамп) | Վերնագիր\nStandard: ГОСТ 2.104-2006 (RU/AM) | ANSI/ASME Y14.1 (US)\nThe information block on engineering drawings with project metadata.",
+            description="Title block — multilingual + standards refs",
+            equivalent_rules="RU:ГОСТ 2.104-2006|US:ASME Y14.1",
+            tags=["eskd", "title_block", "stamp", "drawing"],
+        ),
+        RAGRecord(
+            id="gloss_transformer",
+            category=RAGCategory.GLOSSARY,
+            content="Transformer | Трансформатор | Տրանսֆորմատոր\nIFC: IfcTransformer\nA device that transfers energy between circuits by electromagnetic induction.",
+            description="Transformer — multilingual + IFC",
+            tags=["electrical", "transformer"],
+        ),
+        RAGRecord(
+            id="gloss_surge_protector",
+            category=RAGCategory.GLOSSARY,
+            content="Surge Protective Device (SPD) | Ограничитель перенапряжений (ОПН) | Գերլարումի սահմանափակ\nIFC: IfcProtectiveDevice\nRU: ГОСТ Р 51992 | US: NEC 285 | IEC 61643\nA device that limits transient overvoltages.",
+            description="SPD/OPN — multilingual + cross-jurisdiction",
+            equivalent_rules="RU:ГОСТ Р 51992|US:NEC 285|IEC:61643",
+            tags=["electrical", "spd", "opn", "surge"],
         ),
     ]
 

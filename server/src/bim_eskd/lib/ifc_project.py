@@ -83,3 +83,65 @@ def list_elements(ifc_class: str = "IfcProduct") -> list[dict]:
         {"guid": p.GlobalId, "name": p.Name or "", "ifc_class": p.is_a()}
         for p in products
     ]
+
+
+# ── Jurisdiction ────────────────────────────────────────────────
+
+PSET_JURISDICTION = "Pset_ProjectJurisdiction"
+
+
+def set_jurisdiction(jurisdiction: str, languages: Optional[list[str]] = None) -> dict:
+    """Set project jurisdiction and languages on IfcProject.
+
+    Args:
+        jurisdiction: ISO country code ("RU", "AM", "US")
+        languages: list of locale codes, e.g. ["ru", "hy", "en"]
+    """
+    import ifcopenshell.api
+
+    ifc = project_manager.ifc
+    proj = ifc.by_type("IfcProject")[0]
+
+    # Find or create pset
+    pset = None
+    for rel in getattr(proj, "IsDefinedBy", []):
+        if not hasattr(rel, "RelatingPropertyDefinition"):
+            continue
+        pdef = rel.RelatingPropertyDefinition
+        if hasattr(pdef, "Name") and pdef.Name == PSET_JURISDICTION:
+            pset = pdef
+            break
+
+    if pset is None:
+        pset = ifcopenshell.api.run("pset.add_pset", ifc,
+                                    product=proj, name=PSET_JURISDICTION)
+
+    props = {"Jurisdiction": jurisdiction}
+    if languages:
+        props["Languages"] = ",".join(languages)
+
+    ifcopenshell.api.run("pset.edit_pset", ifc, pset=pset, properties=props)
+    return {"jurisdiction": jurisdiction, "languages": languages or []}
+
+
+def get_jurisdiction() -> dict:
+    """Read project jurisdiction from IfcProject Pset_ProjectJurisdiction."""
+    ifc = project_manager.ifc
+    proj = ifc.by_type("IfcProject")[0]
+
+    for rel in getattr(proj, "IsDefinedBy", []):
+        if not hasattr(rel, "RelatingPropertyDefinition"):
+            continue
+        pdef = rel.RelatingPropertyDefinition
+        if hasattr(pdef, "Name") and pdef.Name == PSET_JURISDICTION:
+            props = {}
+            for prop in getattr(pdef, "HasProperties", []):
+                val = getattr(prop, "NominalValue", None)
+                props[prop.Name] = val.wrappedValue if val else None
+            langs_raw = props.get("Languages", "")
+            return {
+                "jurisdiction": props.get("Jurisdiction", ""),
+                "languages": [l for l in langs_raw.split(",") if l] if langs_raw else [],
+            }
+
+    return {"jurisdiction": "", "languages": []}

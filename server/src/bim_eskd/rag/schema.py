@@ -44,6 +44,7 @@ class RAGRecord:
     jurisdiction: str = ""     # "RU", "AM", "US", "" (universal)
     locale: str = ""           # "ru", "en", "hy"
     tags: list[str] = field(default_factory=list)
+    equivalent_rules: str = "" # cross-jurisdiction refs, e.g. "RU:ПУЭ 1.7|US:NEC 250"
 
     # Versioning
     version: int = 1
@@ -68,6 +69,7 @@ class RAGRecord:
             "jurisdiction": self.jurisdiction,
             "locale": self.locale,
             "tags": ",".join(self.tags),
+            "equivalent_rules": self.equivalent_rules,
             "version": self.version,
             "is_outdated": self.is_outdated,
             "usage_count": self.usage_count,
@@ -89,6 +91,7 @@ class RAGRecord:
             jurisdiction=meta.get("jurisdiction", ""),
             locale=meta.get("locale", ""),
             tags=tags,
+            equivalent_rules=meta.get("equivalent_rules", ""),
             version=meta.get("version", 1),
             is_outdated=meta.get("is_outdated", False),
             usage_count=meta.get("usage_count", 0),

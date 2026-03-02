@@ -23,7 +23,7 @@
 | Инструмент | Роль |
 |---|---|
 | Claude Code | LLM-агент |
-| **bim-eskd server** | MCP-сервер (35 инструментов), IFC CRUD, SVG рендер, ЕСКД листы |
+| **bim-eskd server** | MCP-сервер (3 инструмента: execute_code, search_rag, manage_rag) |
 | ifcopenshell | Python API для IFC + ifcopenshell.draw (HLR рендер) |
 
 ---
@@ -258,8 +258,21 @@ PDF → JSONL чанки (текст + таблицы в markdown). Таблиц
 Через MCP:
 - `search_rag(query, categories="REGULATIONS")` — семантический поиск по нормам
 - `search_rag(query, categories="API,SCRIPTS")` — поиск по ifcopenshell API и скриптам
-- `manage_rag(action="seed")` — заполнить RAG паттернами из кодовой базы
+- `search_rag(query, categories="GLOSSARY")` — мультиязычный глоссарий (en/ru/hy + IFC маппинг)
+- `search_rag(query, jurisdiction="RU")` — фильтр по юрисдикции (RU, AM, US; универсальные записи включаются всегда)
+- `manage_rag(action="seed")` — заполнить RAG паттернами из кодовой базы (30 записей: API, скрипты, глоссарий, шаблоны)
 - `manage_rag(action="build_standards")` — проиндексировать JSONL из standards/parsed/
+
+### Юрисдикция проекта
+
+В IFC модели юрисдикция хранится в `Pset_ProjectJurisdiction` на IfcProject:
+```python
+lib.set_jurisdiction("AM", languages=["hy", "ru", "en"])
+info = lib.get_jurisdiction()  # {"jurisdiction": "AM", "languages": ["hy", "ru", "en"]}
+```
+
+RAG search автоматически фильтрует по jurisdiction — возвращает записи для указанной юрисдикции + универсальные.
+Глоссарий содержит cross-jurisdiction refs через `equivalent_rules` (e.g. "RU:ПУЭ 1.7|US:NEC 250").
 
 ### Добавление документов
 

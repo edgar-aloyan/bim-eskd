@@ -58,7 +58,7 @@ def _get_embeddings():
 
     model = os.environ.get(
         "BIM_ESKD_EMBEDDING_MODEL",
-        "sentence-transformers/all-MiniLM-L6-v2",
+        "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     )
     cache = os.environ.get("BIM_ESKD_EMBEDDING_CACHE") or os.environ.get("HF_HOME")
     return HuggingFaceEmbeddings(

@@ -10,7 +10,7 @@
 
 Рабочий процесс:
 - Инженер промптит Claude Code
-- Claude Code через standalone сервер или Bonsai-mcp генерирует IFC модель
+- Claude Code через MCP-сервер генерирует IFC модель
 - Сервер рендерит SVG виды (ifcopenshell.draw, HLR), собирает ЕСКД листы, публикует на GitHub Pages
 - Заказчику отправляются .ifc + .pdf (Print→PDF из viewer)
 
@@ -23,83 +23,38 @@
 | Инструмент | Роль |
 |---|---|
 | Claude Code | LLM-агент |
-| **bim-eskd server** | Standalone MCP-сервер (29 инструментов), IFC CRUD, SVG рендер, ЕСКД листы |
+| **bim-eskd server** | MCP-сервер (35 инструментов), IFC CRUD, SVG рендер, ЕСКД листы |
 | ifcopenshell | Python API для IFC + ifcopenshell.draw (HLR рендер) |
-| Blender 4.5+ / Bonsai | BIM среда (опционально, для визуальной работы) |
-| ifc-bonsai-mcp (форк) | MCP сервер Blender, 50+ инструментов, RAG по ifcopenshell |
-
-Форк: `git@github.com:edgar-aloyan/ifc-bonsai-mcp.git`
-Upstream: `https://github.com/Show2Instruct/ifc-bonsai-mcp`
 
 ---
 
-## Установка (Debian)
+## Установка
 
 ```bash
-# 1. Blender — скачать с blender.org, распаковать в ~/apps/
-# Внутри Blender: Edit → Preferences → Get Extensions → "Bonsai" → Install
-
-# 2. ifc-bonsai-mcp (форк)
-git clone git@github.com:edgar-aloyan/ifc-bonsai-mcp.git ~/apps/ifc-bonsai-mcp
-cd ~/apps/ifc-bonsai-mcp
+cd /home/edgar/projects/bim-eskd/server
 ~/.local/bin/uv sync
+```
 
-# 3. Установить пакеты в Blender Python
-~/.local/bin/uv run python scripts/install_blender_packages.py
-
-# 4. Установить аддон в Blender
-python3 -c "
-import zipfile, os, shutil
-src = os.path.expanduser('~/apps/ifc-bonsai-mcp/blender_addon')
-with zipfile.ZipFile('/tmp/blender_addon.zip', 'w', zipfile.ZIP_DEFLATED) as z:
-    for root, dirs, files in os.walk(src):
-        for f in files:
-            fp = os.path.join(root, f)
-            z.write(fp, os.path.relpath(fp, os.path.dirname(src)))
-"
-# Blender → Edit → Preferences → Add-ons → Install → /tmp/blender_addon.zip
-
-# 5. Подключить MCP к Claude Code
-claude mcp add bonsai -- /path/to/.venv/bin/python /path/to/ifc-bonsai-mcp/main.py
-
-# 6. Инициализировать RAG базу знаний (один раз)
-cd ~/apps/ifc-bonsai-mcp && ~/.local/bin/uv run python scripts/init_knowledge_base.py
+MCP подключение — в `~/.claude.json` (секция `mcpServers`):
+```json
+"bim-eskd": {
+  "type": "stdio",
+  "command": "/home/edgar/projects/bim-eskd/server/.venv/bin/python",
+  "args": ["-m", "bim_eskd.main"],
+  "cwd": "/home/edgar/projects/bim-eskd/server"
+}
 ```
 
 ---
 
-## Запуск (каждая сессия)
+## Запуск
 
 ```bash
-# 1. Запустить Blender
-DISPLAY=:0 ~/apps/blender-4.5.7-linux-x64/blender > /tmp/blender.log 2>&1 &
+# Как MCP-сервер (автоматически через Claude Code):
+cd server && .venv/bin/python -m bim_eskd.main
 
-# 2. В Blender: открыть IFC проект через File → Open IFC Project
-#    Затем: N-панель → BlenderMCP → Connect to MCP server
-```
-
-> IFC файл нельзя открыть через аргумент CLI — только через Bonsai меню.
-
-### Embedding server (RAG)
-
-Работает как systemd user service — стартует автоматически при логине:
-```bash
-systemctl --user status ifc-embedding-server.service   # проверить
-systemctl --user restart ifc-embedding-server.service   # перезапустить
-journalctl --user -u ifc-embedding-server.service -f    # логи
-```
-
-**В начале каждой сессии** Claude должен вызвать `ensure_ifc_knowledge_ready` для инициализации RAG-индекса (занимает ~0.1с если уже готов).
-
----
-
-## Обновление аддона после изменений в форке
-
-```bash
-cp -r ~/apps/ifc-bonsai-mcp/blender_addon/. \
-      ~/.config/blender/4.5/scripts/addons/blender_addon/
-find ~/.config/blender/4.5/scripts/addons/blender_addon -name "__pycache__" -exec rm -rf {} + 2>/dev/null
-# Перезапустить Blender полностью
+# С авто-открытием IFC:
+BIM_ESKD_IFC_PATH=../projects/001_server_container/model.ifc .venv/bin/python -m bim_eskd.main
 ```
 
 ---
@@ -110,17 +65,18 @@ find ~/.config/blender/4.5/scripts/addons/blender_addon -name "__pycache__" -exe
 /
 ├── CLAUDE.md                        ← ТЫ ЗДЕСЬ
 │
-├── server/                          ← Phase 2: standalone IFC сервер (без Blender)
+├── server/                          ← MCP-сервер
 │   ├── pyproject.toml
 │   └── src/bim_eskd/
-│       ├── main.py                  ← MCP entry point (29 инструментов)
-│       ├── ifc_engine/              ← IFC CRUD (wall, slab, door, window, roof, feature)
+│       ├── main.py                  ← MCP entry point (3 инструмента)
+│       ├── sandbox/                 ← execute_code sandbox (security, executor, rasterizer)
+│       ├── lib/                     ← Фасад для sandbox (documents, html_sheet, render, eskd_api)
+│       ├── ifc_engine/              ← project_manager + ifc_utils (singleton, утилиты)
 │       ├── svg_renderer/            ← IFC → SVG через ifcopenshell.draw (HLR)
-│       ├── eskd/                    ← Phase 3: ЕСКД рамки, штампы, компоновка листов
-│       ├── rag/                     ← RAG: standards (ПУЭ, ГОСТ, IEC)
-│       └── mcp_tools/               ← MCP tool definitions
+│       ├── eskd/                    ← ЕСКД рамки, штампы, компоновка листов
+│       └── rag/                     ← Unified RAG (5 категорий, ChromaDB)
 │
-├── standards/                       ← Phase 1: нормативная база
+├── standards/                       ← нормативная база
 │   ├── raw/                         ← исходные PDF (ПУЭ, ГОСТ, СП, IEC)
 │   ├── parsed/                      ← JSONL чанки для embedding
 │   └── parser/                      ← парсер PDF → JSONL (таблицы + текст)
@@ -133,7 +89,7 @@ find ~/.config/blender/4.5/scripts/addons/blender_addon -name "__pycache__" -exe
 │   │   └── README.md                ← описание, refs, статус
 │   └── ...
 │
-├── docs/                           ← Phase 4: GitHub Pages viewer
+├── docs/                           ← GitHub Pages viewer
 │   ├── index.html                  ← entry point
 │   ├── style.css / app.js          ← стили и логика
 │   └── projects/NNN/               ← SVG листы + manifest.json
@@ -206,124 +162,87 @@ in-progress / done
 
 ---
 
-## Работа с MCP (ОБЯЗАТЕЛЬНО)
+## Работа с MCP
 
-**Никогда не читай .ifc файлы напрямую.** Всегда работай через MCP-инструменты Bonsai.
-
-### Иерархия инструментов (строго по приоритету)
-
-**Уровень 1 — Специализированные MCP-инструменты** (всегда предпочтительны):
-- Стены: `create_wall`, `create_two_point_wall`, `create_polyline_walls`, `update_wall`, `get_wall_properties`
-- Двери: `create_door`, `update_door`, `get_door_properties`, `get_door_operation_types`
-- Окна: `create_window`, `update_window`, `get_window_properties`, `get_window_partition_types`
-- Плиты: `create_slab`, `update_slab`, `get_slab_properties`
-- Крыши: `create_roof`, `update_roof`, `delete_roof`, `get_roof_types`
-- Лестницы: `create_stairs`, `update_stairs`, `delete_stairs`, `get_stairs_types`
-- Mesh: `create_mesh_ifc`, `create_trimesh_ifc`, `get_trimesh_examples`
-- Стили: `create_surface_style`, `create_pbr_style`, `apply_style_to_object`, `list_styles`, `update_style`, `remove_style`
-- Инфо: `get_scene_info`, `get_object_info`, `get_selected_objects`, `list_ifc_entities`
-- Скриншоты: `capture_blender_3dviewport_screenshot`, `capture_blender_window_screenshot`
-
-**Уровень 2 — `execute_ifc_code_tool`** (когда нет специализированного инструмента):
-- Работает через ifcopenshell API в песочнице (без bpy)
-- Использовать для: удаления элементов (`root.remove_product`), назначения свойств, материалов, и т.д.
-- **ПЕРЕД использованием** — обязательно найти правильную функцию через RAG
-
-**Уровень 3 — `execute_blender_code`** (крайний случай):
-- Прямой доступ к bpy — только когда задача НЕ решается через IFC API
-- Примеры: настройка камеры, viewport, рендер, манипуляции с UI Blender
-
-> **Известные пробелы:** `delete` есть только для roof и stairs. Для удаления wall, door, slab, window — используй `execute_ifc_code_tool` + `root.remove_product`.
-
-### RAG база знаний (ifcopenshell)
-
-**Перед любым вызовом `execute_ifc_code_tool`** — ищи правильный подход через RAG:
-1. `search_ifc_knowledge` — семантический поиск по базе
-2. `find_ifc_function` — поиск по операции и типу объекта
-3. `get_ifc_function_details` — полная документация функции
-4. `get_ifc_module_info` — обзор модуля
-
-Если RAG не инициализирован — сначала вызови `ensure_ifc_knowledge_ready`.
+**Никогда не читай .ifc файлы напрямую.** Работай через `execute_code`.
 
 ### Порядок работы
 
-1. Получить состояние сцены (`get_scene_info`)
-2. Проверить есть ли специализированный инструмент (уровень 1)
-3. Если нет — найти подход через RAG, затем выполнить через `execute_ifc_code_tool` (уровень 2)
-4. Проверить результат (`get_scene_info` / скриншот)
+1. Открыть проект: `execute_code("project.open_project('/path/to/model.ifc')")`
+2. Писать Python/ifcopenshell код через `execute_code` (любые IFC операции)
+3. Проверить: `execute_code("print(lib.get_info())")`
+4. Сохранить: `execute_code("project.save()")`
+5. При необходимости искать паттерны: `search_rag("как создать стену")`
 
 ---
 
-## Standalone IFC-сервер (Phase 2)
+## MCP-сервер
 
-Автономный MCP-сервер без зависимости от Blender. Живёт в `server/`.
+Автономный MCP-сервер на чистом ifcopenshell. Живёт в `server/`.
 
-### Запуск
+### Инструменты (3 шт)
 
-```bash
-cd server
-~/.local/bin/uv sync
-# Как MCP-сервер:
-.venv/bin/python -m bim_eskd.main
-# С авто-открытием IFC:
-BIM_ESKD_IFC_PATH=../projects/001_server_container/model.ifc .venv/bin/python -m bim_eskd.main
-```
-
-### Инструменты (29 шт)
-
-| Категория | Инструменты |
+| Инструмент | Описание |
 |---|---|
-| Проект | `new_ifc_project`, `open_ifc_project`, `save_ifc_project` |
-| Стены | `create_wall`, `create_two_point_wall`, `update_wall`, `get_wall_properties` |
-| Плиты | `create_slab`, `get_slab_properties` |
-| Двери | `create_door`, `get_door_properties` |
-| Окна | `create_window`, `get_window_properties` |
-| Крыши | `create_roof`, `delete_roof` |
-| Проёмы | `create_opening`, `delete_element` |
-| Сцена | `get_scene_info`, `get_object_info`, `list_ifc_entities` |
-| SVG | `render_view`, `get_model_bounds` |
-| RAG | `search_standards`, `ensure_standards_ready` |
-| ЕСКД | `generate_sheet`, `generate_spec`, `list_sheets`, `get_sheet` |
-| Публикация | `publish_sheets` |
+| `execute_code` | Выполнение Python/ifcopenshell кода в sandbox. Доступны: `ifcopenshell`, `numpy`, `lxml`, `lib` (фасад), `project`, `ifc`, `workdir`. SVG авто-растеризуется в PNG. |
+| `search_rag` | Поиск по unified RAG (5 категорий: API, SCRIPTS, REGULATIONS, GLOSSARY, TEMPLATES). Фильтр по jurisdiction. |
+| `manage_rag` | Управление RAG: add, mark_failure, seed, build_standards. |
+
+### Sandbox namespace (execute_code)
+
+| Переменная | Что это |
+|---|---|
+| `project` | ProjectManager (open_project, save, get_element, get_products) |
+| `ifc` | Текущий ifcopenshell.file |
+| `workdir` | Path к рабочей директории (SVG-файлы тут авто-растеризуются) |
+| `lib` | Фасад: add_sheet, generate_docs, list_sheets, render_plan, render_elevation, compose_eskd_sheet, create_spec_table, create_sld, get_info, save |
+| `ifcopenshell` | Полный ifcopenshell + ifcopenshell.api, .draw, .geom |
+| `np` / `numpy` | NumPy |
+| `etree` | lxml.etree |
+| `math, json, re, collections, itertools, datetime, Path` | Python stdlib |
 
 ### SVG рендеринг
 
-```
-render_view(output_path, view="plan|front|back|left|right", scale=50)
-```
+Через `lib.render_plan()` / `lib.render_elevation()` или напрямую `ifcopenshell.draw`.
+HLR, ~8с на вид (320 продуктов). `IfcBuildingStorey.Elevation` выставляется автоматически.
 
-Генерирует SVG-проекции из IFC-модели через `ifcopenshell.draw` (hidden-line removal).
-Требует `IfcBuildingStorey.Elevation != None` — рендерер выставляет автоматически.
-Plan: `auto_floorplan=True`, elevation: `auto_elevation=True` (все 4 фасада в одном SVG).
-Время: ~8с на вид (320 продуктов).
+### Комплект документов (IFC → HTML)
 
-### ЕСКД чертежи (Phase 3)
+Документы описываются в IFC модели:
+- `IfcDocumentInformation` — каждый лист (title, designation)
+- `IfcAnnotation` + `Pset_ESKD_Sheet` — все поля штампа
+- `IfcRelAssociatesDocument` — привязка к проекту
 
 ```python
-# Генерация листа с ЕСКД рамкой + штампом
-generate_sheet(project_id="001_server_container", view="plan", scale=50,
-               title="План", designation="001.АР.001", ...)
+# Через execute_code:
 
-# Спецификация оборудования (ГОСТ 21.110)
-generate_spec(project_id="001_server_container", entity_types=["IfcProduct"])
+# 1. Описать листы в IFC
+lib.add_sheet("plan", view="plan", title="План расположения оборудования",
+    designation="001.ЭОМ.001", scale="1:50", format="A3",
+    organization="BIM-ESKD", developed_by="Инженер",
+    date="03.2026", sheet_number="1", total_sheets="3")
+lib.add_sheet("front", view="front", title="Фасад",
+    designation="001.ЭОМ.002", form=2, sheet_number="2", total_sheets="3", ...)
+project.save()
 
-# Публикация в docs/ для GitHub Pages
-publish_sheets(project_id="001_server_container")
+# 2. Сгенерировать HTML (читает IFC → рендерит виды → собирает листы)
+paths = lib.generate_docs(str(workdir))
+# → ["/path/plan.html", "/path/front.html"]
 ```
 
+HTML-лист: рамка (SVG линии) + чертёж (SVG) + штамп (HTML-текст).
+Печать: File → Print → Save as PDF (размер страницы из @page).
+
 Модули:
+- `lib/documents.py` — CRUD для IfcDocumentInformation + Pset_ESKD_Sheet
+- `lib/html_sheet.py` — генерация HTML из IFC-описания листа
 - `eskd/frame.py` — ЕСКД рамка + основная надпись (ГОСТ 2.104-2006)
-- `eskd/composer.py` — компоновщик листа (рамка + вид + масштаб)
+- `eskd/composer.py` — компоновщик SVG-листа (legacy)
 - `eskd/spec_table.py` — таблица спецификации (ГОСТ 21.110)
-
-### GitHub Pages viewer (Phase 4)
-
-Статический HTML/CSS/JS просмотрщик чертежей: `docs/index.html`.
-Функции: навигация по проектам/листам, zoom/pan, Print→PDF, тёмная тема.
 
 ---
 
-## RAG нормативной базы (Phase 1)
+## RAG нормативной базы
 
 ### Парсинг стандартов
 
@@ -336,21 +255,17 @@ PDF → JSONL чанки (текст + таблицы в markdown). Таблиц
 
 ### Поиск по нормативам
 
-Через MCP (bonsai-mcp или standalone):
-- `search_standards(query, document?, section?)` — семантический поиск
-- `ensure_standards_ready(force_rebuild?)` — инициализация индекса
+Через MCP:
+- `search_rag(query, categories="REGULATIONS")` — семантический поиск по нормам
+- `search_rag(query, categories="API,SCRIPTS")` — поиск по ifcopenshell API и скриптам
+- `manage_rag(action="seed")` — заполнить RAG паттернами из кодовой базы
+- `manage_rag(action="build_standards")` — проиндексировать JSONL из standards/parsed/
 
 ### Добавление документов
 
 1. Положить PDF в `standards/raw/`
 2. Запустить парсер: `python -m standards.parser.cli standards/raw/ -o standards/parsed/`
-3. Вызвать `ensure_standards_ready(force_rebuild=True)` для переиндексации
-
----
-
-## Дополнительные сценарии
-
-- **Входящий IFC от архитектора** — обогащение существующей модели инженерными системами через ifc-bonsai-mcp
+3. Вызвать `manage_rag(action="build_standards")` для переиндексации
 
 ---
 

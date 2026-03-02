@@ -1,6 +1,6 @@
-"""RAG subsystem for the standalone server.
+"""Unified RAG store — 5 categories (API, Scripts, Regulations, Glossary, Templates)."""
 
-Provides two knowledge bases:
-1. ifcopenshell API (reused from bonsai-mcp)
-2. Standards (ПУЭ, ГОСТ, СП, IEC)
-"""
+from .schema import RAGCategory, RAGRecord
+from .store import UnifiedRAGStore
+
+__all__ = ["RAGCategory", "RAGRecord", "UnifiedRAGStore"]

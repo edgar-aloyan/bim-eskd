@@ -76,10 +76,8 @@ BIM_ESKD_IFC_PATH=../projects/001_server_container/model.ifc .venv/bin/python -m
 │       ├── eskd/                    ← ЕСКД рамки, штампы, компоновка листов
 │       └── rag/                     ← Unified RAG (5 категорий, ChromaDB)
 │
-├── standards/                       ← нормативная база
-│   ├── raw/                         ← исходные PDF (ПУЭ, ГОСТ, СП, IEC)
-│   ├── parsed/                      ← JSONL чанки для embedding
-│   └── parser/                      ← парсер PDF → JSONL (таблицы + текст)
+├── standards/
+│   └── raw/                         ← исходные PDF (ПУЭ, ГОСТ, СП, IEC)
 │
 ├── projects/
 │   ├── 001_название/
@@ -263,7 +261,7 @@ in-progress / done
 |---|---|
 | `execute_code` | Выполнение Python/ifcopenshell кода в sandbox. Доступны: `ifcopenshell`, `numpy`, `lxml`, `lib` (фасад), `project`, `ifc`, `workdir`. SVG авто-растеризуется в PNG. |
 | `search_rag` | Поиск по unified RAG (5 категорий: API, SCRIPTS, REGULATIONS, GLOSSARY, TEMPLATES). Фильтр по jurisdiction. |
-| `manage_rag` | Управление RAG: add, mark_failure, seed, build_standards. |
+| `manage_rag` | Управление RAG: add, mark_failure, seed. |
 
 ### Sandbox namespace (execute_code)
 
@@ -320,14 +318,13 @@ paths = lib.generate_docs(str(workdir))
 
 ## RAG нормативной базы
 
-### Парсинг стандартов
+### Принцип работы
 
-```bash
-cd /home/edgar/projects/bim-eskd
-.venv/bin/python -m standards.parser.cli standards/raw/ -o standards/parsed/
-```
+PDF хранятся в `standards/raw/` как источник истины. Claude читает PDF напрямую (Read tool),
+извлекает ключевые правила и добавляет их как курированные записи в RAG через `manage_rag(action="add")`.
+RAG работает как кэш — быстрый семантический поиск по уже вычитанным правилам.
 
-PDF → JSONL чанки (текст + таблицы в markdown). Таблицы сохраняются целиком.
+**Не используется OCR-парсер.** Claude читает PDF лучше любого OCR.
 
 ### Поиск по нормативам
 
@@ -337,7 +334,6 @@ PDF → JSONL чанки (текст + таблицы в markdown). Таблиц
 - `search_rag(query, categories="GLOSSARY")` — мультиязычный глоссарий (en/ru/hy + IFC маппинг)
 - `search_rag(query, jurisdiction="RU")` — фильтр по юрисдикции (RU, AM, US; универсальные записи включаются всегда)
 - `manage_rag(action="seed")` — заполнить RAG паттернами из кодовой базы (30 записей: API, скрипты, глоссарий, шаблоны)
-- `manage_rag(action="build_standards")` — проиндексировать JSONL из standards/parsed/
 
 ### Юрисдикция проекта
 
@@ -348,13 +344,12 @@ info = lib.get_jurisdiction()  # {"jurisdiction": "AM", "languages": ["hy", "ru"
 ```
 
 RAG search автоматически фильтрует по jurisdiction — возвращает записи для указанной юрисдикции + универсальные.
-Глоссарий содержит cross-jurisdiction refs через `equivalent_rules` (e.g. "RU:ПУЭ 1.7|US:NEC 250").
 
-### Добавление документов
+### Добавление нормативов
 
 1. Положить PDF в `standards/raw/`
-2. Запустить парсер: `python -m standards.parser.cli standards/raw/ -o standards/parsed/`
-3. Вызвать `manage_rag(action="build_standards")` для переиндексации
+2. Прочитать PDF через Read tool, извлечь ключевые правила
+3. Добавить через `manage_rag(action="add", category="REGULATIONS", content="...", description="...", tags="...")`
 
 ---
 

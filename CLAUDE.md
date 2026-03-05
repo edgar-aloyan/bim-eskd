@@ -128,6 +128,13 @@ BIM_ESKD_IFC_PATH=../projects/001_server_container/model.ifc .venv/bin/python -m
 in-progress / done
 ```
 
+### Git
+- **Коммить каждое логическое изменение** — не накапливай незакоммиченные правки
+- Один коммит = одна задача (фикс, фича, рефакторинг)
+- Сообщения на английском, кратко: `Fix elevation HLR rendering`, `Add scale passthrough to draw settings`
+- Бинарные файлы (model.ifc, PDF) коммитить только по явной просьбе пользователя
+- Перед началом работы — `git status`, убедись что рабочая директория чистая
+
 ### Файлы
 - Максимум 300 строк на файл
 - Имена функций самодокументирующие
@@ -159,6 +166,17 @@ in-progress / done
 | СС | Слаботочные системы | IfcCommunicationsAppliance, IfcCableSegment | следующий |
 | РСЗА | Релейная защита и автоматика | IfcController, IfcActuator | следующий |
 | ОВК | Отопление, вентиляция, кондиционирование | IfcDuctSegment, IfcAirTerminal, IfcPipeSegment | позже |
+
+---
+
+## Работа с ifcopenshell
+
+**Всегда сначала изучи API ifcopenshell** перед написанием кода. Не изобретай велосипед — ifcopenshell.draw, ifcopenshell.api, ifcopenshell.geom уже имеют нужные настройки и методы. Типичные ошибки:
+- Ручной рендер через `geom.serializers.svg` вместо `ifcopenshell.draw.main()` (теряется HLR)
+- Игнорирование параметров `draw_settings` (scale, auto_elevation, auto_floorplan) — проверяй все доступные настройки
+- Ручное вычисление геометрии вместо использования `ifcopenshell.api.geometry`
+
+Если не уверен в API — проверь `dir(module)` и `draw_settings()` прежде чем писать обёртки.
 
 ---
 

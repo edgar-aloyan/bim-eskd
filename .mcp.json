@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "bim-eskd": {
+      "type": "stdio",
+      "command": "/home/edgar/projects/bim-eskd/server/.venv/bin/python",
+      "args": ["-m", "bim_eskd.main"],
+      "cwd": "/home/edgar/projects/bim-eskd/server",
+      "env": {
+        "BIM_ESKD_IFC_PATH": "../projects/001_server_container/model.ifc"
+      }
+    }
+  }
+}

@@ -1,7 +1,9 @@
 """Single-line diagram (SLD) generator from IFC model.
 
-Reads IfcDistributionSystem and its elements, builds topology,
-renders ГОСТ 2.702/2.721 symbols as SVG.
+Reads electrical elements, assigns positional designations per ГОСТ 2.710-81,
+builds topology, renders ГОСТ 2.702/2.721/2.723/2.727/2.755 symbols as SVG.
+
+Includes перечень элементов (element list) per ГОСТ 2.702-2011 п.5.3.18.
 """
 
 import logging
@@ -11,206 +13,208 @@ import ifcopenshell
 import ifcopenshell.util.element
 
 from .svg_primitives import (
-    SVG_NS, NSMAP, LINE_W, THIN_W, FONT_LABEL, FONT_SMALL,
+    SVG_NS, NSMAP, LINE_W, THIN_W, FONT_LABEL, FONT_SMALL, FONT_PROPS,
     rect, line, line_v, text,
 )
 from . import symbols
 
 logger = logging.getLogger(__name__)
 
-# Diagram dimensions (mm) — fits A3 landscape working area
 DIAGRAM_W = 340
-DIAGRAM_H = 180
-
-# Layout constants
-CENTER_X = DIAGRAM_W / 2  # 170
-SYMBOL_GAP = 4  # vertical gap between symbols
+DIAGRAM_H = 200
+CENTER_X = DIAGRAM_W / 2
+SYMBOL_GAP = 4
 
 
 def create_single_line_diagram(ifc_file) -> str:
     """Generate SVG single-line diagram from IFC model.
 
-    Reads IfcDistributionSystem and its elements, classifies by type,
-    builds topology (source → load), draws ГОСТ symbols.
-
-    Returns SVG string suitable for compose_sheet().
+    Returns SVG string with diagram and element list per ГОСТ 2.702.
     """
-    elements = _collect_elements(ifc_file)
-    topology = _build_topology(elements)
+    elems = _collect_elements(ifc_file)
+    _assign_designations(elems)
+    topology = _build_topology(elems, ifc_file)
 
     root = etree.Element("svg", nsmap=NSMAP)
     root.set("width", f"{DIAGRAM_W}mm")
     root.set("height", f"{DIAGRAM_H}mm")
     root.set("viewBox", f"0 0 {DIAGRAM_W} {DIAGRAM_H}")
 
-    # White background
     rect(root, 0, 0, DIAGRAM_W, DIAGRAM_H, fill="white", stroke="none")
-
-    # Title
     text(root, CENTER_X, 6, "Однолинейная схема электроснабжения",
          font_size=5, font_weight="bold", text_anchor="middle")
 
-    y = 14
-    y = _draw_topology(root, topology, CENTER_X, y)
+    y = _draw_topology(root, topology, CENTER_X, 14)
+    _draw_element_list(root, _make_element_list(elems),
+                       5, max(y + 8, DIAGRAM_H - 55))
 
     return etree.tostring(root, pretty_print=True, encoding="unicode")
+
+
+def get_element_list(ifc_file) -> list[dict]:
+    """Return element list data for external use (e.g. separate sheet)."""
+    elems = _collect_elements(ifc_file)
+    _assign_designations(elems)
+    return _make_element_list(elems)
 
 
 # ── Data collection ──────────────────────────────────────────────────
 
 
-def _collect_elements(ifc_file) -> list[dict]:
-    """Collect all electrical elements with their properties."""
-    elements = []
+def _get_pt(element) -> str:
+    """PredefinedType from instance, fallback to type object."""
+    pt = getattr(element, "PredefinedType", None)
+    if pt and pt != "NOTDEFINED":
+        return pt
+    t = ifcopenshell.util.element.get_type(element)
+    if t:
+        pt = getattr(t, "PredefinedType", None)
+        if pt and pt != "NOTDEFINED":
+            return pt
+    return ""
 
+
+def _collect_elements(ifc_file) -> list[dict]:
+    """Collect electrical elements with properties and type info."""
+    result = []
     for cls in ("IfcTransformer", "IfcProtectiveDevice",
                 "IfcElectricDistributionBoard", "IfcCableSegment"):
         for el in ifc_file.by_type(cls):
-            props = _get_element_props(ifc_file, el)
-            props["ifc_class"] = cls
-            props["guid"] = el.GlobalId
-            props["name"] = el.Name or cls
-            if hasattr(el, "PredefinedType") and el.PredefinedType:
-                props["predefined_type"] = el.PredefinedType
-            # Check if element has geometry (= physical presence)
-            if el.Representation and el.Representation.Representations:
-                props["has_geometry"] = True
-                if (el.ObjectPlacement and
-                        el.ObjectPlacement.is_a("IfcLocalPlacement")):
-                    rp = el.ObjectPlacement.RelativePlacement
-                    if rp and rp.Location:
-                        loc = rp.Location.Coordinates
-                        props["position"] = list(loc)
-            elements.append(props)
-
-    return elements
+            props = {}
+            try:
+                for pp in ifcopenshell.util.element.get_psets(el).values():
+                    props.update({k: v for k, v in pp.items() if k != "id"})
+            except Exception:
+                pass
+            t = ifcopenshell.util.element.get_type(el)
+            props.update(
+                ifc_class=cls, guid=el.GlobalId, name=el.Name or cls,
+                predefined_type=_get_pt(el),
+                type_name=t.Name if t else "",
+            )
+            result.append(props)
+    return result
 
 
-def _get_element_props(ifc_file, element) -> dict:
-    """Extract pset properties from an element."""
-    props = {}
-    try:
-        psets = ifcopenshell.util.element.get_psets(element)
-        for pset_name, pset_props in psets.items():
-            for key, val in pset_props.items():
-                if key == "id":
-                    continue
-                props[key] = val
-    except Exception:
-        pass
-    return props
+# ── Positional designations (ГОСТ 2.710-81) ─────────────────────────
+
+
+def _pos_code(el: dict) -> str:
+    """Letter code per ГОСТ 2.710-81 table 2."""
+    cls, pt = el["ifc_class"], el["predefined_type"]
+    name = el.get("name", "").upper()
+
+    if cls == "IfcTransformer":
+        return "T"
+    if cls == "IfcProtectiveDevice":
+        if pt in ("VARISTOR", "USERDEFINED") or "OPN" in name or "ОПН" in name:
+            return "FV"
+        return "QF"
+    if cls == "IfcCableSegment":
+        return "W"
+    return ""
+
+
+def _assign_designations(elements: list[dict]):
+    """Assign T1, QF1, FV1, W1... per ГОСТ 2.710-81."""
+    counters: dict[str, int] = {}
+    for el in elements:
+        code = _pos_code(el)
+        if code:
+            counters[code] = counters.get(code, 0) + 1
+            el["designation"] = f"{code}{counters[code]}"
+        else:
+            el["designation"] = ""
 
 
 # ── Topology builder ─────────────────────────────────────────────────
 
 
-def _build_topology(elements: list[dict]) -> list[dict]:
-    """Build ordered topology from source to load.
-
-    Order: Transformer(VOLTAGE,high) → ProtectiveDevice(CB,high) →
-           CableSegment → ProtectiveDevice(CB,inside) →
-           ProtectiveDevice(VARISTOR) → DistributionBoard(SWITCHBOARD) →
-           Transformer(low) → DistributionBoard(DISTRIBUTIONBOARD) →
-           Loads
-    """
-    # Classify elements into buckets
-    transformers_high = []
-    transformers_low = []
-    cb_external = []
-    cb_internal = []
-    varistors = []
-    cables = []
-    bus_main = []
-    bus_secondary = []
-
+def _build_topology(elements: list[dict], ifc_file) -> list[dict]:
+    """Build ordered topology from source to load."""
+    bk: dict[str, list] = {
+        k: [] for k in ("xfmr_hi", "xfmr_lo", "cb_ext", "cb_int",
+                         "arr", "cable", "bus_m", "bus_s")
+    }
     for el in elements:
-        cls = el["ifc_class"]
-        pt = el.get("predefined_type", "")
+        cls, pt = el["ifc_class"], el["predefined_type"]
         name = el.get("name", "").upper()
-        voltage = el.get("RatedVoltage", 0)
-        has_position = "position" in el
+        v = el.get("RatedVoltage", 0) or 0
+        i = el.get("RatedCurrent", 0) or 0
 
         if cls == "IfcTransformer":
-            if "JUPITER" in name or "9000" in name or voltage >= 1000:
-                transformers_high.append(el)
-            else:
-                transformers_low.append(el)
+            bk["xfmr_hi" if v >= 1000 else "xfmr_lo"].append(el)
         elif cls == "IfcProtectiveDevice":
-            if pt == "VARISTOR":
-                varistors.append(el)
-            elif "630" in name or (not has_position and voltage >= 800):
-                cb_external.append(el)
+            if pt in ("VARISTOR", "USERDEFINED") or "OPN" in name:
+                bk["arr"].append(el)
+            elif i >= 600:
+                bk["cb_ext"].append(el)
             else:
-                cb_internal.append(el)
+                bk["cb_int"].append(el)
         elif cls == "IfcCableSegment":
-            cables.append(el)
+            bk["cable"].append(el)
         elif cls == "IfcElectricDistributionBoard":
-            if pt == "SWITCHBOARD" or "MAIN" in name or voltage >= 800:
-                bus_main.append(el)
-            else:
-                bus_secondary.append(el)
+            bk["bus_m" if v >= 800 or "MAIN" in name else "bus_s"].append(el)
 
-    # Build ordered list with render hints
+    # Load terminals from IFC
+    terms = ifc_file.by_type("IfcFlowTerminal")
+    load_n = len(terms)
+    load_name = ""
+    if terms:
+        t = ifcopenshell.util.element.get_type(terms[0])
+        load_name = t.Name if t else "Load"
+
     topo = []
 
-    for t in transformers_high:
-        topo.append({"render": "transformer", "data": t,
-                      "label": _short_name(t),
-                      "sub": _transformer_sub(t)})
+    for t in bk["xfmr_hi"]:
+        topo.append(_item("transformer", t))
 
-    # Combine multiple identical circuit breakers (e.g. 2x QF-630A)
-    if len(cb_external) > 1:
-        first = cb_external[0]
-        topo.append({"render": "circuit_breaker", "data": first,
-                      "label": f"{len(cb_external)}x {_short_name(first)}",
-                      "sub": _cb_sub(first)})
-    elif cb_external:
-        topo.append({"render": "circuit_breaker", "data": cb_external[0],
-                      "label": _short_name(cb_external[0]),
-                      "sub": _cb_sub(cb_external[0])})
+    # External CBs — show all designations on one symbol
+    cbs = bk["cb_ext"]
+    if len(cbs) > 1:
+        desigs = ", ".join(cb["designation"] for cb in cbs)
+        topo.append(_item("circuit_breaker", cbs[0],
+                          label=desigs, sub=_sub_vi(cbs[0])))
+    elif cbs:
+        topo.append(_item("circuit_breaker", cbs[0]))
 
-    for c in cables:
-        topo.append({"render": "cable", "data": c,
-                      "label": _short_name(c),
-                      "sub": _cable_sub(c)})
+    for c in bk["cable"]:
+        topo.append(_item("cable", c))
 
-    # Container boundary
     topo.append({"render": "boundary", "label": "Контейнер"})
 
-    for cb in cb_internal:
-        topo.append({"render": "circuit_breaker", "data": cb,
-                      "label": _short_name(cb),
-                      "sub": _cb_sub(cb)})
+    for cb in bk["cb_int"]:
+        topo.append(_item("circuit_breaker", cb))
 
-    if varistors:
-        topo.append({"render": "surge_arrester", "data": varistors,
-                      "label": "ОПН",
-                      "sub": f"{len(varistors)}шт, "
-                             f"{varistors[0].get('RatedVoltage', 0):.0f}В"})
+    if bk["arr"]:
+        a = bk["arr"]
+        desig = (f"{a[0]['designation']}…{a[-1]['designation']}"
+                 if len(a) > 1 else a[0]["designation"])
+        topo.append(_item("surge_arrester", a[0],
+                          label=desig,
+                          sub=f"{len(a)}шт, {a[0].get('RatedVoltage', 0):.0f}В"))
 
-    for b in bus_main:
-        topo.append({"render": "busbar", "data": b,
-                      "label": _short_name(b),
-                      "sub": _board_sub(b)})
+    for b in bk["bus_m"]:
+        topo.append(_item("busbar", b))
 
-    # Branch point — left: transformer, right: direct loads
+    # Branches
     branch = {"render": "branch", "left": [], "right": []}
+    for t in bk["xfmr_lo"]:
+        branch["left"].append(_item("transformer", t))
+    for b in bk["bus_s"]:
+        branch["left"].append(_item("busbar", b))
 
-    for t in transformers_low:
-        branch["left"].append({"render": "transformer", "data": t,
-                                "label": _short_name(t),
-                                "sub": _transformer_sub(t)})
-    for b in bus_secondary:
-        branch["left"].append({"render": "busbar", "data": b,
-                                "label": _short_name(b),
-                                "sub": _board_sub(b)})
-    branch["left"].append({"render": "load_group",
-                            "label": "Левая группа",
-                            "sub": "120x S21 XP, L-L' 230В"})
-
-    branch["right"].append({"render": "load_group",
-                             "label": "Правая группа",
-                             "sub": "120x S21 XP, N-L 230В"})
+    half = load_n // 2
+    if half and load_name:
+        sv = (bk["xfmr_lo"][0].get("SecondaryVoltage", 400)
+              if bk["xfmr_lo"] else 400)
+        mv = bk["bus_m"][0].get("RatedVoltage", 800) if bk["bus_m"] else 800
+        branch["left"].append({"render": "load_group",
+                               "label": f"{half}× {load_name}",
+                               "sub": f"~3, {sv:.0f}В"})
+        branch["right"].append({"render": "load_group",
+                                "label": f"{load_n - half}× {load_name}",
+                                "sub": f"~3, {mv:.0f}В"})
 
     if branch["left"] or branch["right"]:
         topo.append(branch)
@@ -218,100 +222,91 @@ def _build_topology(elements: list[dict]) -> list[dict]:
     return topo
 
 
-def _short_name(el: dict) -> str:
-    name = el.get("name", "")
-    return name if len(name) <= 30 else name[:27] + "..."
+def _item(render, el, label=None, sub=None):
+    return {"render": render, "data": el,
+            "label": label or el.get("designation", ""),
+            "sub": sub or _auto_sub(el)}
 
 
-def _transformer_sub(t: dict) -> str:
+def _auto_sub(el):
+    """Auto-generate sub-label from element properties."""
+    cls = el["ifc_class"]
+    pv, sv = el.get("PrimaryVoltage", 0), el.get("SecondaryVoltage", 0)
+    v = el.get("RatedVoltage", 0) or 0
+    rp = el.get("RatedPower", 0) or 0
+
+    if cls == "IfcTransformer":
+        parts = []
+        if pv and sv:
+            parts.append(f"{_fv(pv)}/{_fv(sv)}")
+        elif v:
+            parts.append(_fv(v))
+        if rp:
+            parts.append(f"{rp/1000:.0f}кВА" if rp < 1e6
+                         else f"{rp/1e6:.0f}МВА")
+        return ", ".join(parts)
+
+    return _sub_vi(el)
+
+
+def _sub_vi(el):
+    """Format RatedCurrent + RatedVoltage."""
     parts = []
-    v = t.get("RatedVoltage", 0)
-    if v:
-        parts.append(f"{v:.0f}В")
-    name = t.get("name", "")
-    if "9000" in name:
-        parts.append("9000кВА")
-    elif "160" in name:
-        parts.append("160кВА")
-    return ", ".join(parts) if parts else ""
-
-
-def _cb_sub(cb: dict) -> str:
-    parts = []
-    i = cb.get("RatedCurrent", 0)
+    i = el.get("RatedCurrent", 0) or 0
+    v = el.get("RatedVoltage", 0) or 0
     if i:
-        parts.append(f"{i:.0f}A")
-    v = cb.get("RatedVoltage", 0)
+        parts.append(f"{i:.0f}А")
     if v:
         parts.append(f"{v:.0f}В")
-    return ", ".join(parts) if parts else ""
+    return ", ".join(parts)
 
 
-def _cable_sub(c: dict) -> str:
-    v = c.get("RatedVoltage", 0)
-    return f"{v:.0f}В" if v else ""
-
-
-def _board_sub(b: dict) -> str:
-    parts = []
-    i = b.get("RatedCurrent", 0)
-    if i:
-        parts.append(f"{i:.0f}A")
-    v = b.get("RatedVoltage", 0)
-    if v:
-        parts.append(f"{v:.0f}В")
-    return ", ".join(parts) if parts else ""
+def _fv(v):
+    """Format voltage: kV if >= 1000, else V."""
+    if v >= 1000:
+        kv = v / 1000
+        return f"{kv:.0f}кВ" if kv == int(kv) else f"{kv:.1f}кВ"
+    return f"{v:.0f}В"
 
 
 # ── Drawing engine ───────────────────────────────────────────────────
 
 
-def _draw_topology(root, topology: list[dict], cx: float, y: float) -> float:
-    """Draw the full topology, returns final y."""
+def _draw_topology(root, topology, cx, y):
+    """Draw full topology, returns final y."""
     for item in topology:
-        render = item.get("render")
-        if render == "transformer":
-            y = _draw_transformer(root, cx, y, item["label"], item.get("sub", ""))
-        elif render == "circuit_breaker":
-            y = _draw_circuit_breaker(root, cx, y, item["label"], item.get("sub", ""))
-        elif render == "cable":
-            y = _draw_cable_symbol(root, cx, y, item["label"], item.get("sub", ""))
-        elif render == "boundary":
-            y = _draw_boundary(root, cx, y, item["label"])
-        elif render == "surge_arrester":
-            y = _draw_surge_arrester(root, cx, y, item["label"], item.get("sub", ""))
-        elif render == "busbar":
-            y = _draw_busbar(root, cx, y, item["label"], item.get("sub", ""))
-        elif render == "branch":
+        r = item.get("render")
+        lbl, sub = item.get("label", ""), item.get("sub", "")
+        if r == "transformer":
+            y = symbols.draw_transformer(root, cx, y, lbl, sub)
+        elif r == "circuit_breaker":
+            y = symbols.draw_circuit_breaker(root, cx, y, lbl, sub)
+        elif r == "cable":
+            y = _draw_cable(root, cx, y, lbl, sub)
+        elif r == "boundary":
+            y = _draw_boundary(root, cx, y, lbl)
+        elif r == "surge_arrester":
+            y = symbols.draw_surge_arrester(root, cx, y, lbl, sub)
+        elif r == "busbar":
+            y = symbols.draw_busbar(root, cx, y, lbl, sub)
+        elif r == "branch":
             y = _draw_branch(root, cx, y, item)
-        elif render == "load_group":
-            y = _draw_load_group(root, cx, y, item["label"], item.get("sub", ""))
+        elif r == "load_group":
+            y = _draw_load_group(root, cx, y, lbl, sub)
     return y
 
 
-def _draw_transformer(parent, cx, y, label, sub) -> float:
-    """Two tangent circles (ГОСТ 2.723). Returns y_next."""
-    return symbols.draw_transformer(parent, cx, y, label, sub)
-
-
-def _draw_circuit_breaker(parent, cx, y, label, sub) -> float:
-    """Tilted contact + rectangle (ГОСТ 2.755). Returns y_next."""
-    return symbols.draw_circuit_breaker(parent, cx, y, label, sub)
-
-
-def _draw_cable_symbol(parent, cx, y, label, sub) -> float:
-    """Dashed vertical line with label."""
+def _draw_cable(parent, cx, y, label, sub):
     length = 10
     line_v(parent, cx, y, y + length, dash="2,1")
-    text(parent, cx + 3, y + length/2, label, font_size=FONT_LABEL)
+    text(parent, cx + 3, y + length / 2, label, font_size=FONT_LABEL)
     if sub:
-        text(parent, cx + 3, y + length/2 + FONT_SMALL + 1, sub,
+        text(parent, cx + 3, y + length / 2 + FONT_SMALL + 1, sub,
              font_size=FONT_SMALL, fill="#444")
     return y + length + SYMBOL_GAP
 
 
-def _draw_boundary(parent, cx, y, label) -> float:
-    """Horizontal dashed line representing container boundary."""
+def _draw_boundary(parent, cx, y, label):
     w = 80
     line(parent, cx - w/2, y, cx + w/2, y, stroke_width=THIN_W, dash="4,2")
     text(parent, cx + w/2 + 2, y + 1, label,
@@ -319,23 +314,7 @@ def _draw_boundary(parent, cx, y, label) -> float:
     return y + SYMBOL_GAP
 
 
-def _draw_surge_arrester(parent, cx, y, label, sub) -> float:
-    """Zigzag + ground (ГОСТ 2.727.2). Returns y_next."""
-    return symbols.draw_surge_arrester(parent, cx, y, label, sub)
-
-
-def _draw_ground(parent, cx, y):
-    """Ground symbol — 3 horizontal lines decreasing in width."""
-    symbols.draw_ground(parent, cx, y)
-
-
-def _draw_busbar(parent, cx, y, label, sub) -> float:
-    """Thick horizontal line (busbar). Returns y_next."""
-    return symbols.draw_busbar(parent, cx, y, label, sub)
-
-
-def _draw_load_group(parent, cx, y, label, sub) -> float:
-    """Rectangle with description (load group)."""
+def _draw_load_group(parent, cx, y, label, sub):
     w, h = 30, 10
     line_v(parent, cx, y, y + 2)
     ry = y + 2
@@ -348,38 +327,94 @@ def _draw_load_group(parent, cx, y, label, sub) -> float:
     return ry + h + SYMBOL_GAP
 
 
-def _draw_branch(parent, cx, y, branch: dict) -> float:
-    """Draw left/right branch from busbar."""
-    left_items = branch.get("left", [])
-    right_items = branch.get("right", [])
+def _draw_branch(parent, cx, y, branch):
+    spread = 60
+    lx, rx = cx - spread, cx + spread
 
-    spread = 60  # horizontal distance from center to branch
-    lx = cx - spread
-    rx = cx + spread
-
-    # Horizontal lines from center to branches
     line(parent, lx, y, rx, y, stroke_width=LINE_W)
     line_v(parent, lx, y, y + 2)
     line_v(parent, rx, y, y + 2)
 
-    # Draw left branch
     ly = y + 2
-    for item in left_items:
-        render = item.get("render")
-        if render == "transformer":
-            ly = _draw_transformer(parent, lx, ly, item["label"], item.get("sub", ""))
-        elif render == "busbar":
-            ly = _draw_busbar(parent, lx, ly, item["label"], item.get("sub", ""))
-        elif render == "load_group":
-            ly = _draw_load_group(parent, lx, ly, item["label"], item.get("sub", ""))
+    for item in branch.get("left", []):
+        r = item.get("render")
+        lbl, sub = item.get("label", ""), item.get("sub", "")
+        if r == "transformer":
+            ly = symbols.draw_transformer(parent, lx, ly, lbl, sub)
+        elif r == "busbar":
+            ly = symbols.draw_busbar(parent, lx, ly, lbl, sub)
+        elif r == "load_group":
+            ly = _draw_load_group(parent, lx, ly, lbl, sub)
 
-    # Draw right branch
     ry = y + 2
-    for item in right_items:
-        render = item.get("render")
-        if render == "load_group":
-            ry = _draw_load_group(parent, rx, ry, item["label"], item.get("sub", ""))
+    for item in branch.get("right", []):
+        lbl, sub = item.get("label", ""), item.get("sub", "")
+        if item.get("render") == "load_group":
+            ry = _draw_load_group(parent, rx, ry, lbl, sub)
 
     return max(ly, ry)
 
 
+# ── Element list (ГОСТ 2.702-2011 п.5.3.18) ─────────────────────────
+
+
+def _make_element_list(elements: list[dict]) -> list[dict]:
+    """Group elements for перечень: {desig, name, count, note}."""
+    groups: dict[str, dict] = {}
+    for el in elements:
+        d = el.get("designation", "")
+        if not d:
+            continue
+        tn = el.get("type_name") or el.get("name", "")
+        if tn in groups:
+            groups[tn]["count"] += 1
+            groups[tn]["desig_last"] = d
+        else:
+            groups[tn] = {"desig_first": d, "desig_last": d,
+                          "name": tn, "count": 1, "note": _auto_sub(el)}
+
+    result = []
+    for g in groups.values():
+        d = g["desig_first"]
+        if g["count"] > 1 and g["desig_first"] != g["desig_last"]:
+            d = f"{g['desig_first']}…{g['desig_last']}"
+        result.append({"desig": d, "name": g["name"],
+                       "count": g["count"], "note": g["note"]})
+    # Sort by letter code alphabetically per ГОСТ 2.702
+    return sorted(result, key=lambda x: x["desig"])
+
+
+def _draw_element_list(parent, items, x, y):
+    """Draw перечень элементов table on the diagram."""
+    if not items:
+        return
+    col_x = [0, 25, 115, 130]
+    w, rh = 180, 5
+
+    text(parent, x + w / 2, y, "Перечень элементов",
+         font_size=FONT_LABEL, font_weight="bold", text_anchor="middle")
+    y += 3
+
+    # Header
+    headers = ["Поз. обозн.", "Наименование", "Кол.", "Примечание"]
+    rect(parent, x, y, w, rh, fill="#eee")
+    for i, h in enumerate(headers):
+        text(parent, x + col_x[i] + 1.5, y + rh - 1.2, h,
+             font_size=FONT_PROPS, font_weight="bold")
+    y += rh
+
+    # Data rows
+    for item in items:
+        vals = [item["desig"], item["name"], str(item["count"]), item["note"]]
+        for i, v in enumerate(vals):
+            text(parent, x + col_x[i] + 1.5, y + rh - 1.2, v,
+                 font_size=FONT_PROPS)
+        y += rh
+
+    # Table grid
+    rows = len(items) + 1
+    ty = y - rows * rh
+    rect(parent, x, ty, w, rows * rh)
+    line(parent, x, ty + rh, x + w, ty + rh, stroke_width=THIN_W)
+    for cx_off in col_x[1:]:
+        line(parent, x + cx_off, ty, x + cx_off, y, stroke_width=THIN_W)

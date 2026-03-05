@@ -83,20 +83,14 @@ BIM_ESKD_IFC_PATH=../projects/001_server_container/model.ifc .venv/bin/python -m
 │
 ├── projects/
 │   ├── 001_название/
-│   │   ├── prompt.md                ← промпт которым генерировался проект
-│   │   ├── model.ifc                ← IFC модель
-│   │   ├── drawings/                ← SVG/PDF листы
-│   │   └── README.md                ← описание, refs, статус
+│   │   ├── model.ifc                ← IFC модель (gitignore)
+│   │   ├── README.md                ← описание, refs, статус
+│   │   └── docs/                    ← generated (gitignore)
+│   │       └── document.html        ← комплект документов (Print→PDF)
 │   └── ...
 │
-├── docs/                           ← GitHub Pages viewer
-│   ├── index.html                  ← entry point
-│   ├── style.css / app.js          ← стили и логика
-│   └── projects/NNN/               ← SVG листы + manifest.json
-│
 └── shared/
-    ├── eskd_stamps/                 ← SVG штампы ЕСКД (ГОСТ 2.104-2006)
-    └── ifc_templates/               ← переиспользуемые IFC типы и семейства
+    └── eskd_symbols/                ← SVG символы для SLD (ГОСТ 2.702)
 ```
 
 ---
@@ -308,19 +302,18 @@ lib.add_sheet("front", view="front", title="Фасад",
     designation="001.ЭОМ.002", form=2, sheet_number="2", total_sheets="3", ...)
 project.save()
 
-# 2. Сгенерировать HTML (читает IFC → рендерит виды → собирает листы)
+# 2. Сгенерировать document.html (читает IFC → рендерит виды → собирает листы)
 paths = lib.generate_docs(str(workdir))
-# → ["/path/plan.html", "/path/front.html"]
+# → projects/NNN/docs/document.html
 ```
 
-HTML-лист: рамка (SVG линии) + чертёж (SVG) + штамп (HTML-текст).
+Результат: `document.html` — самодостаточный файл с навигацией и всеми листами.
 Печать: File → Print → Save as PDF (размер страницы из @page).
 
 Модули:
 - `lib/documents.py` — CRUD для IfcDocumentInformation + Pset_ESKD_Sheet
 - `lib/html_sheet.py` — генерация HTML из IFC-описания листа
 - `eskd/frame.py` — ЕСКД рамка + основная надпись (ГОСТ 2.104-2006)
-- `eskd/composer.py` — компоновщик SVG-листа (legacy)
 - `eskd/spec_table.py` — таблица спецификации (ГОСТ 21.110)
 
 ---

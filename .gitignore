@@ -22,12 +22,12 @@ build/
 # Environment
 .env
 
-# Large files
-*.ifc
+# Projects (binary + generated)
+projects/*/model.ifc
+projects/*/docs/
 
 # Temp
 /tmp/
-sandbox_output/
 _raw_*.svg
 test.svg
 

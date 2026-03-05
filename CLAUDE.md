@@ -210,6 +210,28 @@ in-progress / done
    - PredefinedType на каждом элементе где поддерживается IFC-схемой
    - Pset_*Common (Description, Status, Reference) на ключевых элементах
 
+### Документация как часть модели
+
+**IFC-модель = единственный источник истины.** Вся документация — производная от модели.
+
+8. **Аннотации в модели** — размеры, выноски, примечания
+   - IfcAnnotation с IfcShapeRepresentation (RepresentationType="Annotation")
+   - 2D-геометрия аннотаций хранится в модели, а не генерируется при рендере
+   - IfcGeometricRepresentationSubContext: ContextType="Plan", TargetView=PLAN_VIEW / ELEVATION_VIEW
+
+9. **Определения видов в IFC** — не в коде
+   - Параметры вида (направление, масштаб, сечение) — в Pset на IfcAnnotation
+   - generate_docs() читает всё из модели, не содержит захардкоженных настроек
+
+10. **Привязка файлов** — IfcDocumentReference
+    - Сгенерированные .svg/.pdf/.html привязываются обратно к модели
+    - Путь к файлу через IfcDocumentReference.Location
+
+11. **Спецификация из Qto_** — quantity takeoff
+    - Читать площади/объёмы/массу из Qto_*BaseQuantities
+    - Агрегация по IfcTypeProduct, не по строковому имени
+    - spec_table.py должен работать с IFC quantities API
+
 ---
 
 ## Работа с ifcopenshell

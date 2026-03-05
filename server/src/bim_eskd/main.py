@@ -72,9 +72,9 @@ def execute_code(code: str, description: str = "") -> str:
 
     # Determine workdir from current project or use temp
     if project_manager.is_open() and project_manager.path:
-        workdir = project_manager.path.parent / "sandbox_output"
+        workdir = project_manager.path.parent / "drawings"
     else:
-        workdir = _PROJECT_ROOT / "sandbox_output"
+        workdir = _PROJECT_ROOT / "drawings"
 
     executor = SandboxExecutor(project_manager, workdir)
     result = executor.execute(code)

@@ -169,6 +169,49 @@ in-progress / done
 
 ---
 
+## BIM-требования к модели
+
+**Модель обязана быть настоящей BIM, а не CAD-геометрией в IFC-обёртке.**
+
+Каждый элемент модели должен содержать:
+
+### Обязательные компоненты
+
+1. **IfcTypeProduct** — типы для каждого класса элементов
+   - IfcWallType, IfcMemberType, IfcSlabType, IfcFootingType и т.д.
+   - Общие свойства (материал, геометрия) — на типе, не на экземпляре
+   - Никаких IfcBuildingElementProxy без крайней необходимости
+
+2. **IfcMaterial** — материалы обязательны
+   - IfcMaterial / IfcMaterialLayerSet / IfcMaterialProfileSet
+   - Привязка через IfcRelAssociatesMaterial
+   - Минимум: имя материала. Желательно: плотность, теплопроводность
+
+3. **Количественные наборы (Qto_)** — автоматический подсчёт
+   - Qto_WallBaseQuantities, Qto_SlabBaseQuantities, Qto_MemberBaseQuantities...
+   - Площади, объёмы, длины, масса
+   - Спецификация должна читать Qto_, а не считать экземпляры по имени
+
+4. **IfcSpace** — помещения / зоны
+   - Каждое функциональное пространство — IfcSpace
+   - Назначение через PredefinedType или Pset_SpaceCommon
+
+5. **IfcDistributionPort** — точки подключения
+   - На каждом электрическом элементе: входной и выходной порт
+   - Связи через IfcRelConnectsPortToElement + IfcRelConnectsPorts
+
+6. **Осмысленные имена** — не "My Site", "My Building"
+   - IfcProject.Name = название проекта (напр. "001_server_container")
+   - IfcSite.Name = адрес / площадка
+   - IfcBuilding.Name = здание / сооружение
+   - IfcBuildingStorey.Name = этаж + Elevation обязательно
+
+7. **Классификация** — хотя бы базовая
+   - PredefinedType на каждом элементе где поддерживается IFC-схемой
+   - Pset_*Common (Description, Status, Reference) на ключевых элементах
+
+---
+
 ## Работа с ifcopenshell
 
 **Всегда сначала изучи API ifcopenshell** перед написанием кода. Не изобретай велосипед — ifcopenshell.draw, ifcopenshell.api, ifcopenshell.geom уже имеют нужные настройки и методы. Типичные ошибки:

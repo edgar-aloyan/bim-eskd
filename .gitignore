@@ -15,21 +15,8 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Build
-dist/
-build/
-
 # Environment
 .env
-
-# Projects (binary + generated)
-projects/*/model.ifc
-projects/*/docs/
-
-# Temp
-/tmp/
-_raw_*.svg
-test.svg
 
 # Cache
 .cache/

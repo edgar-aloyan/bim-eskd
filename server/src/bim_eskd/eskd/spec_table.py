@@ -1,12 +1,10 @@
 """Equipment specification table generator (ГОСТ 21.110).
 
-Generates an SVG table listing IFC products with their properties,
-suitable for embedding into ЕСКД drawing sheets.
+Generates an SVG table listing IFC products grouped by IfcTypeProduct,
+with quantities from Qto_*BaseQuantities.
 
-Columns: №, Наименование, Тип/Марка, Кол-во, Масса, Примечание.
+Columns: №, Наименование, Тип/Марка, Кол-во, Масса ед., Масса общ., Примечание.
 """
-
-from collections import Counter
 
 from lxml import etree
 
@@ -15,10 +13,11 @@ from .svg_primitives import SVG_NS, NSMAP, rect as _rect, line as _line, text as
 # Table layout constants (mm)
 COL_WIDTHS = {
     "num": 10,        # №
-    "name": 65,       # Наименование
-    "type": 45,       # Тип/Марка
-    "qty": 15,        # Кол-во
-    "mass": 20,       # Масса, кг
+    "name": 55,       # Наименование
+    "type": 40,       # Тип/Марка
+    "qty": 12,        # Кол-во
+    "mass_u": 18,     # Масса ед., кг
+    "mass_t": 20,     # Масса общ., кг
     "note": 30,       # Примечание
 }
 ROW_HEIGHT = 8
@@ -31,6 +30,9 @@ def create_spec_table(
     entity_types: list[str] | None = None,
 ) -> str:
     """Create an SVG specification table from IFC entities.
+
+    Aggregates products by IfcTypeProduct. Mass is read from
+    Qto_*BaseQuantities.GrossWeight on each occurrence.
 
     Args:
         ifc_file: An open ifcopenshell file.
@@ -45,103 +47,116 @@ def create_spec_table(
     for cls in types:
         products.extend(ifc_file.by_type(cls))
 
-    # Group by (class, name) and count
-    rows = _aggregate_products(products)
+    rows = _aggregate_by_type(products)
 
-    # Calculate table size
     num_rows = len(rows)
     table_h = HEADER_HEIGHT + ROW_HEIGHT * max(num_rows, 1)
 
-    # Generate SVG
     root = etree.Element("svg", nsmap=NSMAP)
     root.set("width", f"{TABLE_WIDTH}mm")
     root.set("height", f"{table_h}mm")
     root.set("viewBox", f"0 0 {TABLE_WIDTH} {table_h}")
 
     g = etree.SubElement(root, "g", id="spec-table")
-
-    # Draw header
     _draw_header(g, 0, 0)
 
-    # Draw data rows
     y = HEADER_HEIGHT
     for i, row in enumerate(rows):
         _draw_row(g, 0, y, i + 1, row)
         y += ROW_HEIGHT
 
-    # Draw outer border
     _rect(g, 0, 0, TABLE_WIDTH, table_h,
           fill="none", stroke="black", stroke_width=0.7)
 
     return etree.tostring(root, pretty_print=True, encoding="unicode")
 
 
-def _aggregate_products(products) -> list[dict]:
-    """Group products by type and base name, counting occurrences."""
-    import re
+_SKIP_CLASSES = {
+    "IfcAnnotation", "IfcOpeningElement", "IfcBuildingStorey",
+    "IfcBuilding", "IfcSite", "IfcSpace", "IfcDistributionPort",
+    "IfcGrid", "IfcVirtualElement",
+}
 
-    counter = Counter()
-    props = {}
+
+def _aggregate_by_type(products) -> list[dict]:
+    """Group products by IfcTypeProduct, count and sum weights from Qto_."""
+    groups: dict[int, dict] = {}  # type_id → row data
+    untyped: dict[str, dict] = {}  # ifc_class → row data (fallback)
 
     for p in products:
-        name = getattr(p, "Name", None) or p.is_a()
-        # Strip trailing index suffixes for grouping
-        # e.g. "Miner_T01_005" → "Miner", "RackPost_F01" → "RackPost"
-        base_name = name
-        prev = None
-        while base_name != prev:
-            prev = base_name
-            base_name = re.sub(r"[_\s]+[A-Z]?\d+$", "", base_name)
-        key = (p.is_a(), base_name)
-        counter[key] += 1
+        if p.is_a() in _SKIP_CLASSES:
+            continue
+        type_obj = _get_type(p)
+        unit_mass = _get_qto_weight(p)
 
-        if key not in props:
-            mass = _get_property(p, "LoadBearing", "GrossWeight")
-            props[key] = {
-                "ifc_class": p.is_a(),
-                "name": base_name,
-                "type_mark": _get_type_mark(p),
-                "mass": mass,
-                "note": "",
-            }
+        if type_obj:
+            tid = type_obj.id()
+            if tid not in groups:
+                groups[tid] = {
+                    "name": _type_description(type_obj),
+                    "type_mark": type_obj.Name or "",
+                    "qty": 0,
+                    "mass_unit": unit_mass,
+                    "mass_total": 0.0,
+                    "note": "",
+                }
+            g = groups[tid]
+            g["qty"] += 1
+            if unit_mass and not g["mass_unit"]:
+                g["mass_unit"] = unit_mass
+            if unit_mass:
+                g["mass_total"] += unit_mass
+        else:
+            cls = p.is_a()
+            if cls not in untyped:
+                untyped[cls] = {
+                    "name": getattr(p, "Name", None) or cls,
+                    "type_mark": "",
+                    "qty": 0,
+                    "mass_unit": unit_mass,
+                    "mass_total": 0.0,
+                    "note": "без типа",
+                }
+            g = untyped[cls]
+            g["qty"] += 1
+            if unit_mass and not g["mass_unit"]:
+                g["mass_unit"] = unit_mass
+            if unit_mass:
+                g["mass_total"] += unit_mass
 
-    rows = []
-    for key, count in counter.most_common():
-        row = dict(props[key])
-        row["qty"] = count
-        rows.append(row)
-
+    rows = sorted(groups.values(), key=lambda r: r["qty"], reverse=True)
+    rows += sorted(untyped.values(), key=lambda r: r["qty"], reverse=True)
     return rows
 
 
-def _get_type_mark(product) -> str:
-    """Extract type/mark from the product's type object or properties."""
-    # Try to get from the type
-    type_obj = None
+def _get_type(product):
+    """Get the IfcTypeProduct for a product, or None."""
     for rel in getattr(product, "IsTypedBy", []):
-        type_obj = rel.RelatingType
-        break
-
-    if type_obj:
-        return getattr(type_obj, "Name", "") or ""
-
-    return ""
+        return rel.RelatingType
+    return None
 
 
-def _get_property(product, pset_name: str, prop_name: str):
-    """Extract a single property value from an IFC product."""
+def _type_description(type_obj) -> str:
+    """Human-readable description from type: Description or Name."""
+    desc = getattr(type_obj, "Description", None)
+    if desc:
+        return desc
+    return type_obj.Name or type_obj.is_a()
+
+
+def _get_qto_weight(product) -> float | None:
+    """Extract GrossWeight from Qto_*BaseQuantities."""
     for rel in getattr(product, "IsDefinedBy", []):
         if not hasattr(rel, "RelatingPropertyDefinition"):
             continue
         pdef = rel.RelatingPropertyDefinition
-        if not hasattr(pdef, "HasProperties"):
+        if not pdef.is_a("IfcElementQuantity"):
             continue
-        if pdef.Name != pset_name:
+        if not pdef.Name or not pdef.Name.startswith("Qto_"):
             continue
-        for prop in pdef.HasProperties:
-            if prop.Name == prop_name:
-                val = getattr(prop, "NominalValue", None)
-                return val.wrappedValue if val else None
+        for q in pdef.Quantities:
+            if q.Name == "GrossWeight":
+                return getattr(q, "WeightValue", None)
     return None
 
 
@@ -151,23 +166,32 @@ def _draw_header(parent, x, y):
           fill="#f0f0f0", stroke="black", stroke_width=0.25)
 
     font = {"font_size": 3, "font_weight": "bold"}
-    headers = ["№", "Наименование", "Тип/Марка", "Кол.", "Масса,кг", "Примечание"]
+    headers = [
+        "№", "Наименование", "Тип/Марка", "Кол.",
+        "Масса ед.", "Масса общ.", "Примечание",
+    ]
 
     cx = x
     for col_key, header in zip(COL_WIDTHS, headers):
         cw = COL_WIDTHS[col_key]
-        # Vertical divider
         if cx > x:
             _line(parent, cx, y, cx, y + HEADER_HEIGHT)
-        # Header text — centered
         _text(parent, cx + cw / 2, y + HEADER_HEIGHT / 2 + 1,
               header, text_anchor="middle", **font)
         cx += cw
 
 
+def _fmt_mass(val) -> str:
+    """Format mass value: integer if whole, one decimal otherwise."""
+    if val is None or val == 0.0:
+        return ""
+    if val == int(val):
+        return str(int(val))
+    return f"{val:.1f}"
+
+
 def _draw_row(parent, x, y, num, row):
     """Draw a single data row."""
-    # Horizontal line at top of row
     _line(parent, x, y, x + TABLE_WIDTH, y)
 
     font = {"font_size": 2.8}
@@ -177,7 +201,8 @@ def _draw_row(parent, x, y, num, row):
         row.get("name", ""),
         row.get("type_mark", ""),
         str(row.get("qty", "")),
-        str(row.get("mass", "")) if row.get("mass") else "",
+        _fmt_mass(row.get("mass_unit")),
+        _fmt_mass(row.get("mass_total")),
         row.get("note", ""),
     ]
 
@@ -187,9 +212,8 @@ def _draw_row(parent, x, y, num, row):
         if cx > x:
             _line(parent, cx, y, cx, y + ROW_HEIGHT)
 
-        # Truncate long text
         max_chars = int(cw / 1.8)
-        display = val[:max_chars] + "..." if len(val) > max_chars else val
+        display = val[:max_chars] + "…" if len(val) > max_chars else val
 
         _text(parent, cx + 1.5, y + ROW_HEIGHT / 2 + 1,
               display, **font)

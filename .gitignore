@@ -27,6 +27,7 @@ build/
 
 # Temp
 /tmp/
+sandbox_output/
 _raw_*.svg
 test.svg
 

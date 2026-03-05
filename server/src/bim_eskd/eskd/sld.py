@@ -36,17 +36,21 @@ def create_single_line_diagram(ifc_file) -> str:
     topology = _build_topology(elems, ifc_file)
 
     root = etree.Element("svg", nsmap=NSMAP)
-    root.set("width", f"{DIAGRAM_W}mm")
-    root.set("height", f"{DIAGRAM_H}mm")
-    root.set("viewBox", f"0 0 {DIAGRAM_W} {DIAGRAM_H}")
-
-    rect(root, 0, 0, DIAGRAM_W, DIAGRAM_H, fill="white", stroke="none")
+    rect(root, 0, 0, DIAGRAM_W, 999, fill="white", stroke="none")
     text(root, CENTER_X, 6, "Однолинейная схема электроснабжения",
          font_size=5, font_weight="bold", text_anchor="middle")
 
     y = _draw_topology(root, topology, CENTER_X, 14)
-    _draw_element_list(root, _make_element_list(elems),
-                       5, max(y + 8, DIAGRAM_H - 55))
+
+    elem_items = _make_element_list(elems)
+    list_y = max(y + 8, 140)
+    _draw_element_list(root, elem_items, 5, list_y)
+    list_h = 3 + 5 + len(elem_items) * 5 + 2  # title + header + rows + pad
+    total_h = max(DIAGRAM_H, list_y + list_h)
+
+    root.set("width", f"{DIAGRAM_W}mm")
+    root.set("height", f"{total_h}mm")
+    root.set("viewBox", f"0 0 {DIAGRAM_W} {total_h}")
 
     return etree.tostring(root, pretty_print=True, encoding="unicode")
 
@@ -195,29 +199,20 @@ def _build_topology(elements: list[dict], ifc_file) -> list[dict]:
                           sub=f"{len(a)}шт, {a[0].get('RatedVoltage', 0):.0f}В"))
 
     for b in bk["bus_m"]:
-        topo.append(_item("busbar", b))
+        topo.append(_item("busbar", b, label=b.get("name", "")))
 
-    # Branches
-    branch = {"render": "branch", "left": [], "right": []}
+    # Secondary path: step-down transformer → secondary bus → loads
     for t in bk["xfmr_lo"]:
-        branch["left"].append(_item("transformer", t))
+        topo.append(_item("transformer", t))
     for b in bk["bus_s"]:
-        branch["left"].append(_item("busbar", b))
+        topo.append(_item("busbar", b, label=b.get("name", "")))
 
-    half = load_n // 2
-    if half and load_name:
+    if load_n and load_name:
         sv = (bk["xfmr_lo"][0].get("SecondaryVoltage", 400)
               if bk["xfmr_lo"] else 400)
-        mv = bk["bus_m"][0].get("RatedVoltage", 800) if bk["bus_m"] else 800
-        branch["left"].append({"render": "load_group",
-                               "label": f"{half}× {load_name}",
-                               "sub": f"~3, {sv:.0f}В"})
-        branch["right"].append({"render": "load_group",
-                                "label": f"{load_n - half}× {load_name}",
-                                "sub": f"~3, {mv:.0f}В"})
-
-    if branch["left"] or branch["right"]:
-        topo.append(branch)
+        topo.append({"render": "load_group",
+                     "label": f"{load_n}× {load_name}",
+                     "sub": f"~3, {sv:.0f}В"})
 
     return topo
 
@@ -286,14 +281,29 @@ def _draw_topology(root, topology, cx, y):
         elif r == "boundary":
             y = _draw_boundary(root, cx, y, lbl)
         elif r == "surge_arrester":
-            y = symbols.draw_surge_arrester(root, cx, y, lbl, sub)
+            y = _draw_arrester_branch(root, cx, y, lbl, sub)
         elif r == "busbar":
             y = symbols.draw_busbar(root, cx, y, lbl, sub)
-        elif r == "branch":
-            y = _draw_branch(root, cx, y, item)
         elif r == "load_group":
             y = _draw_load_group(root, cx, y, lbl, sub)
     return y
+
+
+def _draw_arrester_branch(parent, cx, y, label, sub):
+    """Draw OPN as a side branch off the main line (ГОСТ convention)."""
+    bx = cx - 40  # far enough left to clear busbar (width=60)
+    line(parent, bx, y, cx, y, stroke_width=LINE_W)
+    symbols.draw_surge_arrester(parent, bx, y)  # no label (overlap risk)
+    # Label to the left of symbol
+    lx = bx - 8
+    if label:
+        text(parent, lx, y + 6, label,
+             font_size=FONT_LABEL, text_anchor="end")
+    if sub:
+        text(parent, lx, y + 6 + FONT_SMALL + 1, sub,
+             font_size=FONT_SMALL, fill="#444", text_anchor="end")
+    line_v(parent, cx, y, y + SYMBOL_GAP)
+    return y + SYMBOL_GAP
 
 
 def _draw_cable(parent, cx, y, label, sub):
@@ -325,34 +335,6 @@ def _draw_load_group(parent, cx, y, label, sub):
         text(parent, cx, ry + h/2 + FONT_SMALL, sub,
              font_size=FONT_SMALL, text_anchor="middle", fill="#444")
     return ry + h + SYMBOL_GAP
-
-
-def _draw_branch(parent, cx, y, branch):
-    spread = 60
-    lx, rx = cx - spread, cx + spread
-
-    line(parent, lx, y, rx, y, stroke_width=LINE_W)
-    line_v(parent, lx, y, y + 2)
-    line_v(parent, rx, y, y + 2)
-
-    ly = y + 2
-    for item in branch.get("left", []):
-        r = item.get("render")
-        lbl, sub = item.get("label", ""), item.get("sub", "")
-        if r == "transformer":
-            ly = symbols.draw_transformer(parent, lx, ly, lbl, sub)
-        elif r == "busbar":
-            ly = symbols.draw_busbar(parent, lx, ly, lbl, sub)
-        elif r == "load_group":
-            ly = _draw_load_group(parent, lx, ly, lbl, sub)
-
-    ry = y + 2
-    for item in branch.get("right", []):
-        lbl, sub = item.get("label", ""), item.get("sub", "")
-        if item.get("render") == "load_group":
-            ry = _draw_load_group(parent, rx, ry, lbl, sub)
-
-    return max(ly, ry)
 
 
 # ── Element list (ГОСТ 2.702-2011 п.5.3.18) ─────────────────────────

@@ -97,6 +97,12 @@ def generate_docs(output_dir: str | Path) -> list[str]:
                 view_svg = create_spec_table(project_manager.ifc)
             except Exception as e:
                 view_svg = _error_svg(f"Spec error: {e}")
+        elif view == "calc":
+            try:
+                from ..eskd.calc_table import create_calc_table
+                view_svg = create_calc_table(project_manager.ifc)
+            except Exception as e:
+                view_svg = _error_svg(f"Calc error: {e}")
         else:
             view_svg = _error_svg(f"Unknown view: {view}")
 

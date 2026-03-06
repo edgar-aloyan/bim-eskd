@@ -1,4 +1,4 @@
-"""ЕСКД facade — wraps frame, composer, spec_table, sld for sandbox use."""
+"""ЕСКД facade — wraps frame, composer, spec_table, sld, pandapower for sandbox use."""
 
 from typing import Optional
 
@@ -6,6 +6,7 @@ from ..ifc_engine import project_manager
 from ..eskd.composer import compose_sheet
 from ..eskd.spec_table import create_spec_table as _create_spec_table
 from ..eskd.sld import create_single_line_diagram
+from ..eskd.pp_converter import ifc_to_pandapower
 
 
 def compose_eskd_sheet(
@@ -57,3 +58,12 @@ def create_sld() -> str:
     """
     ifc = project_manager.ifc
     return create_single_line_diagram(ifc)
+
+
+def create_pandapower_net():
+    """Convert IFC electrical model to pandapower network.
+
+    Returns pandapower.pandapowerNet ready for analysis.
+    """
+    ifc = project_manager.ifc
+    return ifc_to_pandapower(ifc)

@@ -1,22 +1,30 @@
 """Single-line diagram (SLD) generator from IFC model.
 
-Reads topology from IfcRelConnectsPorts, assigns designations per ГОСТ 2.710-81,
+Reads topology via ifc_netlist, assigns designations per ГОСТ 2.710-81,
 renders symbols per ГОСТ 2.702/2.721/2.723/2.727/2.755 as SVG.
 
 Includes перечень элементов (element list) per ГОСТ 2.702-2011 п.5.3.18.
 """
 
 import logging
+
+import ifcopenshell.util.element
 from lxml import etree
 
-import ifcopenshell
-import ifcopenshell.util.element
-
-from .svg_primitives import (
-    SVG_NS, NSMAP, LINE_W, THIN_W, FONT_LABEL, FONT_SMALL, FONT_PROPS,
-    rect, line, line_v, text,
-)
 from . import symbols
+from .ifc_netlist import Element, Netlist, parse_netlist
+from .svg_primitives import (
+    FONT_LABEL,
+    FONT_PROPS,
+    FONT_SMALL,
+    LINE_W,
+    NSMAP,
+    THIN_W,
+    line,
+    line_v,
+    rect,
+    text,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +33,7 @@ DIAGRAM_H = 200
 CENTER_X = DIAGRAM_W / 2
 SYMBOL_GAP = 4
 
-# ── IFC → ГОСТ symbol mapping (declarative, no heuristics) ──────────
+# ── IFC → ГОСТ symbol mapping ───────────────────────────────────────
 
 RENDER_MAP = {
     ("IfcTransformer", None): "transformer",
@@ -44,10 +52,9 @@ DESIG_MAP = {
 }
 
 
-def _render_type(ifc_class, pt):
-    """Map IFC class + PredefinedType to render symbol type."""
-    return (RENDER_MAP.get((ifc_class, pt))
-            or RENDER_MAP.get((ifc_class, None)))
+def _render_type(el: Element) -> str | None:
+    cls, pt = el.ifc_class, el.predefined_type
+    return RENDER_MAP.get((cls, pt)) or RENDER_MAP.get((cls, None))
 
 
 # ── Public API ───────────────────────────────────────────────────────
@@ -55,10 +62,11 @@ def _render_type(ifc_class, pt):
 
 def create_single_line_diagram(ifc_file) -> str:
     """Generate SVG single-line diagram from IFC model."""
-    chain, branches = _walk_port_graph(ifc_file)
-    elements = _enrich_chain(chain, branches, ifc_file)
-    _assign_designations(elements)
-    topo = _chain_to_topo(elements, branches, ifc_file)
+    nl = parse_netlist(ifc_file)
+    chain, branches = _walk_netlist(nl)
+    items = _enrich_all(chain, branches, nl)
+    _assign_designations(items)
+    topo = _build_topo(items, branches, ifc_file)
 
     root = etree.Element("svg", nsmap=NSMAP)
     rect(root, 0, 0, DIAGRAM_W, 999, fill="white", stroke="none")
@@ -67,7 +75,7 @@ def create_single_line_diagram(ifc_file) -> str:
 
     y = _draw_topology(root, topo, CENTER_X, 14)
 
-    elem_items = _make_element_list(elements)
+    elem_items = _make_element_list(items)
     list_y = max(y + 8, 140)
     _draw_element_list(root, elem_items, 5, list_y)
     list_h = 3 + 5 + len(elem_items) * 5 + 2
@@ -81,144 +89,109 @@ def create_single_line_diagram(ifc_file) -> str:
 
 def get_element_list(ifc_file) -> list[dict]:
     """Return element list data for external use."""
-    chain, branches = _walk_port_graph(ifc_file)
-    elements = _enrich_chain(chain, branches, ifc_file)
-    _assign_designations(elements)
-    return _make_element_list(elements)
+    nl = parse_netlist(ifc_file)
+    chain, branches = _walk_netlist(nl)
+    items = _enrich_all(chain, branches, nl)
+    _assign_designations(items)
+    return _make_element_list(items)
 
 
-# ── Port graph topology (reads IfcRelConnectsPorts) ──────────────────
+# ── Walk netlist for SLD ordering ────────────────────────────────────
 
 
-def _walk_port_graph(ifc_file):
-    """Walk IfcRelConnectsPorts to get ordered chain + branches.
+def _walk_netlist(nl: Netlist):
+    """Walk netlist source→load, return (chain, branches).
 
-    Returns:
-        chain: list of IFC elements in source→load order
-        branches: dict {element.id(): [branch_element, ...]}
+    chain: ordered list of Element IDs on the main path
+    branches: {element_id: [branch Element IDs]}
     """
-    port_owner = {}
-    elem_ports = {}
-
-    for rel in ifc_file.by_type("IfcRelNests"):
-        for child in (rel.RelatedObjects or []):
-            if child.is_a("IfcDistributionPort"):
-                port_owner[child.id()] = rel.RelatingObject
-                elem_ports.setdefault(rel.RelatingObject.id(), []).append(child)
-
+    conn_ids = nl.connected_port_ids
     connected = {}
-    for rel in ifc_file.by_type("IfcRelConnectsPorts"):
-        connected[rel.RelatingPort.id()] = rel.RelatedPort
-        connected[rel.RelatedPort.id()] = rel.RelatingPort
+    for c in nl.connections:
+        connected[c.port_a_id] = c.port_b_id
+        connected[c.port_b_id] = c.port_a_id
 
-    # Find source: element with unconnected SINK port
-    source = None
-    for eid, ports in elem_ports.items():
-        for p in ports:
-            if p.FlowDirection == "SINK" and p.id() not in connected:
-                source = ifc_file.by_id(eid)
+    # Find source: element with unconnected SINK
+    source_id = None
+    for el in nl.elements.values():
+        for p in el.sinks:
+            if p.id not in conn_ids:
+                source_id = el.id
                 break
-        if source:
+        if source_id:
             break
 
-    if not source:
-        logger.warning("No source element found in port graph")
+    if not source_id:
+        logger.warning("No source element found in netlist")
         return [], {}
 
-    chain = []
-    branches = {}
-    visited = set()
+    chain: list[int] = []
+    branches: dict[int, list[int]] = {}
+    visited: set[int] = set()
 
-    def walk(element):
-        if element.id() in visited:
+    def walk(eid: int):
+        if eid in visited:
             return
-        visited.add(element.id())
-        chain.append(element)
+        visited.add(eid)
+        chain.append(eid)
 
-        ports = elem_ports.get(element.id(), [])
-        sources = [p for p in ports if p.FlowDirection == "SOURCE"]
-        # Primary outputs first (Output, Output_1, Load, End_B)
-        sources.sort(key=lambda p: _port_priority(p.Name))
+        el = nl.elements[eid]
+        sources = sorted(el.sources, key=lambda p: _port_priority(p.name))
 
         main_followed = False
         for port in sources:
-            next_port = connected.get(port.id())
-            if not next_port:
+            next_pid = connected.get(port.id)
+            if not next_pid:
                 continue
-            next_el = port_owner.get(next_port.id())
-            if not next_el or next_el.id() in visited:
+            next_el = nl.element_of(next_pid)
+            if not next_el or next_el.id in visited:
                 continue
             if not main_followed:
-                walk(next_el)
+                walk(next_el.id)
                 main_followed = True
             else:
-                branches.setdefault(element.id(), []).append(next_el)
-                visited.add(next_el.id())
+                branches.setdefault(eid, []).append(next_el.id)
+                visited.add(next_el.id)
 
-    walk(source)
+    walk(source_id)
     return chain, branches
 
 
-def _port_priority(name):
-    """Sort key: primary outputs first, secondary later."""
-    primary = ("Output", "Output_1", "Load", "End_B")
-    return 0 if name in primary else 1
+_PRIMARY = {"Output", "Output_1", "Load", "End_B"}
 
 
-# ── Element enrichment ───────────────────────────────────────────────
+def _port_priority(name: str) -> int:
+    return 0 if name in _PRIMARY else 1
 
 
-def _get_pt(element) -> str:
-    """PredefinedType from instance, fallback to type object."""
-    pt = getattr(element, "PredefinedType", None)
-    if pt and pt != "NOTDEFINED":
-        return pt
-    t = ifcopenshell.util.element.get_type(element)
-    if t:
-        pt = getattr(t, "PredefinedType", None)
-        if pt and pt != "NOTDEFINED":
-            return pt
-    return ""
+# ── Element enrichment → render dicts ────────────────────────────────
 
 
-def _enrich_element(el):
-    """Build property dict for an IFC element."""
-    props = {}
-    try:
-        for pp in ifcopenshell.util.element.get_psets(el).values():
-            props.update({k: v for k, v in pp.items() if k != "id"})
-    except Exception:
-        pass
-    t = ifcopenshell.util.element.get_type(el)
-    cls = el.is_a()
-    pt = _get_pt(el)
-    props.update(
-        ifc_class=cls, ifc_id=el.id(), guid=el.GlobalId,
-        name=el.Name or cls, predefined_type=pt,
-        type_name=t.Name if t else "",
-        render=_render_type(cls, pt),
+def _el_to_dict(el: Element) -> dict:
+    """Convert Element dataclass to flat dict for rendering."""
+    d = dict(el.props)
+    d.update(
+        ifc_class=el.ifc_class, ifc_id=el.id, guid=el.guid,
+        name=el.name, predefined_type=el.predefined_type,
+        type_name=el.type_name, render=_render_type(el),
     )
-    return props
+    return d
 
 
-def _enrich_chain(chain, branches, ifc_file):
-    """Enrich all elements in chain + branches."""
-    elements = []
-    for el in chain:
-        elements.append(_enrich_element(el))
-    for branch_list in branches.values():
-        for el in branch_list:
-            elements.append(_enrich_element(el))
-    return elements
+def _enrich_all(chain, branches, nl: Netlist) -> list[dict]:
+    items = [_el_to_dict(nl.elements[eid]) for eid in chain]
+    for bl in branches.values():
+        for eid in bl:
+            items.append(_el_to_dict(nl.elements[eid]))
+    return items
 
 
 # ── Designations (ГОСТ 2.710-81) ────────────────────────────────────
 
 
-def _assign_designations(elements):
-    """Assign T1, QF1, FV1, W1... based on render type."""
-    counters = {}
-    for el in elements:
+def _assign_designations(items):
+    counters: dict[str, int] = {}
+    for el in items:
         code = DESIG_MAP.get(el.get("render", ""), "")
         if code:
             counters[code] = counters.get(code, 0) + 1
@@ -230,20 +203,17 @@ def _assign_designations(elements):
 # ── Topology → render items ──────────────────────────────────────────
 
 
-def _chain_to_topo(elements, branches, ifc_file):
-    """Convert enriched elements to topology render items."""
-    # Split: chain elements vs branch elements
+def _build_topo(items, branches, ifc_file):
     branch_ids = set()
     for bl in branches.values():
-        for el in bl:
-            branch_ids.add(el.id())
+        branch_ids.update(bl)
 
-    el_by_id = {el["ifc_id"]: el for el in elements}
+    el_by_id = {el["ifc_id"]: el for el in items}
     topo = []
 
-    for el in elements:
+    for el in items:
         if el["ifc_id"] in branch_ids:
-            continue  # branches rendered at their parent
+            continue
 
         render = el.get("render")
         if not render:
@@ -254,14 +224,11 @@ def _chain_to_topo(elements, branches, ifc_file):
         else:
             topo.append(_item(render, el))
 
-        # Render branches off this element
         parent_branches = branches.get(el["ifc_id"], [])
         if not parent_branches:
             continue
-        br_enriched = [el_by_id.get(b.id()) for b in parent_branches]
-        br_enriched = [b for b in br_enriched if b]
-        # Group surge arresters into one symbol
-        arresters = [b for b in br_enriched if b.get("render") == "surge_arrester"]
+        br_items = [el_by_id[bid] for bid in parent_branches if bid in el_by_id]
+        arresters = [b for b in br_items if b.get("render") == "surge_arrester"]
         if arresters:
             first, last = arresters[0], arresters[-1]
             desig = (f"{first['designation']}…{last['designation']}"
@@ -269,23 +236,19 @@ def _chain_to_topo(elements, branches, ifc_file):
             v = first.get("RatedVoltage", 0) or 0
             topo.append(_item("surge_arrester", first, label=desig,
                               sub=f"{len(arresters)}шт, {v:.0f}В"))
-        # Other branch types
-        for br in br_enriched:
+        for br in br_items:
             if br.get("render") != "surge_arrester":
                 topo.append(_item(br.get("render", ""), br))
 
-    # Load terminals (IfcFlowTerminal — not in port graph)
     terms = ifc_file.by_type("IfcFlowTerminal")
     if terms:
         t = ifcopenshell.util.element.get_type(terms[0])
         name = t.Name if t else "Load"
-        # Get voltage from last busbar in chain
-        last_bus = [e for e in elements if e.get("render") == "busbar"]
+        last_bus = [e for e in items if e.get("render") == "busbar"]
         sv = last_bus[-1].get("RatedVoltage", 400) if last_bus else 400
         topo.append({"render": "load_group",
                      "label": f"{len(terms)}× {name}",
                      "sub": f"~3, {_fv(sv)}"})
-
     return topo
 
 
@@ -296,7 +259,6 @@ def _item(render, el, label=None, sub=None):
 
 
 def _auto_sub(el):
-    """Auto-generate sub-label from element properties."""
     cls = el["ifc_class"]
     pv, sv = el.get("PrimaryVoltage", 0), el.get("SecondaryVoltage", 0)
     v = el.get("RatedVoltage", 0) or 0
@@ -385,11 +347,11 @@ def _draw_load_group(parent, cx, y, label, sub):
     w, h = 30, 10
     line_v(parent, cx, y, y + 2)
     ry = y + 2
-    rect(parent, cx - w/2, ry, w, h, fill="#f0f0f0")
-    text(parent, cx, ry + h/2 - 1, label,
+    rect(parent, cx - w / 2, ry, w, h, fill="#f0f0f0")
+    text(parent, cx, ry + h / 2 - 1, label,
          font_size=FONT_LABEL, text_anchor="middle")
     if sub:
-        text(parent, cx, ry + h/2 + FONT_SMALL, sub,
+        text(parent, cx, ry + h / 2 + FONT_SMALL, sub,
              font_size=FONT_SMALL, text_anchor="middle", fill="#444")
     return ry + h + SYMBOL_GAP
 
@@ -397,9 +359,9 @@ def _draw_load_group(parent, cx, y, label, sub):
 # ── Element list (ГОСТ 2.702-2011 п.5.3.18) ─────────────────────────
 
 
-def _make_element_list(elements):
-    groups = {}
-    for el in elements:
+def _make_element_list(items):
+    groups: dict[str, dict] = {}
+    for el in items:
         d = el.get("designation", "")
         if not d:
             continue

@@ -1,29 +1,21 @@
-"""Single-line diagram (SLD) generator from IFC model.
+"""Single-line diagram (SLD) from pandapower network.
 
-Reads topology via ifc_netlist, assigns designations per ГОСТ 2.710-81,
-renders symbols per ГОСТ 2.702/2.721/2.723/2.727/2.755 as SVG.
-
-Includes перечень элементов (element list) per ГОСТ 2.702-2011 п.5.3.18.
+IFC → pandapower net → SVG diagram with ГОСТ designations.
+Symbols per ГОСТ 2.702/2.721/2.723/2.727/2.755.
+Designations per ГОСТ 2.710-81.
+Element list per ГОСТ 2.702-2011 п.5.3.18.
 """
 
 import logging
+from collections import defaultdict
 
-import ifcopenshell.util.element
 from lxml import etree
 
 from . import symbols
-from .ifc_netlist import Element, Netlist, parse_netlist
+from .pp_converter import ifc_to_pandapower
 from .svg_primitives import (
-    FONT_LABEL,
-    FONT_PROPS,
-    FONT_SMALL,
-    LINE_W,
-    NSMAP,
-    THIN_W,
-    line,
-    line_v,
-    rect,
-    text,
+    FONT_LABEL, FONT_PROPS, FONT_SMALL, LINE_W, NSMAP, THIN_W,
+    line, line_v, rect, text,
 )
 
 logger = logging.getLogger(__name__)
@@ -33,28 +25,7 @@ DIAGRAM_H = 200
 CENTER_X = DIAGRAM_W / 2
 SYMBOL_GAP = 4
 
-# ── IFC → ГОСТ symbol mapping ───────────────────────────────────────
-
-RENDER_MAP = {
-    ("IfcTransformer", None): "transformer",
-    ("IfcProtectiveDevice", "CIRCUITBREAKER"): "circuit_breaker",
-    ("IfcProtectiveDevice", "VARISTOR"): "surge_arrester",
-    ("IfcProtectiveDevice", "USERDEFINED"): "surge_arrester",
-    ("IfcElectricDistributionBoard", None): "busbar",
-    ("IfcCableSegment", None): "cable",
-}
-
-DESIG_MAP = {
-    "transformer": "T",
-    "circuit_breaker": "QF",
-    "surge_arrester": "FV",
-    "cable": "W",
-}
-
-
-def _render_type(el: Element) -> str | None:
-    cls, pt = el.ifc_class, el.predefined_type
-    return RENDER_MAP.get((cls, pt)) or RENDER_MAP.get((cls, None))
+DESIG_CODE = {"trafo": "T", "switch": "QF", "line": "W", "shunt": "FV"}
 
 
 # ── Public API ───────────────────────────────────────────────────────
@@ -62,11 +33,8 @@ def _render_type(el: Element) -> str | None:
 
 def create_single_line_diagram(ifc_file) -> str:
     """Generate SVG single-line diagram from IFC model."""
-    nl = parse_netlist(ifc_file)
-    chain, branches = _walk_netlist(nl)
-    items = _enrich_all(chain, branches, nl)
-    _assign_designations(items)
-    topo = _build_topo(items, branches, ifc_file)
+    net = ifc_to_pandapower(ifc_file)
+    topo = _walk_pp_topology(net)
 
     root = etree.Element("svg", nsmap=NSMAP)
     rect(root, 0, 0, DIAGRAM_W, 999, fill="white", stroke="none")
@@ -75,7 +43,7 @@ def create_single_line_diagram(ifc_file) -> str:
 
     y = _draw_topology(root, topo, CENTER_X, 14)
 
-    elem_items = _make_element_list(items)
+    elem_items = _element_list_from_topo(topo)
     list_y = max(y + 8, 140)
     _draw_element_list(root, elem_items, 5, list_y)
     list_h = 3 + 5 + len(elem_items) * 5 + 2
@@ -89,202 +57,145 @@ def create_single_line_diagram(ifc_file) -> str:
 
 def get_element_list(ifc_file) -> list[dict]:
     """Return element list data for external use."""
-    nl = parse_netlist(ifc_file)
-    chain, branches = _walk_netlist(nl)
-    items = _enrich_all(chain, branches, nl)
-    _assign_designations(items)
-    return _make_element_list(items)
+    net = ifc_to_pandapower(ifc_file)
+    topo = _walk_pp_topology(net)
+    return _element_list_from_topo(topo)
 
 
-# ── Walk netlist for SLD ordering ────────────────────────────────────
+# ── Topology walker ─────────────────────────────────────────────────
 
 
-def _walk_netlist(nl: Netlist):
-    """Walk netlist source→load, return (chain, branches).
+def _walk_pp_topology(net):
+    """Walk pandapower net from ext_grid → loads. Returns render items."""
+    adj = _build_adjacency(net)
 
-    chain: ordered list of Element IDs on the main path
-    branches: {element_id: [branch Element IDs]}
-    """
-    conn_ids = nl.connected_port_ids
-    connected = {}
-    for c in nl.connections:
-        connected[c.port_a_id] = c.port_b_id
-        connected[c.port_b_id] = c.port_a_id
+    bus_shunts = defaultdict(list)
+    for i in net.shunt.index:
+        bus_shunts[int(net.shunt.at[i, "bus"])].append(i)
 
-    # Find source: element with unconnected SINK
-    source_id = None
-    for el in nl.elements.values():
-        for p in el.sinks:
-            if p.id not in conn_ids:
-                source_id = el.id
-                break
-        if source_id:
-            break
+    bus_loads = defaultdict(list)
+    for i in net.load.index:
+        bus_loads[int(net.load.at[i, "bus"])].append(i)
 
-    if not source_id:
-        logger.warning("No source element found in netlist")
-        return [], {}
+    start = int(net.ext_grid.bus.iloc[0]) if not net.ext_grid.empty else None
+    if start is None:
+        return []
 
-    chain: list[int] = []
-    branches: dict[int, list[int]] = {}
-    visited: set[int] = set()
+    items: list[dict] = []
+    visited_buses: set[int] = set()
+    visited_edges: set[tuple] = set()
+    counters: dict[str, int] = {}
 
-    def walk(eid: int):
-        if eid in visited:
+    def desig(code):
+        counters[code] = counters.get(code, 0) + 1
+        return f"{code}{counters[code]}"
+
+    def walk(bus):
+        if bus in visited_buses:
             return
-        visited.add(eid)
-        chain.append(eid)
+        visited_buses.add(bus)
 
-        el = nl.elements[eid]
-        sources = sorted(el.sources, key=lambda p: _port_priority(p.name))
+        # Named bus → busbar symbol
+        bname = net.bus.at[bus, "name"]
+        if bname:
+            items.append({"render": "busbar", "label": bname,
+                          "sub": f"{_fv(net.bus.at[bus, 'vn_kv'] * 1000)}"})
 
-        main_followed = False
-        for port in sources:
-            next_pid = connected.get(port.id)
-            if not next_pid:
+        # Shunts → branch (group surge arresters)
+        if bus in bus_shunts:
+            _add_shunt_group(net, bus_shunts[bus], items, desig)
+
+        # Follow edges
+        for etype, eidx, other in adj.get(bus, []):
+            key = (etype, eidx)
+            if key in visited_edges:
                 continue
-            next_el = nl.element_of(next_pid)
-            if not next_el or next_el.id in visited:
-                continue
-            if not main_followed:
-                walk(next_el.id)
-                main_followed = True
-            else:
-                branches.setdefault(eid, []).append(next_el.id)
-                visited.add(next_el.id)
+            visited_edges.add(key)
+            items.append(_edge_item(net, etype, eidx, desig))
+            walk(other)
 
-    walk(source_id)
-    return chain, branches
+        # Loads (terminal)
+        if bus in bus_loads:
+            for li in bus_loads[bus]:
+                vn = net.bus.at[bus, "vn_kv"]
+                items.append({
+                    "render": "load_group",
+                    "label": str(net.load.at[li, "name"]),
+                    "sub": f"~3, {_fv(vn * 1000)}",
+                    "type_name": str(net.load.at[li, "ifc_type_name"])
+                    if "ifc_type_name" in net.load.columns else "",
+                })
 
-
-_PRIMARY = {"Output", "Output_1", "Load", "End_B"}
-
-
-def _port_priority(name: str) -> int:
-    return 0 if name in _PRIMARY else 1
-
-
-# ── Element enrichment → render dicts ────────────────────────────────
-
-
-def _el_to_dict(el: Element) -> dict:
-    """Convert Element dataclass to flat dict for rendering."""
-    d = dict(el.props)
-    d.update(
-        ifc_class=el.ifc_class, ifc_id=el.id, guid=el.guid,
-        name=el.name, predefined_type=el.predefined_type,
-        type_name=el.type_name, render=_render_type(el),
-    )
-    return d
-
-
-def _enrich_all(chain, branches, nl: Netlist) -> list[dict]:
-    items = [_el_to_dict(nl.elements[eid]) for eid in chain]
-    for bl in branches.values():
-        for eid in bl:
-            items.append(_el_to_dict(nl.elements[eid]))
+    walk(start)
     return items
 
 
-# ── Designations (ГОСТ 2.710-81) ────────────────────────────────────
+def _build_adjacency(net):
+    """Build bus → [(elem_type, elem_idx, other_bus)] adjacency."""
+    adj: dict[int, list] = defaultdict(list)
+    for i in net.trafo.index:
+        hv, lv = int(net.trafo.at[i, "hv_bus"]), int(net.trafo.at[i, "lv_bus"])
+        adj[hv].append(("trafo", i, lv))
+        adj[lv].append(("trafo", i, hv))
+    for i in net.switch[net.switch.et == "b"].index:
+        a, b = int(net.switch.at[i, "bus"]), int(net.switch.at[i, "element"])
+        adj[a].append(("switch", i, b))
+        adj[b].append(("switch", i, a))
+    for i in net.line.index:
+        f, t = int(net.line.at[i, "from_bus"]), int(net.line.at[i, "to_bus"])
+        adj[f].append(("line", i, t))
+        adj[t].append(("line", i, f))
+    return adj
 
 
-def _assign_designations(items):
-    counters: dict[str, int] = {}
-    for el in items:
-        code = DESIG_MAP.get(el.get("render", ""), "")
-        if code:
-            counters[code] = counters.get(code, 0) + 1
-            el["designation"] = f"{code}{counters[code]}"
-        else:
-            el["designation"] = ""
-
-
-# ── Topology → render items ──────────────────────────────────────────
-
-
-def _build_topo(items, branches, ifc_file):
-    branch_ids = set()
-    for bl in branches.values():
-        branch_ids.update(bl)
-
-    el_by_id = {el["ifc_id"]: el for el in items}
-    topo = []
-
-    for el in items:
-        if el["ifc_id"] in branch_ids:
-            continue
-
-        render = el.get("render")
-        if not render:
-            continue
-
-        if render == "busbar":
-            topo.append(_item(render, el, label=el.get("name", "")))
-        else:
-            topo.append(_item(render, el))
-
-        parent_branches = branches.get(el["ifc_id"], [])
-        if not parent_branches:
-            continue
-        br_items = [el_by_id[bid] for bid in parent_branches if bid in el_by_id]
-        arresters = [b for b in br_items if b.get("render") == "surge_arrester"]
-        if arresters:
-            first, last = arresters[0], arresters[-1]
-            desig = (f"{first['designation']}…{last['designation']}"
-                     if len(arresters) > 1 else first["designation"])
-            v = first.get("RatedVoltage", 0) or 0
-            topo.append(_item("surge_arrester", first, label=desig,
-                              sub=f"{len(arresters)}шт, {v:.0f}В"))
-        for br in br_items:
-            if br.get("render") != "surge_arrester":
-                topo.append(_item(br.get("render", ""), br))
-
-    terms = ifc_file.by_type("IfcFlowTerminal")
-    if terms:
-        t = ifcopenshell.util.element.get_type(terms[0])
-        name = t.Name if t else "Load"
-        last_bus = [e for e in items if e.get("render") == "busbar"]
-        sv = last_bus[-1].get("RatedVoltage", 400) if last_bus else 400
-        topo.append({"render": "load_group",
-                     "label": f"{len(terms)}× {name}",
-                     "sub": f"~3, {_fv(sv)}"})
-    return topo
-
-
-def _item(render, el, label=None, sub=None):
-    return {"render": render, "data": el,
-            "label": label or el.get("designation", ""),
-            "sub": sub or _auto_sub(el)}
-
-
-def _auto_sub(el):
-    cls = el["ifc_class"]
-    pv, sv = el.get("PrimaryVoltage", 0), el.get("SecondaryVoltage", 0)
-    v = el.get("RatedVoltage", 0) or 0
-    rp = el.get("RatedPower", 0) or 0
-    if cls == "IfcTransformer":
+def _edge_item(net, etype, eidx, desig_fn):
+    """Create render item for a trafo/switch/line edge."""
+    if etype == "trafo":
+        row = net.trafo.loc[eidx]
+        vhv, vlv, sn = row.vn_hv_kv, row.vn_lv_kv, row.sn_mva
+        sub = f"{_fv(vhv * 1000)}/{_fv(vlv * 1000)}, "
+        sub += f"{sn:.0f}МВА" if sn >= 1 else f"{sn * 1000:.0f}кВА"
+        return {"render": "transformer", "label": desig_fn("T"),
+                "sub": sub, "name": row["name"],
+                "type_name": row.get("ifc_type_name", "")}
+    if etype == "switch":
+        row = net.switch.loc[eidx]
+        rc = row.get("rated_current_a", 0) or 0
+        rv = row.get("rated_voltage_v", 0) or 0
         parts = []
-        if pv and sv:
-            parts.append(f"{_fv(pv)}/{_fv(sv)}")
-        elif v:
-            parts.append(_fv(v))
-        if rp:
-            parts.append(f"{rp/1000:.0f}кВА" if rp < 1e6
-                         else f"{rp/1e6:.0f}МВА")
-        return ", ".join(parts)
-    return _sub_vi(el)
+        if rc:
+            parts.append(f"{rc:.0f}А")
+        if rv:
+            parts.append(f"{rv:.0f}В")
+        return {"render": "circuit_breaker", "label": desig_fn("QF"),
+                "sub": ", ".join(parts), "name": row["name"],
+                "type_name": row.get("ifc_type_name", "")}
+    # line
+    row = net.line.loc[eidx]
+    length_m = row.length_km * 1000
+    return {"render": "cable", "label": desig_fn("W"),
+            "sub": f"{length_m:.0f}м" if length_m else "",
+            "name": row["name"],
+            "type_name": row.get("ifc_type_name", "")}
 
 
-def _sub_vi(el):
-    parts = []
-    i = el.get("RatedCurrent", 0) or 0
-    v = el.get("RatedVoltage", 0) or 0
-    if i:
-        parts.append(f"{i:.0f}А")
-    if v:
-        parts.append(f"{v:.0f}В")
-    return ", ".join(parts)
+def _add_shunt_group(net, shunt_indices, items, desig_fn):
+    """Render grouped surge arresters as a branch."""
+    desigs = [desig_fn("FV") for _ in shunt_indices]
+    rv = net.shunt.at[shunt_indices[0], "rated_voltage_v"] \
+        if "rated_voltage_v" in net.shunt.columns else 0
+    rv = rv or (net.shunt.at[shunt_indices[0], "vn_kv"] * 1000)
+    if len(desigs) > 1:
+        label = f"{desigs[0]}…{desigs[-1]}"
+        sub = f"{len(desigs)}шт, {rv:.0f}В"
+    else:
+        label = desigs[0]
+        sub = f"{rv:.0f}В"
+    items.append({"render": "surge_arrester", "label": label, "sub": sub,
+                  "count": len(shunt_indices),
+                  "name": net.shunt.at[shunt_indices[0], "name"],
+                  "type_name": net.shunt.at[shunt_indices[0], "ifc_type_name"]
+                  if "ifc_type_name" in net.shunt.columns else ""})
 
 
 def _fv(v):
@@ -299,9 +210,9 @@ def _fv(v):
 # ── Drawing engine ───────────────────────────────────────────────────
 
 
-def _draw_topology(root, topology, cx, y):
-    for item in topology:
-        r = item.get("render")
+def _draw_topology(root, topo, cx, y):
+    for item in topo:
+        r = item["render"]
         lbl, sub = item.get("label", ""), item.get("sub", "")
         if r == "transformer":
             y = symbols.draw_transformer(root, cx, y, lbl, sub)
@@ -359,19 +270,25 @@ def _draw_load_group(parent, cx, y, label, sub):
 # ── Element list (ГОСТ 2.702-2011 п.5.3.18) ─────────────────────────
 
 
-def _make_element_list(items):
+def _element_list_from_topo(topo):
+    """Build element list from render items."""
+    skip = {"busbar", "load_group"}
     groups: dict[str, dict] = {}
-    for el in items:
-        d = el.get("designation", "")
-        if not d:
+    for item in topo:
+        if item["render"] in skip:
             continue
-        tn = el.get("type_name") or el.get("name", "")
-        if tn in groups:
-            groups[tn]["count"] += 1
-            groups[tn]["desig_last"] = d
+        name = item.get("type_name") or item.get("name", "")
+        if not name:
+            continue
+        d = item.get("label", "")
+        n = item.get("count", 1)
+        if name in groups:
+            groups[name]["count"] += n
+            groups[name]["desig_last"] = d
         else:
-            groups[tn] = {"desig_first": d, "desig_last": d,
-                          "name": tn, "count": 1, "note": _auto_sub(el)}
+            groups[name] = {"desig_first": d, "desig_last": d,
+                            "name": name, "count": n,
+                            "note": item.get("sub", "")}
     result = []
     for g in groups.values():
         d = g["desig_first"]

@@ -7,6 +7,11 @@ The pandapower net is used for:
   - Short circuit calculation (IEC 60909)
   - SLD rendering (topology + results)
   - Cable journal generation
+
+Custom columns added for SLD/reporting:
+  - ifc_type_name: IfcTypeProduct name (for element list)
+  - rated_current_a: rated current in Amperes (switches)
+  - rated_voltage_v: rated voltage in Volts
 """
 
 import logging
@@ -95,24 +100,20 @@ def _create_buses(net, nl: Netlist):
     """Create pandapower buses from port connectivity."""
     uf = _UF()
 
-    # Connected ports share a bus
     for c in nl.connections:
         uf.union(c.port_a_id, c.port_b_id)
 
-    # All ports of a busbar share one bus
     for el in nl.elements.values():
         if el.ifc_class == "IfcElectricDistributionBoard":
             ids = [p.id for p in el.ports]
             for pid in ids[1:]:
                 uf.union(ids[0], pid)
 
-    # Collect groups
     groups: dict[int, set[int]] = {}
     for pid in nl.ports:
         rep = uf.find(pid)
         groups.setdefault(rep, set()).add(pid)
 
-    # Create a pp bus per group
     pp_bus: dict[int, int] = {}
     for rep, port_ids in groups.items():
         vn = _bus_voltage(port_ids, nl)
@@ -127,7 +128,6 @@ def _create_buses(net, nl: Netlist):
 
 
 def _bus_voltage(port_ids: set[int], nl: Netlist) -> float:
-    """Determine kV from connected elements' properties."""
     for pid in port_ids:
         port = nl.ports[pid]
         el = nl.elements.get(port.owner_id)
@@ -154,7 +154,7 @@ def _bus_name(port_ids: set[int], nl: Netlist) -> str:
     return ""
 
 
-# ── Element creators ─────────────────────────────────────────────────
+# ── Element creators (store IFC metadata in custom columns) ─────────
 
 
 def _add_trafo(net, el, bus_of):
@@ -170,7 +170,7 @@ def _add_trafo(net, el, bus_of):
     if not all((sn, vhv, vlv)):
         logger.warning("Transformer %s: incomplete parameters", el.name)
         return
-    pp.create_transformer_from_parameters(
+    idx = pp.create_transformer_from_parameters(
         net, hv_bus=hv, lv_bus=lv,
         sn_mva=sn, vn_hv_kv=vhv, vn_lv_kv=vlv,
         vkr_percent=p.get("vkr_percent", 1.5),
@@ -179,16 +179,21 @@ def _add_trafo(net, el, bus_of):
         i0_percent=p.get("i0_percent", 0.5),
         name=el.name,
     )
+    net.trafo.at[idx, "ifc_type_name"] = el.type_name
 
 
 def _add_switch(net, el, bus_of):
     if not el.sinks or not el.sources:
         return
-    pp.create_switch(
+    rc = el.props.get("RatedCurrent", 0) or 0
+    idx = pp.create_switch(
         net, bus=bus_of(el.sinks[0].id),
         element=bus_of(el.sources[0].id),
         et="b", type="CB", name=el.name,
     )
+    net.switch.at[idx, "ifc_type_name"] = el.type_name
+    net.switch.at[idx, "rated_current_a"] = rc
+    net.switch.at[idx, "rated_voltage_v"] = el.props.get("RatedVoltage", 0) or 0
 
 
 def _add_line(net, el, bus_of):
@@ -197,7 +202,7 @@ def _add_line(net, el, bus_of):
     p = el.props
     length_km = (p.get("Length", 50) or 50) / 1000
     max_i = (p.get("RatedCurrent", 630) or 630) / 1000
-    pp.create_line_from_parameters(
+    idx = pp.create_line_from_parameters(
         net, from_bus=bus_of(el.sinks[0].id),
         to_bus=bus_of(el.sources[0].id),
         length_km=length_km,
@@ -205,17 +210,19 @@ def _add_line(net, el, bus_of):
         x_ohm_per_km=p.get("x_ohm_per_km", 0.1),
         c_nf_per_km=0, max_i_ka=max_i, name=el.name,
     )
+    net.line.at[idx, "ifc_type_name"] = el.type_name
 
 
 def _add_shunt(net, el, bus_of):
-    """Surge arrester → shunt (reactive power ≈ 0)."""
     if not el.sinks:
         return
     bus = bus_of(el.sinks[0].id)
-    pp.create_shunt(
+    idx = pp.create_shunt(
         net, bus=bus, q_mvar=0, p_mw=0,
         name=el.name, vn_kv=net.bus.at[bus, "vn_kv"],
     )
+    net.shunt.at[idx, "ifc_type_name"] = el.type_name
+    net.shunt.at[idx, "rated_voltage_v"] = el.props.get("RatedVoltage", 0) or 0
 
 
 # ── Unconnected loads (IfcFlowTerminal without ports) ────────────────
@@ -230,19 +237,17 @@ def _add_unconnected_loads(net, ifc_file, nl: Netlist):
     if not unconnected:
         return
 
-    # Group by type
     groups: dict[str, list] = {}
     for t in unconnected:
         tp = ue.get_type(t)
         key = tp.Name if tp else (t.Name or "Load")
         groups.setdefault(key, []).append(t)
 
-    # Find lowest-voltage bus as load bus
     if net.bus.empty:
         return
     load_bus = int(net.bus["vn_kv"].idxmin())
 
-    for name, items in groups.items():
+    for type_name, items in groups.items():
         p_each = 0.0
         for t in items:
             try:
@@ -253,8 +258,9 @@ def _add_unconnected_loads(net, ifc_file, nl: Netlist):
                         break
             except Exception:
                 pass
-        pp.create_load(
+        idx = pp.create_load(
             net, bus=load_bus,
             p_mw=p_each * len(items) if p_each else 0,
-            name=f"{len(items)}× {name}",
+            name=f"{len(items)}× {type_name}",
         )
+        net.load.at[idx, "ifc_type_name"] = type_name

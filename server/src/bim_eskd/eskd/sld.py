@@ -152,10 +152,12 @@ def _edge_item(net, etype, eidx, desig_fn):
     """Create render item for a trafo/switch/line edge."""
     if etype == "trafo":
         row = net.trafo.loc[eidx]
+        is_auto = bool(row.get("is_auto", False))
         vhv, vlv, sn = row.vn_hv_kv, row.vn_lv_kv, row.sn_mva
         sub = f"{_fv(vhv * 1000)}/{_fv(vlv * 1000)}, "
         sub += f"{sn:.0f}МВА" if sn >= 1 else f"{sn * 1000:.0f}кВА"
-        return {"render": "transformer", "label": desig_fn("T"),
+        render = "autotransformer" if is_auto else "transformer"
+        return {"render": render, "label": desig_fn("T"),
                 "sub": sub, "name": row["name"],
                 "type_name": row.get("ifc_type_name", "")}
     if etype == "switch":
@@ -216,6 +218,8 @@ def _draw_topology(root, topo, cx, y):
         lbl, sub = item.get("label", ""), item.get("sub", "")
         if r == "transformer":
             y = symbols.draw_transformer(root, cx, y, lbl, sub)
+        elif r == "autotransformer":
+            y = symbols.draw_autotransformer(root, cx, y, lbl, sub)
         elif r == "circuit_breaker":
             y = symbols.draw_circuit_breaker(root, cx, y, lbl, sub)
         elif r == "cable":

@@ -132,6 +132,28 @@ def draw_transformer(parent, cx, y, label="", sub="") -> float:
     return y_bottom + LEAD + SYMBOL_GAP
 
 
+def draw_autotransformer(parent, cx, y, label="", sub="") -> float:
+    """Insert autotransformer symbol. Returns y_next."""
+    sym = _get_symbol("sym-autotransformer")
+    sym_h = sym.bottom_y - sym.top_y
+
+    line_v(parent, cx, y, y + LEAD)
+
+    g = etree.SubElement(parent, "g")
+    tx = cx - sym.cx
+    ty = y + LEAD - sym.top_y
+    g.set("transform", f"translate({tx:.3f},{ty:.3f})")
+    _clone_elements(g, sym.elements)
+
+    y_bottom = y + LEAD + sym_h
+    line_v(parent, cx, y_bottom, y_bottom + LEAD)
+
+    _label_right(parent, cx + sym.cx + 10, y + LEAD + sym_h * 0.3,
+                 label, sub)
+
+    return y_bottom + LEAD + SYMBOL_GAP
+
+
 def draw_surge_arrester(parent, cx, y, label="", sub="") -> float:
     """Insert surge arrester (OPN) symbol. Returns y_next (of main line).
 

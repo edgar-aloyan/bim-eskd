@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Автотрансформатор / Autotransformer (ГОСТ 2.723-68)
+     Одна окружность с отводом из середины обмотки -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16mm" height="16mm">
+  <g id="symbol" data-cx="6" data-top-y="0" data-bottom-y="16">
+    <!-- Winding (single coil) -->
+    <circle cx="6" cy="8" r="5" fill="none" stroke="black" stroke-width="0.5"/>
+    <!-- Top lead -->
+    <line x1="6" y1="0" x2="6" y2="3" stroke="black" stroke-width="0.5"/>
+    <!-- Bottom lead -->
+    <line x1="6" y1="13" x2="6" y2="16" stroke="black" stroke-width="0.5"/>
+    <!-- Tap (horizontal line from winding to the right + arrow down) -->
+    <line x1="11" y1="8" x2="14" y2="8" stroke="black" stroke-width="0.5"/>
+    <line x1="14" y1="8" x2="14" y2="16" stroke="black" stroke-width="0.5"/>
+    <!-- Arrow at the tap junction pointing right -->
+    <polyline points="9.5,7 11,8 9.5,9" fill="none" stroke="black" stroke-width="0.5"/>
+  </g>
+</svg>

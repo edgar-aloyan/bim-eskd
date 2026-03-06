@@ -157,6 +157,11 @@ def _bus_name(port_ids: set[int], nl: Netlist) -> str:
 # ── Element creators (store IFC metadata in custom columns) ─────────
 
 
+def _is_autotransformer(el) -> bool:
+    """Check if transformer is an autotransformer via Pset property."""
+    return bool(el.props.get("IsAutoTransformer"))
+
+
 def _add_trafo(net, el, bus_of):
     if not el.sinks or not el.sources:
         logger.warning("Transformer %s: missing ports", el.name)
@@ -170,16 +175,18 @@ def _add_trafo(net, el, bus_of):
     if not all((sn, vhv, vlv)):
         logger.warning("Transformer %s: incomplete parameters", el.name)
         return
+    is_auto = _is_autotransformer(el)
     idx = pp.create_transformer_from_parameters(
         net, hv_bus=hv, lv_bus=lv,
         sn_mva=sn, vn_hv_kv=vhv, vn_lv_kv=vlv,
-        vkr_percent=p.get("vkr_percent", 1.5),
-        vk_percent=p.get("vk_percent", 6.0),
-        pfe_kw=p.get("pfe_kw", 0.5),
-        i0_percent=p.get("i0_percent", 0.5),
+        vkr_percent=p.get("vkr_percent", 1.0 if is_auto else 1.5),
+        vk_percent=p.get("vk_percent", 3.0 if is_auto else 6.0),
+        pfe_kw=p.get("pfe_kw", 0.3 if is_auto else 0.5),
+        i0_percent=p.get("i0_percent", 0.3 if is_auto else 0.5),
         name=el.name,
     )
     net.trafo.at[idx, "ifc_type_name"] = el.type_name
+    net.trafo.at[idx, "is_auto"] = is_auto
 
 
 def _add_switch(net, el, bus_of):

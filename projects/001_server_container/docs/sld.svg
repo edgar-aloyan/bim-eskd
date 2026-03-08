@@ -16,7 +16,7 @@
   <rect width="420" height="297" fill="url(#mm5)"/>
 
   <!-- Заземлитель на нижнем полюсе генератора -->
-  <g transform="translate(90, 70)" stroke="black" stroke-width="0.5">
+  <g transform="translate(95, 70)" stroke="black" stroke-width="0.5">
     <line x1="0" y1="0" x2="0" y2="5"/>
     <line x1="-4" y1="5" x2="4" y2="5"/>
     <line x1="-2.5" y1="7" x2="2.5" y2="7"/>
@@ -25,15 +25,15 @@
 
   <!-- Провода (замкнутая цепь: генератор — лампочка) -->
   <g stroke="black" stroke-width="0.5">
-    <line x1="70" y1="50" x2="90" y2="50"/>
-    <line x1="70" y1="70" x2="90" y2="70"/>
+    <line x1="65" y1="50" x2="95" y2="50"/>
+    <line x1="65" y1="70" x2="95" y2="70"/>
   </g>
 
-  <!-- Точка на пересечении (90,70): провод + ответвление заземлителя -->
-  <circle cx="90" cy="70" r="0.7" fill="black" stroke="none"/>
+  <!-- Точка на пересечении (95,70): провод + ответвление заземлителя -->
+  <circle cx="95" cy="70" r="0.7" fill="black" stroke="none"/>
 
   <!-- Обмотка генератора (двухполюсная), ГОСТ 2.723, d=10мм, выводы 5мм -->
-  <g transform="translate(90, 50)" stroke="black" stroke-width="0.5" fill="none">
+  <g transform="translate(95, 50)" stroke="black" stroke-width="0.5" fill="none">
     <line x1="0" y1="0" x2="0" y2="5"/>
     <rect x="-10" y="5" width="20" height="10" stroke-dasharray="2,1" stroke-width="0.3"/>
     <circle cx="0" cy="10" r="5"/>
@@ -42,7 +42,7 @@
   </g>
 
   <!-- Лампочка (двухполюсная), ГОСТ 2.732, d=10мм, выводы 5мм -->
-  <g transform="translate(70, 50)" stroke="black" stroke-width="0.5" fill="none">
+  <g transform="translate(65, 50)" stroke="black" stroke-width="0.5" fill="none">
     <line x1="0" y1="0" x2="0" y2="5"/>
     <rect x="-10" y="5" width="20" height="10" stroke-dasharray="2,1" stroke-width="0.3"/>
     <circle cx="0" cy="10" r="5"/>

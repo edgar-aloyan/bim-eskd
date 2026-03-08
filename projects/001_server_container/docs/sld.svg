@@ -29,13 +29,8 @@
     <line x1="70" y1="70" x2="90" y2="70"/>
   </g>
 
-  <!-- Точки соединений -->
-  <g fill="black" stroke="none">
-    <circle cx="70" cy="50" r="0.7"/>
-    <circle cx="90" cy="50" r="0.7"/>
-    <circle cx="70" cy="70" r="0.7"/>
-    <circle cx="90" cy="70" r="0.7"/>
-  </g>
+  <!-- Точка на пересечении (90,70): провод + ответвление заземлителя -->
+  <circle cx="90" cy="70" r="0.7" fill="black" stroke="none"/>
 
   <!-- Обмотка генератора (двухполюсная), ГОСТ 2.723, d=10мм, выводы 5мм -->
   <g transform="translate(90, 50)" stroke="black" stroke-width="0.5" fill="none">

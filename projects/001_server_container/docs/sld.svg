@@ -15,8 +15,8 @@
   </defs>
   <rect width="420" height="297" fill="url(#mm5)"/>
 
-  <!-- Заземлитель -->
-  <g transform="translate(50, 50)" stroke="black" stroke-width="0.5">
+  <!-- Заземлитель на нижнем полюсе генератора -->
+  <g transform="translate(90, 70)" stroke="black" stroke-width="0.5">
     <line x1="0" y1="0" x2="0" y2="5"/>
     <line x1="-4" y1="5" x2="4" y2="5"/>
     <line x1="-2.5" y1="7" x2="2.5" y2="7"/>

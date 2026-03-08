@@ -72,7 +72,8 @@ def generate_docs(output_dir: str | Path) -> list[str]:
         svg_path = output_dir / f"_view_{name}.svg"
         view_svg = ""
 
-        if view in ("plan", "front", "back", "left", "right"):
+        if view in ("plan", "front", "back", "left", "right",
+                    "section_ns", "section_ew"):
             try:
                 section_height = float(section_h) if section_h else None
                 renderer.render_view(

@@ -23,7 +23,7 @@ PSET_SHEET = "Pset_ESKD_Sheet"
 
 # Standard fields stored in the Pset
 SHEET_FIELDS = [
-    "view",           # "plan", "front", "back", "left", "right", "sld", "spec"
+    "view",           # "plan", "front", "back", "left", "right", "section_ns", "section_ew", "sld", "spec", "calc"
     "scale",          # "1:50", "1:100"
     "format",         # "A3", "A4", "A1"
     "orientation",    # "landscape", "portrait"

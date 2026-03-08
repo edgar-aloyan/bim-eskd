@@ -60,6 +60,29 @@ def render_elevation(
     return str(result)
 
 
+def render_section(
+    output_path: str,
+    direction: str = "section_ns",
+    scale: float = 50.0,
+    width_mm: float = 297.0,
+    height_mm: float = 210.0,
+) -> str:
+    """Render a vertical section view to SVG. Returns the output path.
+
+    direction: "section_ns" (longitudinal, North-South cut),
+               "section_ew" (transverse, East-West cut)
+    """
+    renderer = _get_renderer()
+    result = renderer.render_view(
+        output_path=output_path,
+        view=direction,
+        scale=scale,
+        width_mm=width_mm,
+        height_mm=height_mm,
+    )
+    return str(result)
+
+
 def get_bounds() -> dict:
     """Get model bounding box: {min, max, size}."""
     renderer = _get_renderer()

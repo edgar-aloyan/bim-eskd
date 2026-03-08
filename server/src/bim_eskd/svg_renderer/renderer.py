@@ -28,6 +28,12 @@ _ELEVATION_NAME_MAP = {
     "right": "Elevation East",    # look from -X towards +X
 }
 
+# Maps section direction to ifcopenshell auto_section group name.
+_SECTION_NAME_MAP = {
+    "section_ns": "Section North South",  # cut along Y-axis (longitudinal)
+    "section_ew": "Section East West",    # cut along X-axis (transverse)
+}
+
 
 class IFCSVGRenderer:
     """Renders IFC models to SVG using ifcopenshell.draw (HLR)."""
@@ -71,7 +77,7 @@ class IFCSVGRenderer:
 
         Args:
             output_path: Where to write the SVG file.
-            view: View type: 'plan', 'front', 'back', 'left', 'right'.
+            view: 'plan', 'front', 'back', 'left', 'right', 'section_ns', 'section_ew'.
             scale: Drawing scale (e.g. 50 means 1:50).
             width_mm: Sheet width in mm.
             height_mm: Sheet height in mm.
@@ -84,7 +90,10 @@ class IFCSVGRenderer:
         output_path = Path(output_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        valid_views = ("plan", "front", "back", "left", "right")
+        valid_views = (
+            "plan", "front", "back", "left", "right",
+            "section_ns", "section_ew",
+        )
         if view not in valid_views:
             raise ValueError(f"Unknown view: {view}. Use: {valid_views}")
 
@@ -95,6 +104,10 @@ class IFCSVGRenderer:
         if view == "plan":
             svg_bytes = self._render_plan(
                 width_mm, height_mm, draw_scale, include_classes
+            )
+        elif view in _SECTION_NAME_MAP:
+            svg_bytes = self._render_section(
+                view, width_mm, height_mm, draw_scale, include_classes
             )
         else:
             svg_bytes = self._render_elevation(
@@ -132,25 +145,46 @@ class IFCSVGRenderer:
         svg_bytes = ifcopenshell.draw.main(settings, [self.ifc_file])
         return self._extract_elevation(svg_bytes, view)
 
+    def _render_section(self, view, width_mm, height_mm, draw_scale,
+                         include_classes):
+        """Render a vertical section using ifcopenshell.draw HLR.
+
+        Uses auto_section to generate both N-S and E-W sections, then
+        extracts the requested one as a standalone SVG.
+        """
+        settings = self._base_settings(width_mm, height_mm)
+        settings.auto_floorplan = False
+        settings.auto_section = True
+        settings.scale = draw_scale
+        if include_classes:
+            settings.include_entities = ",".join(include_classes)
+
+        svg_bytes = ifcopenshell.draw.main(settings, [self.ifc_file])
+        return self._extract_section(svg_bytes, view)
+
+    def _extract_section(self, svg_bytes: bytes, view: str) -> bytes:
+        """Extract a single section from the combined auto_section SVG."""
+        return self._extract_named_group(svg_bytes, _SECTION_NAME_MAP[view])
+
     def _extract_elevation(self, svg_bytes: bytes, view: str) -> bytes:
         """Extract a single elevation from the combined auto_elevation SVG."""
-        target_name = _ELEVATION_NAME_MAP[view]
+        return self._extract_named_group(svg_bytes, _ELEVATION_NAME_MAP[view])
+
+    def _extract_named_group(self, svg_bytes: bytes, group_name: str) -> bytes:
+        """Extract a named <g> from a multi-view SVG as standalone SVG."""
         root = etree.fromstring(svg_bytes)
 
-        # Find the target elevation group
-        section = None
+        target = None
         for g in root.iter(f"{{{NS_SVG}}}g"):
-            if g.get(f"{{{NS_IFC}}}name") == target_name:
-                section = g
+            if g.get(f"{{{NS_IFC}}}name") == group_name:
+                target = g
                 break
 
-        if section is None:
-            logger.warning(f"Elevation '{target_name}' not found, "
-                           f"returning full SVG")
+        if target is None:
+            logger.warning(f"Group '{group_name}' not found, returning full SVG")
             return svg_bytes
 
-        # Compute viewBox from path coordinates
-        all_paths = section.findall(f".//{{{NS_SVG}}}path")
+        all_paths = target.findall(f".//{{{NS_SVG}}}path")
         coords = []
         for p in all_paths:
             d = p.get("d", "")
@@ -160,7 +194,7 @@ class IFCSVGRenderer:
             )
 
         if not coords:
-            logger.warning(f"No paths in elevation '{target_name}'")
+            logger.warning(f"No paths in group '{group_name}'")
             return svg_bytes
 
         xs = [c[0] for c in coords]
@@ -171,7 +205,6 @@ class IFCSVGRenderer:
         vw = max(xs) - min(xs) + 2 * margin
         vh = max(ys) - min(ys) + 2 * margin
 
-        # Build standalone SVG with defs, style, and the elevation group
         new_svg = etree.Element(
             "svg",
             nsmap={
@@ -187,7 +220,7 @@ class IFCSVGRenderer:
             if el is not None:
                 new_svg.append(el)
 
-        new_svg.append(section)
+        new_svg.append(target)
 
         return etree.tostring(new_svg, encoding="unicode").encode(
             "ascii", "xmlcharrefreplace"

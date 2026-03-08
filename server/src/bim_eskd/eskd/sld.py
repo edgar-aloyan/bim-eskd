@@ -1,53 +1,81 @@
-"""Single-line diagram (SLD) from pandapower network.
+"""Single-line diagram — classical switchgear layout.
 
-IFC → pandapower net → SVG diagram with ГОСТ designations.
-Symbols per ГОСТ 2.702/2.721/2.723/2.727/2.755.
-Designations per ГОСТ 2.710-81.
-Element list per ГОСТ 2.702-2011 п.5.3.18.
+IFC -> pandapower -> switchgear tree -> SVG.
+Horizontal busbars, vertical panel columns (ячейки РУ).
+Symbols: ГОСТ 2.702/2.721/2.723/2.727/2.755.
+Designations: ГОСТ 2.710-81.
+Element list: ГОСТ 2.702-2011 п.5.3.18.
 """
 
 import logging
 from collections import defaultdict
+from dataclasses import dataclass, field
 
 from lxml import etree
 
 from . import symbols
 from .pp_converter import ifc_to_pandapower
 from .svg_primitives import (
-    FONT_LABEL, FONT_PROPS, FONT_SMALL, LINE_W, NSMAP, THIN_W,
+    FONT_LABEL, FONT_PROPS, FONT_SMALL, NSMAP, THICK_W, THIN_W,
     line, line_v, rect, text,
 )
 
 logger = logging.getLogger(__name__)
 
-DIAGRAM_W = 340
-DIAGRAM_H = 200
-CENTER_X = DIAGRAM_W / 2
-SYMBOL_GAP = 4
+# Layout (mm)
+DIAGRAM_W = 280
+COL_W = 60
+BUS_GAP = 4
+BUS_PAD = 15
 
-DESIG_CODE = {"trafo": "T", "switch": "QF", "line": "W", "shunt": "FV"}
+
+# ── Data structures ───────────────────────────────────────────────
 
 
-# ── Public API ───────────────────────────────────────────────────────
+@dataclass
+class Item:
+    kind: str       # transformer, autotransformer, circuit_breaker, cable,
+                    # surge_arrester, load
+    label: str      # ГОСТ designation: T1, QF2, FV1…FV3
+    sub: str        # parameters: 630А, 800В
+    type_name: str  # IFC type name (for element list)
+    name: str       # pandapower element name
+    count: int = 1
+
+
+@dataclass
+class Panel:
+    items: list[Item]
+    child: "Switchgear | None" = None
+
+
+@dataclass
+class Switchgear:
+    name: str
+    voltage_kv: float
+    incoming: list[Item] = field(default_factory=list)
+    panels: list[Panel] = field(default_factory=list)
+
+
+# ── Public API ────────────────────────────────────────────────────
 
 
 def create_single_line_diagram(ifc_file) -> str:
     """Generate SVG single-line diagram from IFC model."""
     net = ifc_to_pandapower(ifc_file)
-    topo = _walk_pp_topology(net)
+    sg = _build_tree(net)
 
     root = etree.Element("svg", nsmap=NSMAP)
     rect(root, 0, 0, DIAGRAM_W, 999, fill="white", stroke="none")
-    text(root, CENTER_X, 6, "Однолинейная схема электроснабжения",
+    text(root, DIAGRAM_W / 2, 7, "Однолинейная схема электроснабжения",
          font_size=5, font_weight="bold", text_anchor="middle")
 
-    y = _draw_topology(root, topo, CENTER_X, 14)
+    y = _render_sg(root, sg, DIAGRAM_W / 2, 14)
 
-    elem_items = _element_list_from_topo(topo)
-    list_y = max(y + 8, 140)
-    _draw_element_list(root, elem_items, 5, list_y)
-    list_h = 3 + 5 + len(elem_items) * 5 + 2
-    total_h = max(DIAGRAM_H, list_y + list_h)
+    rows = _elem_table_rows(_collect_items(sg))
+    ty = y + 10
+    _draw_elem_table(root, rows, 5, ty)
+    total_h = ty + 8 + len(rows) * 5 + 2
 
     root.set("width", f"{DIAGRAM_W}mm")
     root.set("height", f"{total_h}mm")
@@ -56,83 +84,92 @@ def create_single_line_diagram(ifc_file) -> str:
 
 
 def get_element_list(ifc_file) -> list[dict]:
-    """Return element list data for external use."""
+    """Return element list for external use."""
     net = ifc_to_pandapower(ifc_file)
-    topo = _walk_pp_topology(net)
-    return _element_list_from_topo(topo)
+    return _elem_table_rows(_collect_items(_build_tree(net)))
 
 
-# ── Topology walker ─────────────────────────────────────────────────
+# ── Topology -> tree ──────────────────────────────────────────────
 
 
-def _walk_pp_topology(net):
-    """Walk pandapower net from ext_grid → loads. Returns render items."""
-    adj = _build_adjacency(net)
-
-    bus_shunts = defaultdict(list)
+def _build_tree(net) -> Switchgear:
+    """Walk pandapower net from ext_grid, return Switchgear tree."""
+    adj = _build_adj(net)
+    shunts = defaultdict(list)
     for i in net.shunt.index:
-        bus_shunts[int(net.shunt.at[i, "bus"])].append(i)
-
-    bus_loads = defaultdict(list)
+        shunts[int(net.shunt.at[i, "bus"])].append(i)
+    loads = defaultdict(list)
     for i in net.load.index:
-        bus_loads[int(net.load.at[i, "bus"])].append(i)
+        loads[int(net.load.at[i, "bus"])].append(i)
 
-    start = int(net.ext_grid.bus.iloc[0]) if not net.ext_grid.empty else None
-    if start is None:
-        return []
+    named = {i for i in net.bus.index if net.bus.at[i, "name"]}
+    start = int(net.ext_grid.bus.iloc[0]) if not net.ext_grid.empty else 0
+    ve: set[tuple] = set()
+    vb: set[int] = set()
+    ctr: dict[str, int] = {}
 
-    items: list[dict] = []
-    visited_buses: set[int] = set()
-    visited_edges: set[tuple] = set()
-    counters: dict[str, int] = {}
-
-    def desig(code):
-        counters[code] = counters.get(code, 0) + 1
-        return f"{code}{counters[code]}"
+    def d(code):
+        ctr[code] = ctr.get(code, 0) + 1
+        return f"{code}{ctr[code]}"
 
     def walk(bus):
-        if bus in visited_buses:
-            return
-        visited_buses.add(bus)
+        if bus in vb:
+            return []
+        vb.add(bus)
 
-        # Named bus → busbar symbol
-        bname = net.bus.at[bus, "name"]
-        if bname:
-            items.append({"render": "busbar", "label": bname,
-                          "sub": f"{_fv(net.bus.at[bus, 'vn_kv'] * 1000)}"})
+        if bus in named:
+            sg = Switchgear(net.bus.at[bus, "name"], net.bus.at[bus, "vn_kv"])
+            # Outgoing edges first, then branches, then loads
+            for et, ei, other in adj.get(bus, []):
+                if (et, ei) in ve:
+                    continue
+                ve.add((et, ei))
+                elem = _mk(net, et, ei, d)
+                child = walk(other)
+                child_sg = None
+                pitems = [elem]
+                for c in child:
+                    if isinstance(c, Switchgear):
+                        child_sg = c
+                    else:
+                        pitems.append(c)
+                sg.panels.append(Panel(pitems, child_sg))
+            if bus in shunts:
+                sg.panels.append(Panel(_shunt_items(net, shunts[bus], d)))
+            if bus in loads:
+                for li in loads[bus]:
+                    sg.panels.append(Panel([_mk_load(net, li, bus)]))
+            return [sg]
 
-        # Shunts → branch (group surge arresters)
-        if bus in bus_shunts:
-            _add_shunt_group(net, bus_shunts[bus], items, desig)
-
-        # Follow edges
-        for etype, eidx, other in adj.get(bus, []):
-            key = (etype, eidx)
-            if key in visited_edges:
+        # Unnamed bus — pass through
+        items = []
+        for et, ei, other in adj.get(bus, []):
+            if (et, ei) in ve:
                 continue
-            visited_edges.add(key)
-            items.append(_edge_item(net, etype, eidx, desig))
-            walk(other)
+            ve.add((et, ei))
+            items.append(_mk(net, et, ei, d))
+            items.extend(walk(other))
+        if bus in loads:
+            for li in loads[bus]:
+                items.append(_mk_load(net, li, bus))
+        return items
 
-        # Loads (terminal)
-        if bus in bus_loads:
-            for li in bus_loads[bus]:
-                vn = net.bus.at[bus, "vn_kv"]
-                items.append({
-                    "render": "load_group",
-                    "label": str(net.load.at[li, "name"]),
-                    "sub": f"~3, {_fv(vn * 1000)}",
-                    "type_name": str(net.load.at[li, "ifc_type_name"])
-                    if "ifc_type_name" in net.load.columns else "",
-                })
-
-    walk(start)
-    return items
+    result = walk(start)
+    root_sg = None
+    incoming = []
+    for r in result:
+        if isinstance(r, Switchgear):
+            root_sg = r
+        else:
+            incoming.append(r)
+    if root_sg is None:
+        root_sg = Switchgear("Bus", 0.4)
+    root_sg.incoming = incoming
+    return root_sg
 
 
-def _build_adjacency(net):
-    """Build bus → [(elem_type, elem_idx, other_bus)] adjacency."""
-    adj: dict[int, list] = defaultdict(list)
+def _build_adj(net):
+    adj = defaultdict(list)
     for i in net.trafo.index:
         hv, lv = int(net.trafo.at[i, "hv_bus"]), int(net.trafo.at[i, "lv_bus"])
         adj[hv].append(("trafo", i, lv))
@@ -148,56 +185,53 @@ def _build_adjacency(net):
     return adj
 
 
-def _edge_item(net, etype, eidx, desig_fn):
-    """Create render item for a trafo/switch/line edge."""
+# ── Item factories ────────────────────────────────────────────────
+
+
+def _mk(net, etype, eidx, dfn) -> Item:
     if etype == "trafo":
-        row = net.trafo.loc[eidx]
-        is_auto = bool(row.get("is_auto", False))
-        vhv, vlv, sn = row.vn_hv_kv, row.vn_lv_kv, row.sn_mva
-        sub = f"{_fv(vhv * 1000)}/{_fv(vlv * 1000)}, "
-        sub += f"{sn:.0f}МВА" if sn >= 1 else f"{sn * 1000:.0f}кВА"
-        render = "autotransformer" if is_auto else "transformer"
-        return {"render": render, "label": desig_fn("T"),
-                "sub": sub, "name": row["name"],
-                "type_name": row.get("ifc_type_name", "")}
+        r = net.trafo.loc[eidx]
+        ia = bool(r.get("is_auto", False))
+        sub = f"{_fv(r.vn_hv_kv * 1000)}/{_fv(r.vn_lv_kv * 1000)}, "
+        sub += f"{r.sn_mva:.0f}МВА" if r.sn_mva >= 1 else f"{r.sn_mva * 1000:.0f}кВА"
+        return Item("autotransformer" if ia else "transformer",
+                     dfn("T"), sub, r.get("ifc_type_name", ""), r["name"])
     if etype == "switch":
-        row = net.switch.loc[eidx]
-        rc = row.get("rated_current_a", 0) or 0
-        rv = row.get("rated_voltage_v", 0) or 0
+        r = net.switch.loc[eidx]
         parts = []
+        rc = r.get("rated_current_a", 0) or 0
+        rv = r.get("rated_voltage_v", 0) or 0
         if rc:
             parts.append(f"{rc:.0f}А")
         if rv:
             parts.append(f"{rv:.0f}В")
-        return {"render": "circuit_breaker", "label": desig_fn("QF"),
-                "sub": ", ".join(parts), "name": row["name"],
-                "type_name": row.get("ifc_type_name", "")}
-    # line
-    row = net.line.loc[eidx]
-    length_m = row.length_km * 1000
-    return {"render": "cable", "label": desig_fn("W"),
-            "sub": f"{length_m:.0f}м" if length_m else "",
-            "name": row["name"],
-            "type_name": row.get("ifc_type_name", "")}
+        return Item("circuit_breaker", dfn("QF"), ", ".join(parts),
+                     r.get("ifc_type_name", ""), r["name"])
+    r = net.line.loc[eidx]
+    lm = r.length_km * 1000
+    return Item("cable", dfn("W"), f"{lm:.0f}м" if lm else "",
+                r.get("ifc_type_name", ""), r["name"])
 
 
-def _add_shunt_group(net, shunt_indices, items, desig_fn):
-    """Render grouped surge arresters as a branch."""
-    desigs = [desig_fn("FV") for _ in shunt_indices]
-    rv = net.shunt.at[shunt_indices[0], "rated_voltage_v"] \
+def _shunt_items(net, indices, dfn):
+    desigs = [dfn("FV") for _ in indices]
+    rv = net.shunt.at[indices[0], "rated_voltage_v"] \
         if "rated_voltage_v" in net.shunt.columns else 0
-    rv = rv or (net.shunt.at[shunt_indices[0], "vn_kv"] * 1000)
-    if len(desigs) > 1:
-        label = f"{desigs[0]}…{desigs[-1]}"
-        sub = f"{len(desigs)}шт, {rv:.0f}В"
-    else:
-        label = desigs[0]
-        sub = f"{rv:.0f}В"
-    items.append({"render": "surge_arrester", "label": label, "sub": sub,
-                  "count": len(shunt_indices),
-                  "name": net.shunt.at[shunt_indices[0], "name"],
-                  "type_name": net.shunt.at[shunt_indices[0], "ifc_type_name"]
-                  if "ifc_type_name" in net.shunt.columns else ""})
+    rv = rv or (net.shunt.at[indices[0], "vn_kv"] * 1000)
+    lbl = f"{desigs[0]}…{desigs[-1]}" if len(desigs) > 1 else desigs[0]
+    sub = f"{len(desigs)}шт, {rv:.0f}В" if len(desigs) > 1 else f"{rv:.0f}В"
+    tn = net.shunt.at[indices[0], "ifc_type_name"] \
+        if "ifc_type_name" in net.shunt.columns else ""
+    return [Item("surge_arrester", lbl, sub, tn,
+                 net.shunt.at[indices[0], "name"], len(indices))]
+
+
+def _mk_load(net, li, bus):
+    vn = net.bus.at[bus, "vn_kv"]
+    tn = str(net.load.at[li, "ifc_type_name"]) \
+        if "ifc_type_name" in net.load.columns else ""
+    return Item("load", str(net.load.at[li, "name"]),
+                f"~3, {_fv(vn * 1000)}", tn, str(net.load.at[li, "name"]))
 
 
 def _fv(v):
@@ -209,101 +243,123 @@ def _fv(v):
     return f"{v:.0f}В"
 
 
-# ── Drawing engine ───────────────────────────────────────────────────
+# ── Rendering ─────────────────────────────────────────────────────
 
 
-def _draw_topology(root, topo, cx, y):
-    for item in topo:
-        r = item["render"]
-        lbl, sub = item.get("label", ""), item.get("sub", "")
-        if r == "transformer":
-            y = symbols.draw_transformer(root, cx, y, lbl, sub)
-        elif r == "autotransformer":
-            y = symbols.draw_autotransformer(root, cx, y, lbl, sub)
-        elif r == "circuit_breaker":
-            y = symbols.draw_circuit_breaker(root, cx, y, lbl, sub)
-        elif r == "cable":
-            y = _draw_cable(root, cx, y, lbl, sub)
-        elif r == "surge_arrester":
-            y = _draw_arrester_branch(root, cx, y, lbl, sub)
-        elif r == "busbar":
-            y = symbols.draw_busbar(root, cx, y, lbl, sub)
-        elif r == "load_group":
-            y = _draw_load_group(root, cx, y, lbl, sub)
+def _render_sg(root, sg, cx, y) -> float:
+    """Render switchgear tree recursively. Returns y_bottom."""
+    # Incoming feeder — vertical chain at cx
+    for item in sg.incoming:
+        y = _draw_item(root, item, cx, y)
+
+    n = len(sg.panels)
+    if n == 0:
+        symbols.draw_busbar(root, cx, y, sg.name, _fv(sg.voltage_kv * 1000))
+        return y + 10
+
+    # Panel column X positions, centered on cx
+    col_xs = [cx + (i - (n - 1) / 2) * COL_W for i in range(n)]
+
+    # Busbar
+    bus_x1 = min(col_xs) - BUS_PAD
+    bus_x2 = max(col_xs) + BUS_PAD
+    bus_y = y
+    if sg.incoming:
+        line_v(root, cx, y - symbols.SYMBOL_GAP, bus_y)
+    line(root, bus_x1, bus_y, bus_x2, bus_y, stroke_width=THICK_W * 2)
+    text(root, bus_x2 + 2, bus_y + 1, sg.name, font_size=FONT_LABEL)
+    text(root, bus_x2 + 2, bus_y + 1 + FONT_SMALL + 1,
+         _fv(sg.voltage_kv * 1000), font_size=FONT_SMALL, fill="#444")
+
+    # Panel columns
+    ptop = bus_y + BUS_GAP
+    max_y = ptop
+    for panel, col_x in zip(sg.panels, col_xs):
+        line_v(root, col_x, bus_y, ptop)
+        py = ptop
+        for item in panel.items:
+            py = _draw_item(root, item, col_x, py)
+        if panel.child:
+            panel.child.incoming = []
+            py = _render_sg(root, panel.child, col_x, py)
+        max_y = max(max_y, py)
+
+    return max_y
+
+
+def _draw_item(root, item, cx, y) -> float:
+    k = item.kind
+    if k == "transformer":
+        return symbols.draw_transformer(root, cx, y, item.label, item.sub)
+    if k == "autotransformer":
+        return symbols.draw_autotransformer(root, cx, y, item.label, item.sub)
+    if k == "circuit_breaker":
+        return symbols.draw_circuit_breaker(root, cx, y, item.label, item.sub)
+    if k == "cable":
+        h = 12
+        line_v(root, cx, y, y + h, dash="2,1")
+        text(root, cx + 3, y + h / 2, item.label, font_size=FONT_LABEL)
+        if item.sub:
+            text(root, cx + 3, y + h / 2 + FONT_SMALL + 1, item.sub,
+                 font_size=FONT_SMALL, fill="#444")
+        return y + h + symbols.SYMBOL_GAP
+    if k == "surge_arrester":
+        # sym-opn includes ground (20mm height)
+        symbols.draw_surge_arrester(root, cx, y, item.label, item.sub)
+        return y + 24
+    if k == "load":
+        w, h = 35, 12
+        line_v(root, cx, y, y + 2)
+        ry = y + 2
+        rect(root, cx - w / 2, ry, w, h, fill="#f5f5f5")
+        text(root, cx, ry + h / 2 - 1, item.label,
+             font_size=FONT_LABEL, text_anchor="middle")
+        if item.sub:
+            text(root, cx, ry + h / 2 + FONT_SMALL, item.sub,
+                 font_size=FONT_SMALL, text_anchor="middle", fill="#444")
+        return ry + h + 4
     return y
 
 
-def _draw_arrester_branch(parent, cx, y, label, sub):
-    bx = cx - 40
-    line(parent, bx, y, cx, y, stroke_width=LINE_W)
-    symbols.draw_surge_arrester(parent, bx, y)
-    lx = bx - 8
-    if label:
-        text(parent, lx, y + 6, label,
-             font_size=FONT_LABEL, text_anchor="end")
-    if sub:
-        text(parent, lx, y + 6 + FONT_SMALL + 1, sub,
-             font_size=FONT_SMALL, fill="#444", text_anchor="end")
-    line_v(parent, cx, y, y + SYMBOL_GAP)
-    return y + SYMBOL_GAP
+# ── Element list ──────────────────────────────────────────────────
 
 
-def _draw_cable(parent, cx, y, label, sub):
-    length = 10
-    line_v(parent, cx, y, y + length, dash="2,1")
-    text(parent, cx + 3, y + length / 2, label, font_size=FONT_LABEL)
-    if sub:
-        text(parent, cx + 3, y + length / 2 + FONT_SMALL + 1, sub,
-             font_size=FONT_SMALL, fill="#444")
-    return y + length + SYMBOL_GAP
+def _collect_items(sg) -> list[Item]:
+    """Recursively collect all Items from switchgear tree."""
+    items = list(sg.incoming)
+    for p in sg.panels:
+        items.extend(p.items)
+        if p.child:
+            items.extend(_collect_items(p.child))
+    return items
 
 
-def _draw_load_group(parent, cx, y, label, sub):
-    w, h = 30, 10
-    line_v(parent, cx, y, y + 2)
-    ry = y + 2
-    rect(parent, cx - w / 2, ry, w, h, fill="#f0f0f0")
-    text(parent, cx, ry + h / 2 - 1, label,
-         font_size=FONT_LABEL, text_anchor="middle")
-    if sub:
-        text(parent, cx, ry + h / 2 + FONT_SMALL, sub,
-             font_size=FONT_SMALL, text_anchor="middle", fill="#444")
-    return ry + h + SYMBOL_GAP
-
-
-# ── Element list (ГОСТ 2.702-2011 п.5.3.18) ─────────────────────────
-
-
-def _element_list_from_topo(topo):
-    """Build element list from render items."""
-    skip = {"busbar", "load_group"}
+def _elem_table_rows(items):
+    skip = {"load"}
     groups: dict[str, dict] = {}
-    for item in topo:
-        if item["render"] in skip:
+    for item in items:
+        if item.kind in skip:
             continue
-        name = item.get("type_name") or item.get("name", "")
-        if not name:
+        key = item.type_name or item.name
+        if not key:
             continue
-        d = item.get("label", "")
-        n = item.get("count", 1)
-        if name in groups:
-            groups[name]["count"] += n
-            groups[name]["desig_last"] = d
+        if key in groups:
+            groups[key]["count"] += item.count
+            groups[key]["dl"] = item.label
         else:
-            groups[name] = {"desig_first": d, "desig_last": d,
-                            "name": name, "count": n,
-                            "note": item.get("sub", "")}
+            groups[key] = {"df": item.label, "dl": item.label,
+                           "name": key, "count": item.count, "note": item.sub}
     result = []
     for g in groups.values():
-        d = g["desig_first"]
-        if g["count"] > 1 and g["desig_first"] != g["desig_last"]:
-            d = f"{g['desig_first']}…{g['desig_last']}"
+        d = g["df"]
+        if g["count"] > 1 and g["df"] != g["dl"]:
+            d = f"{g['df']}…{g['dl']}"
         result.append({"desig": d, "name": g["name"],
                        "count": g["count"], "note": g["note"]})
     return sorted(result, key=lambda x: x["desig"])
 
 
-def _draw_element_list(parent, items, x, y):
+def _draw_elem_table(parent, items, x, y):
     if not items:
         return
     col_x = [0, 25, 115, 130]

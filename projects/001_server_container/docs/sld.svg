@@ -35,7 +35,7 @@
   <!-- Обмотка генератора (двухполюсная), ГОСТ 2.723, d=10мм, выводы 5мм -->
   <g transform="translate(90, 50)" stroke="black" stroke-width="0.5" fill="none">
     <line x1="0" y1="0" x2="0" y2="5"/>
-    <rect x="-7" y="4" width="14" height="12" stroke-dasharray="2,1" stroke-width="0.3"/>
+    <rect x="-10" y="5" width="20" height="10" stroke-dasharray="2,1" stroke-width="0.3"/>
     <circle cx="0" cy="10" r="5"/>
     <path d="M-3,10 C-3,7.5 0,7.5 0,10 S3,12.5 3,10" stroke-width="0.3"/>
     <line x1="0" y1="16" x2="0" y2="20"/>
@@ -44,7 +44,7 @@
   <!-- Лампочка (двухполюсная), ГОСТ 2.732, d=10мм, выводы 5мм -->
   <g transform="translate(70, 50)" stroke="black" stroke-width="0.5" fill="none">
     <line x1="0" y1="0" x2="0" y2="5"/>
-    <rect x="-7" y="4" width="14" height="12" stroke-dasharray="2,1" stroke-width="0.3"/>
+    <rect x="-10" y="5" width="20" height="10" stroke-dasharray="2,1" stroke-width="0.3"/>
     <circle cx="0" cy="10" r="5"/>
     <line x1="-3.5" y1="6.5" x2="3.5" y2="13.5"/>
     <line x1="3.5" y1="6.5" x2="-3.5" y2="13.5"/>

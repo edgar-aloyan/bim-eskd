@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-32 -49 68 98" width="68mm" height="98mm">
+  <title>Three-phase transducer</title>
+  <g>
+    <text x="-16" y="-31.67" fill="#000000" font-family="sans-serif" font-size="4.0">A1</text>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="11,21 17,30 17,35"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-11,21 -17,30 -17,35"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-11,-21 -17,-30 -17,-35"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="11,-21 17,-30 17,-35"/>
+    <text x="4" y="34.33" fill="#000000" font-family="sans-serif" font-size="4.0">A2</text>
+    <text x="-16" y="34.33" fill="#000000" font-family="sans-serif" font-size="4.0">A2</text>
+    <text x="18" y="-31.67" fill="#000000" font-family="sans-serif" font-size="4.0">C1</text>
+    <text x="1" y="-31.67" fill="#000000" font-family="sans-serif" font-size="4.0">B1</text>
+    <ellipse stroke-width="0.7" stroke="#000" fill="none" cx="0.00" cy="10.00" rx="15.00" ry="15.00"/>
+    <text x="18" y="34.33" fill="#000000" font-family="sans-serif" font-size="4.0">C2</text>
+    <text x="20" y="7.5" fill="#000" font-family="sans-serif" font-size="5.0">___V</text>
+    <text x="20" y="-22.5" fill="#000" font-family="sans-serif" font-size="5.0">___V</text>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="25" x2="0" y2="35"/>
+    <ellipse stroke-width="0.7" stroke="#000" fill="none" cx="0.00" cy="-10.00" rx="15.00" ry="15.00"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="-35" x2="0" y2="-25"/>
+    <circle cx="17" cy="-36" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="0" cy="-36" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="-17" cy="-36" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="-17" cy="36" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="0" cy="36" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="17" cy="36" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

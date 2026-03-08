@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-104 -39 208 78" width="208mm" height="78mm">
+  <title>UPS</title>
+  <g>
+    <rect stroke-width="0.7" stroke="#000" stroke-dasharray="4,2" fill="none" x="-90" y="-30" width="180" height="60"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="79.5" y1="-19.5" x2="40.5" y2="19.5"/>
+    <line stroke-width="0.7" stroke="blue" fill="none" x1="30" y1="0" x2="10" y2="0"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="40" y1="-10" x2="-40" y2="-10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-80" y1="-10" x2="-90" y2="-10"/>
+    <line stroke-width="0.7" stroke="red" fill="none" x1="3" y1="0" x2="-5" y2="0"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="40,-20 80,-20 80,20 40,20"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-80,-20 -40,-20 -40,20 -80,20"/>
+    <path d="M-72.49,-14.78 A2.50,2.50 0 0,0 -67.50,-15.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <line stroke-width="0.7" stroke="red" fill="none" x1="-10" y1="0" x2="-30" y2="0"/>
+    <path d="M71.51,15.22 A2.50,2.50 0 0,0 76.50,15.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <line stroke-width="0.7" stroke="red" fill="none" x1="-10" y1="-7.25" x2="-10" y2="7.27"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="90" y1="10" x2="80" y2="10"/>
+    <rect stroke-width="0.7" stroke="#000" fill="blue" x="-7" y="-5" width="3" height="10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="80" y1="-10" x2="90" y2="-10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-90" y1="10" x2="-80" y2="10"/>
+    <line stroke-width="0.7" stroke="red" fill="none" x1="3.7" y1="-7.25" x2="3.7" y2="7.27"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-40" y1="10" x2="40" y2="10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-45" y1="13" x2="-43.5" y2="13"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="44" y1="-17" x2="42.5" y2="-17"/>
+    <text x="13" y="5.67" fill="#000000" font-family="sans-serif" font-size="6.0">-</text>
+    <text x="-17" y="7" fill="#000000" font-family="sans-serif" font-size="6.0">+</text>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="47" y1="-17" x2="45.5" y2="-17"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-48" y1="13" x2="-46.5" y2="13"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="50" y1="-17" x2="48.5" y2="-17"/>
+    <rect stroke-width="0.7" stroke="#000" fill="blue" x="6.7" y="-5" width="3" height="10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-51" y1="13" x2="-49.5" y2="13"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-51" y1="15" x2="-43.5" y2="15"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="50" y1="-15" x2="42.5" y2="-15"/>
+    <path d="M71.49,14.78 A2.50,2.50 0 0,0 66.50,15.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <path d="M-72.51,-15.22 A2.50,2.50 0 0,0 -77.50,-15.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-40.5" y1="-19.5" x2="-79.5" y2="19.5"/>
+    <line stroke-width="0.7" stroke="blue" fill="none" x1="30" y1="0" x2="30" y2="9"/>
+    <line stroke-width="0.7" stroke="red" fill="none" x1="-30" y1="-0.24" x2="-30" y2="-9.78"/>
+    <rect stroke-width="0.7" stroke="#000" fill="none" x="-20" y="-20" width="40" height="40"/>
+    <ellipse stroke-width="0.7" stroke="#000" fill="#fff" cx="-90.00" cy="-10.00" rx="2.00" ry="2.00"/>
+    <ellipse stroke-width="0.7" stroke="#000" fill="#fff" cx="-90.00" cy="10.00" rx="2.00" ry="2.00"/>
+    <ellipse stroke-width="0.7" stroke="#000" fill="#fff" cx="90.00" cy="-10.00" rx="2.00" ry="2.00"/>
+    <ellipse stroke-width="0.7" stroke="#000" fill="#fff" cx="90.00" cy="10.00" rx="2.00" ry="2.00"/>
+    <ellipse stroke-width="0.7" stroke="#000" fill="#000" cx="-30.00" cy="-10.00" rx="1.50" ry="1.50"/>
+    <ellipse stroke-width="0.7" stroke="#000" fill="#000" cx="30.00" cy="10.00" rx="1.50" ry="1.50"/>
+    <circle cx="-90" cy="10" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="-90" cy="-10" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="90" cy="10" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="90" cy="-10" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

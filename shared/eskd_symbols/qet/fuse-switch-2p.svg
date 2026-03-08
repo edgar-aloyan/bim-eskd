@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-24 -34 48 68" width="48mm" height="68mm">
+  <title>Fuse-disconnector</title>
+  <g>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-15,-10 -10,10 -10,20"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="5,-10 10,10 10,20"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="4.31,-4.51 6.81,5.49 10.69,4.51 8.19,-5.49"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="8" y1="-10" x2="12" y2="-10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="10" y1="-20" x2="10" y2="-10"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-15.69,-4.51 -13.19,5.49 -9.31,4.51 -11.81,-5.49"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-10" y1="-20" x2="-10" y2="-10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-8" y1="-10" x2="-12" y2="-10"/>
+    <line stroke-width="0.3" stroke="#000" stroke-dasharray="1,2" fill="none" x1="-9.07" y1="0" x2="5.07" y2="0"/>
+    <circle cx="-10" cy="-20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="-10" cy="20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="10" cy="20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="10" cy="-20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

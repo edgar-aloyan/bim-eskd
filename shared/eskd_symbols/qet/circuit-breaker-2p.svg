@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-21 -34 48 68" width="48mm" height="68mm">
+  <title>Circuit-breaker</title>
+  <g>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="10,20 10,10 5,-10"/>
+    <text x="-8" y="18" fill="#000000" font-family="sans-serif" font-size="4.0">2</text>
+    <text x="12" y="18" fill="#000000" font-family="sans-serif" font-size="4.0">4</text>
+    <text x="13" y="-15" fill="#000000" font-family="sans-serif" font-size="4.0">3</text>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="10" y1="-20" x2="10" y2="-10"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-10,20 -10,10 -15,-10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-10" y1="-20" x2="-10" y2="-10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="12" y1="-8" x2="8" y2="-12"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-8" y1="-8" x2="-12" y2="-12"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="12" y1="-12" x2="8" y2="-8"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-8" y1="-12" x2="-12" y2="-8"/>
+    <text x="17" y="-3" fill="#000" font-family="sans-serif" font-size="4.0">Calibre __A</text>
+    <line stroke-width="0.3" stroke="#000" stroke-dasharray="4,2" fill="none" x1="-12" y1="0" x2="7" y2="0"/>
+    <text x="-8" y="-15" fill="#000000" font-family="sans-serif" font-size="4.0">1</text>
+    <circle cx="-10" cy="-20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="-10" cy="20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="10" cy="-20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="10" cy="20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-35 -34 58 68" width="58mm" height="68mm">
+  <title>Three-phase generator</title>
+  <g>
+    <ellipse stroke-width="0.7" stroke="#000" fill="none" cx="0.00" cy="-10.00" rx="15.00" ry="15.00"/>
+    <text x="-10.25" y="-2" fill="#000000" font-family="sans-serif" font-size="18.0">G</text>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="20" x2="0" y2="5"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="10" y1="20" x2="10" y2="1.5"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-10" y1="20" x2="-10" y2="1.5"/>
+    <circle cx="10" cy="20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="-10" cy="20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="0" cy="20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

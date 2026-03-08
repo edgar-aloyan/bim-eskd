@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-33 -42 68 68" width="68mm" height="68mm">
+  <title>Three-phase engine</title>
+  <g>
+    <ellipse stroke-width="0.7" stroke="#000" fill="none" cx="0.00" cy="0.00" rx="15.00" ry="15.00"/>
+    <path d="M9.50,14.36 A16.00,16.00 0 0,0 16.54,-4.97" stroke-width="0.7" stroke="#000" fill="none"/>
+    <text x="21" y="-24" fill="#000000" font-family="sans-serif" font-size="4.0">W1</text>
+    <text x="2" y="-24" fill="#000000" font-family="sans-serif" font-size="4.0">V1</text>
+    <text x="-6" y="0" fill="#000000" font-family="sans-serif" font-size="11.0">M</text>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="-30" x2="0" y2="-15"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-20,-30 -20,-20 -11,-11"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="20,-30 20,-20 11,-11"/>
+    <text x="-19" y="-24" fill="#000000" font-family="sans-serif" font-size="4.0">U1</text>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="17" y1="13" x2="25" y2="13"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="18" y1="15" x2="24" y2="15"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="19.61" y1="17" x2="22.42" y2="17"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="18,4 21,6 21,13"/>
+    <text x="-8" y="10" fill="#000000" font-family="sans-serif" font-size="9.0">3</text>
+    <path d="M4.00,6.00 A2.00,2.00 0 0,0 8.00,6.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <path d="M4.00,6.00 A2.00,2.00 0 0,0 0.00,6.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <circle cx="20" cy="-30" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="-20" cy="-30" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="21" cy="6" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="0" cy="-30" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

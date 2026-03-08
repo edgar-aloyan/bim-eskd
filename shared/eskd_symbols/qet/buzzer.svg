@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-11 -34 48 68" width="48mm" height="68mm">
+  <title>Buzzer</title>
+  <g>
+    <path d="M30.00,-10.00 A10.00,10.00 0 0,0 30.00,10.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="30" y1="-10" x2="30" y2="10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="5" x2="21" y2="5"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="-5" x2="21" y2="-5"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="5" x2="0" y2="20"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="-20" x2="0" y2="-5"/>
+    <circle cx="0" cy="-20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="0" cy="20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

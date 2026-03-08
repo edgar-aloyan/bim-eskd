@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-37 -38 78 68" width="78mm" height="68mm">
+  <title>PVCell</title>
+  <g>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="12.05" y1="21.75" x2="14.53" y2="21.75"/>
+    <rect stroke-width="1.2" stroke="#fff" fill="#fff" x="-1.8" y="-19.13" width="4.26" height="37.65"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="12.82" y1="23" x2="13.81" y2="23"/>
+    <rect stroke-width="0.7" stroke="#000" fill="#fff" x="-5" y="-11" width="10" height="31"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="#000" points="-5,20 -10,22 -10,23 10,23 10,22 5,20"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="#fff" points="-28.79,-11 -5.42,-30.69 32,-30.69 9.78,-11"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-11.82,-21.56 -8.07,-24.38 -2.08,-24.38 -5.64,-21.56"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="0.28,-21.56 4,-24.38 10,-24.38 6.46,-21.56"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-10.72,-12.26 -7,-15.08 -1,-15.08 -4.54,-12.26"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="12.38,-21.56 16.13,-24.38 22.12,-24.38 18.56,-21.56"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="5.78,-26.21 9.53,-29 15.52,-29 12,-26.21"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="17.88,-26.21 21.63,-29 27.62,-29 24.06,-26.21"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-6.32,-26.21 -2.57,-29 3.42,-29 -0.14,-26.21"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="0.28,-12.26 4,-15.08 10,-15.08 6.46,-12.26"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-22.82,-12.26 -19.07,-15.08 -13.08,-15.08 -16.64,-12.26"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-5.22,-16.91 -1.47,-19.73 4.52,-19.73 1,-16.91"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-17.32,-16.91 -13.57,-19.73 -7.58,-19.73 -11.14,-16.91"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="6.88,-16.91 10.63,-19.73 16.62,-19.73 13.06,-16.91"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="5" y1="15" x2="13.25" y2="15"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="13.25" y1="15" x2="13.25" y2="20.5"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="10.5" y1="20.5" x2="16" y2="20.5"/>
+    <circle cx="-5" cy="6" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="-5" cy="12" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="5" cy="9" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="5" cy="3" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

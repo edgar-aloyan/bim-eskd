@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-29 -34 78 68" width="78mm" height="68mm">
+  <title>Residual Circuit Breaker with Overload</title>
+  <g>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="10,20 10,10 3,-9"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-10" y1="-20" x2="-10" y2="-10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="10" y1="-20" x2="10" y2="-10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="12" y1="-12" x2="8" y2="-8"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="8" y1="-12" x2="12" y2="-8"/>
+    <ellipse stroke-width="0.7" stroke="#000" fill="none" cx="0.00" cy="13.00" rx="12.00" ry="2.00"/>
+    <text x="34" y="2" fill="#000" font-family="sans-serif" font-size="5.0">___mA</text>
+    <polyline stroke-width="0.7" stroke="#000" fill="none" points="-10,20 -10,10 -17,-9"/>
+    <polyline stroke-width="0.3" stroke="#000" stroke-dasharray="4,2" fill="none" points="6,0 -20,0 -20,13 -12,13"/>
+    <circle cx="-10" cy="-20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="-10" cy="20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="10" cy="-20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="10" cy="20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

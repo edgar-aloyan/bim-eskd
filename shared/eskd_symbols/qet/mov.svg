@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-14 -34 28 68" width="28mm" height="68mm">
+  <title>Metal-Oxide Varistor</title>
+  <g>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="10" x2="0" y2="20"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="-10" x2="0" y2="-20"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="7" y1="6" x2="-7" y2="-10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="7" y1="10" x2="7" y2="6"/>
+    <rect stroke-width="0.7" stroke="#000" fill="none" x="-4" y="-10" width="8" height="20"/>
+    <circle cx="0" cy="-20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="0" cy="20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

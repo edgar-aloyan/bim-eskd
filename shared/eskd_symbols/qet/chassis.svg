@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-13 -25 28 38" width="28mm" height="38mm">
+  <title>Chassis</title>
+  <g>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="7.5" y1="0.5" x2="5" y2="3"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-1" y1="3" x2="1.5" y2="0.5"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-7" y1="3" x2="-4.5" y2="0.5"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="2" y1="3" x2="4.5" y2="0.5"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-4" y1="3" x2="-1.5" y2="0.5"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-7" y1="0" x2="8" y2="0"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="-10" x2="0" y2="0"/>
+    <circle cx="0" cy="-11" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

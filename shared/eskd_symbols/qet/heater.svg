@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-39 -27 78 48" width="78mm" height="48mm">
+  <title>Heater</title>
+  <g>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="10" y1="-4" x2="10" y2="-10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-10" y1="-4" x2="-10" y2="-10"/>
+    <rect stroke-width="0.7" stroke="#000" fill="none" x="-30" y="-4" width="15" height="17"/>
+    <rect stroke-width="0.7" stroke="#000" fill="none" x="15" y="-4" width="15" height="17"/>
+    <rect stroke-width="0.7" stroke="#000" fill="none" x="0" y="-4" width="15" height="17"/>
+    <rect stroke-width="0.7" stroke="#000" fill="none" x="-15" y="-4" width="15" height="17"/>
+    <circle cx="10" cy="-14" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="-10" cy="-14" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-23 -35 48 68" width="48mm" height="68mm">
+  <title>Surge protection</title>
+  <g>
+    <text x="-10" y="-16.67" fill="#000000" font-family="sans-serif" font-size="4.0">N</text>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="8" y1="24" x2="14" y2="24"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="6" y1="22" x2="16" y2="22"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="4" y1="20" x2="18" y2="20"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-11" y1="-10" x2="-11" y2="-20"/>
+    <rect stroke-width="0.7" stroke="#000" fill="none" x="-15" y="-10" width="30" height="20"/>
+    <text x="10" y="15" fill="#000000" font-family="sans-serif" font-size="4.0">T</text>
+    <text x="11" y="-16.67" fill="#000000" font-family="sans-serif" font-size="4.0">L1</text>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="11" y1="20" x2="11" y2="10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="10" y1="-10" x2="10" y2="-20"/>
+    <circle cx="10" cy="-21" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="11" cy="17" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="-11" cy="-21" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

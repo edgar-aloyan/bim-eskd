@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-28 -36 48 68" width="48mm" height="68mm">
+  <title>Engine</title>
+  <g>
+    <ellipse stroke-width="0.7" stroke="#000" fill="none" cx="0.00" cy="0.00" rx="10.50" ry="10.50"/>
+    <ellipse stroke-width="0.7" stroke="#000" fill="none" cx="0.00" cy="0.00" rx="13.00" ry="13.00"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="-13" x2="0" y2="-20"/>
+    <text x="-8.25" y="7" fill="#000000" font-family="sans-serif" font-size="14.0">M</text>
+    <circle cx="0" cy="-21" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

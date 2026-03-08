@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-24 -34 48 58" width="48mm" height="58mm">
+  <title>autotransformer single phase</title>
+  <g>
+    <path d="M5.00,-5.00 A2.50,2.50 0 0,0 10.00,-5.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <path d="M0.00,-5.00 A2.50,2.50 0 0,0 5.00,-5.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <path d="M-5.00,-5.00 A2.50,2.50 0 0,0 0.00,-5.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <path d="M-10.00,-5.00 A2.50,2.50 0 0,0 -5.00,-5.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-10" y1="-20" x2="-10" y2="-6"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="10" y1="-20" x2="10" y2="-5"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="10" y1="10" x2="10" y2="-5"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="10" x2="0" y2="-5"/>
+    <circle cx="-10" cy="-20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="10" cy="-20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="10" cy="10" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="0" cy="10" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

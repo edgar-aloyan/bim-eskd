@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-19 -34 38 68" width="38mm" height="68mm">
+  <title>Flashing light</title>
+  <g>
+    <text x="2" y="20" fill="#000000" font-family="sans-serif" font-size="5.0">A2</text>
+    <polyline stroke-width="0.7" stroke="#000" fill="#000" points="0,0 -7,7 -10,0 -7,-7"/>
+    <polyline stroke-width="0.7" stroke="#000" fill="#000" points="0,0 7,-7 10,0 7,7"/>
+    <ellipse stroke-width="0.7" stroke="#000" fill="none" cx="0.00" cy="0.00" rx="10.00" ry="10.00"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="7" y1="-7" x2="-7" y2="7"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-7" y1="-7" x2="7" y2="7"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="-20" x2="0" y2="-10"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="0" y1="10" x2="0" y2="20"/>
+    <text x="2" y="-15" fill="#000000" font-family="sans-serif" font-size="5.0">A1</text>
+    <circle cx="0" cy="20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="0" cy="-20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

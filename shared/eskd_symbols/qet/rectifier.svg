@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-41 -59 78 78" width="78mm" height="78mm">
+  <title>Rectiﬁer</title>
+  <g>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="10" y1="-13" x2="20" y2="-13"/>
+    <line stroke-width="0.7" stroke="#000" stroke-dasharray="1,2" fill="none" x1="10" y1="-15" x2="22" y2="-15"/>
+    <rect stroke-width="0.7" stroke="#000" fill="none" x="-30" y="-40" width="60" height="40"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-12" y1="-4" x2="-8" y2="-4"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="8" y1="-4" x2="12" y2="-4"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-30" y1="0" x2="30" y2="-40"/>
+    <line x1="-30.0" y1="0.0" x2="-30.00" y2="0.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <line x1="-30.0" y1="0.0" x2="-30.00" y2="0.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <line x1="30.0" y1="-40.0" x2="30.00" y2="-40.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <line x1="30.0" y1="-40.0" x2="30.00" y2="-40.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <path d="M-19.49,-32.78 A2.50,2.50 0 0,0 -14.50,-33.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <path d="M-19.51,-33.22 A2.50,2.50 0 0,0 -24.50,-33.00" stroke-width="0.7" stroke="#000" fill="none"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-25" y1="-28" x2="-14" y2="-28"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="10" y1="-6" x2="10" y2="-2"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-10" y1="-45" x2="-10" y2="-40"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="10" y1="-45" x2="10" y2="-40"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="-10" y1="0" x2="-10" y2="5"/>
+    <line stroke-width="0.7" stroke="#000" fill="none" x1="10" y1="0" x2="10" y2="5"/>
+    <circle cx="-30" cy="-20" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="-10" cy="-45" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="10" cy="-45" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="10" cy="5" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+    <circle cx="-10" cy="5" r="1.2" fill="#06f" stroke="none" opacity="0.5"/>
+  </g>
+</svg>

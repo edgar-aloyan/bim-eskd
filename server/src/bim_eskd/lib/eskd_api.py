@@ -60,6 +60,16 @@ def create_sld() -> str:
     return create_single_line_diagram(ifc)
 
 
+def create_cable_journal() -> str:
+    """Create a cable journal table from IFC electrical model.
+
+    Returns SVG string of the cable journal.
+    """
+    ifc = project_manager.ifc
+    from ..eskd.cable_journal import create_cable_journal as _create
+    return _create(ifc)
+
+
 def create_pandapower_net():
     """Convert IFC electrical model to pandapower network.
 

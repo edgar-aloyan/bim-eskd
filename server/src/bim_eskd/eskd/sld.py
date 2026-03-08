@@ -15,8 +15,9 @@ from lxml import etree
 
 from . import symbols
 from .pp_converter import ifc_to_pandapower
+from .sld_elem_list import collect_items, draw_elem_table, elem_table_rows
 from .svg_primitives import (
-    FONT_LABEL, FONT_PROPS, FONT_SMALL, NSMAP, THICK_W, THIN_W,
+    FONT_LABEL, FONT_SMALL, NSMAP, THICK_W,
     line, line_v, rect, text,
 )
 
@@ -34,8 +35,8 @@ BUS_PAD = 15
 
 @dataclass
 class Item:
-    kind: str       # transformer, autotransformer, circuit_breaker, cable,
-                    # surge_arrester, load
+    kind: str       # transformer, autotransformer, circuit_breaker, fuse,
+                    # disconnector, cable, surge_arrester, motor, load
     label: str      # ГОСТ designation: T1, QF2, FV1…FV3
     sub: str        # parameters: 630А, 800В
     type_name: str  # IFC type name (for element list)
@@ -72,9 +73,9 @@ def create_single_line_diagram(ifc_file) -> str:
 
     y = _render_sg(root, sg, DIAGRAM_W / 2, 14)
 
-    rows = _elem_table_rows(_collect_items(sg))
+    rows = elem_table_rows(collect_items(sg))
     ty = y + 10
-    _draw_elem_table(root, rows, 5, ty)
+    draw_elem_table(root, rows, 5, ty)
     total_h = ty + 8 + len(rows) * 5 + 2
 
     root.set("width", f"{DIAGRAM_W}mm")
@@ -86,7 +87,7 @@ def create_single_line_diagram(ifc_file) -> str:
 def get_element_list(ifc_file) -> list[dict]:
     """Return element list for external use."""
     net = ifc_to_pandapower(ifc_file)
-    return _elem_table_rows(_collect_items(_build_tree(net)))
+    return elem_table_rows(collect_items(_build_tree(net)))
 
 
 # ── Topology -> tree ──────────────────────────────────────────────
@@ -303,6 +304,12 @@ def _draw_item(root, item, cx, y) -> float:
             text(root, cx + 3, y + h / 2 + FONT_SMALL + 1, item.sub,
                  font_size=FONT_SMALL, fill="#444")
         return y + h + symbols.SYMBOL_GAP
+    if k == "fuse":
+        return symbols.draw_fuse(root, cx, y, item.label, item.sub)
+    if k == "disconnector":
+        return symbols.draw_disconnector(root, cx, y, item.label, item.sub)
+    if k == "motor":
+        return symbols.draw_motor(root, cx, y, item.label, item.sub)
     if k == "surge_arrester":
         # sym-opn includes ground (20mm height)
         symbols.draw_surge_arrester(root, cx, y, item.label, item.sub)
@@ -321,67 +328,3 @@ def _draw_item(root, item, cx, y) -> float:
     return y
 
 
-# ── Element list ──────────────────────────────────────────────────
-
-
-def _collect_items(sg) -> list[Item]:
-    """Recursively collect all Items from switchgear tree."""
-    items = list(sg.incoming)
-    for p in sg.panels:
-        items.extend(p.items)
-        if p.child:
-            items.extend(_collect_items(p.child))
-    return items
-
-
-def _elem_table_rows(items):
-    skip = {"load"}
-    groups: dict[str, dict] = {}
-    for item in items:
-        if item.kind in skip:
-            continue
-        key = item.type_name or item.name
-        if not key:
-            continue
-        if key in groups:
-            groups[key]["count"] += item.count
-            groups[key]["dl"] = item.label
-        else:
-            groups[key] = {"df": item.label, "dl": item.label,
-                           "name": key, "count": item.count, "note": item.sub}
-    result = []
-    for g in groups.values():
-        d = g["df"]
-        if g["count"] > 1 and g["df"] != g["dl"]:
-            d = f"{g['df']}…{g['dl']}"
-        result.append({"desig": d, "name": g["name"],
-                       "count": g["count"], "note": g["note"]})
-    return sorted(result, key=lambda x: x["desig"])
-
-
-def _draw_elem_table(parent, items, x, y):
-    if not items:
-        return
-    col_x = [0, 25, 115, 130]
-    w, rh = 180, 5
-    text(parent, x + w / 2, y, "Перечень элементов",
-         font_size=FONT_LABEL, font_weight="bold", text_anchor="middle")
-    y += 3
-    headers = ["Поз. обозн.", "Наименование", "Кол.", "Примечание"]
-    rect(parent, x, y, w, rh, fill="#eee")
-    for i, h in enumerate(headers):
-        text(parent, x + col_x[i] + 1.5, y + rh - 1.2, h,
-             font_size=FONT_PROPS, font_weight="bold")
-    y += rh
-    for item in items:
-        vals = [item["desig"], item["name"], str(item["count"]), item["note"]]
-        for i, v in enumerate(vals):
-            text(parent, x + col_x[i] + 1.5, y + rh - 1.2, v,
-                 font_size=FONT_PROPS)
-        y += rh
-    rows = len(items) + 1
-    ty = y - rows * rh
-    rect(parent, x, ty, w, rows * rh)
-    line(parent, x, ty + rh, x + w, ty + rh, stroke_width=THIN_W)
-    for cx_off in col_x[1:]:
-        line(parent, x + cx_off, ty, x + cx_off, y, stroke_width=THIN_W)

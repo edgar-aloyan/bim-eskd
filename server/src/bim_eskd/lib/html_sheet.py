@@ -103,6 +103,12 @@ def generate_docs(output_dir: str | Path) -> list[str]:
                 view_svg = create_calc_table(project_manager.ifc)
             except Exception as e:
                 view_svg = _error_svg(f"Calc error: {e}")
+        elif view == "cable":
+            try:
+                from ..eskd.cable_journal import create_cable_journal
+                view_svg = create_cable_journal(project_manager.ifc)
+            except Exception as e:
+                view_svg = _error_svg(f"Cable journal error: {e}")
         else:
             view_svg = _error_svg(f"Unknown view: {view}")
 

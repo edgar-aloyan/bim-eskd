@@ -360,22 +360,22 @@
     <text x="392.5" y="43" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.751</text>
 
     <!-- 2. Контакт н.р. (51–71, 20мм), повёрнут –90° -->
-    <g transform="translate(250, 61) rotate(-90)"><use href="#ugo-contact" y="-10"/></g>
+    <g transform="translate(250, 61) rotate(90)"><use href="#ugo-contact" y="-10"/></g>
     <text x="272" y="63" font-size="2.5" fill="black" stroke="none">Контакт нормально разомкнутый</text>
     <text x="392.5" y="63" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.755</text>
 
     <!-- 3. Автоматический выключатель (71–91, 20мм), повёрнут –90° -->
-    <g transform="translate(250, 81) rotate(-90)"><use href="#ugo-breaker" y="-10"/></g>
+    <g transform="translate(250, 81) rotate(90)"><use href="#ugo-breaker" y="-10"/></g>
     <text x="272" y="83" font-size="2.5" fill="black" stroke="none">Автоматический выключатель</text>
     <text x="392.5" y="83" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.755</text>
 
     <!-- 4. Генератор однофазный (91–111, 20мм), повёрнут –90° -->
-    <g transform="translate(250, 101) rotate(-90)"><use href="#ugo-generator" y="-10"/></g>
+    <g transform="translate(250, 101) rotate(90)"><use href="#ugo-generator" y="-10"/></g>
     <text x="272" y="103" font-size="2.5" fill="black" stroke="none">Обмотка генератора однофазная</text>
     <text x="392.5" y="103" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.723</text>
 
     <!-- 5. Лампа накаливания (111–131, 20мм), повёрнут –90° -->
-    <g transform="translate(250, 121) rotate(-90)"><use href="#ugo-lamp" y="-10"/></g>
+    <g transform="translate(250, 121) rotate(90)"><use href="#ugo-lamp" y="-10"/></g>
     <text x="272" y="123" font-size="2.5" fill="black" stroke="none">Лампа накаливания осветительная</text>
     <text x="392.5" y="123" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.732</text>
 

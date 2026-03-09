@@ -82,9 +82,10 @@
     <line x1="65" y1="50" x2="80" y2="50"/>
     <line x1="80" y1="50" x2="80" y2="40"/>
     <line x1="80" y1="20" x2="95" y2="20"/>
-    <line x1="95" y1="20" x2="95" y2="50"/>
+    <line x1="95" y1="40" x2="95" y2="50"/>
   </g>
   <use href="#ugo-contact" x="80" y="20"/>
+  <use href="#ugo-breaker" x="95" y="20"/>
 
   <!-- N (нейтраль) — синий -->
   <g stroke="#0000CC" stroke-width="0.5">

@@ -111,33 +111,34 @@
 
   <!-- PE от узла до заземлителя (ниже узла N отделился, остался только PE) -->
   <g stroke-width="0.7">
-    <line x1="115" y1="105" x2="115" y2="125" stroke="#228B22"/>
-    <line x1="115" y1="105" x2="115" y2="125" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="115" y1="105" x2="115" y2="135" stroke="#228B22"/>
+    <line x1="115" y1="105" x2="115" y2="135" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
 
   <!-- PE (защитное заземление) — жёлто-зелёный -->
   <g stroke-width="0.7">
     <!-- Зелёная основа -->
     <line x1="75" y1="90" x2="75" y2="95" stroke="#228B22"/>
-    <line x1="75" y1="95" x2="115" y2="95" stroke="#228B22"/>
-    <line x1="105" y1="95" x2="105" y2="75" stroke="#228B22"/>
-    <line x1="115" y1="95" x2="115" y2="105" stroke="#228B22"/>
+    <line x1="75" y1="95" x2="105" y2="95" stroke="#228B22"/>
+    <line x1="105" y1="75" x2="105" y2="120" stroke="#228B22"/>
+    <line x1="105" y1="120" x2="115" y2="120" stroke="#228B22"/>
     <!-- Жёлтый пунктир поверх -->
     <line x1="75" y1="90" x2="75" y2="95" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="75" y1="95" x2="115" y2="95" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="105" y1="95" x2="105" y2="75" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="115" y1="95" x2="115" y2="105" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="75" y1="95" x2="105" y2="95" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="105" y1="75" x2="105" y2="120" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="105" y1="120" x2="115" y2="120" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
-  <!-- Узлы PE: T на корпусе лампы (75,90), T ответвление к генератору (105,95), T на корпусе генератора (105,75) -->
+  <!-- Узлы PE: T на корпусе лампы (75,90), T ответвление от лампы (105,95), T на корпусе генератора (105,75), T к заземлителю (115,120) -->
   <use href="#ugo-node" x="75" y="90"/>
   <use href="#ugo-node" x="105" y="95"/>
   <use href="#ugo-node" x="105" y="75"/>
+  <use href="#ugo-node" x="115" y="120"/>
 
   <!-- Размещение УГО на схеме -->
   <use href="#ugo-generator" x="115" y="50"/>
   <use href="#ugo-lamp" x="65" y="65"/>
   <use href="#ugo-contact" x="80" y="20"/>
-  <use href="#ugo-ground" x="115" y="125"/>
+  <use href="#ugo-ground" x="115" y="135"/>
 
   <!-- Таблица УГО (перечень условных графических обозначений) -->
   <g transform="translate(295, 5)" stroke="black" stroke-width="0.3" font-family="sans-serif">

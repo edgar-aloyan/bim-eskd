@@ -85,6 +85,14 @@
 
   <rect width="420" height="297" fill="url(#mm5)"/>
 
+  <!-- Питающие проводники (горизонтальные) -->
+  <line x1="25" y1="15" x2="270" y2="15" stroke="#8B4513" stroke-width="0.5"/>
+  <line x1="25" y1="20" x2="270" y2="20" stroke="#0000CC" stroke-width="0.5"/>
+  <g stroke-width="0.7">
+    <line x1="25" y1="25" x2="270" y2="25" stroke="#228B22"/>
+    <line x1="25" y1="25" x2="270" y2="25" stroke="#FFD700" stroke-dasharray="2,2"/>
+  </g>
+
   <!-- Корпуса (элемент схемы, не часть УГО) -->
   <rect x="50" y="220" width="25" height="45" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>
   <rect x="105" y="60" width="20" height="30" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>

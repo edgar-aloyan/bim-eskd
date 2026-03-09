@@ -83,7 +83,7 @@
     </symbol>
   </defs>
 
-  <rect x="21" y="6" width="393" height="285" fill="url(#mm5)"/>
+  <rect x="21" y="7" width="393" height="284" fill="url(#mm5)"/>
 
   <!-- Рамка ГОСТ 2.104-2006, A3 альбомная -->
   <rect x="20.5" y="5.5" width="394" height="286" fill="none" stroke="black" stroke-width="1"/>

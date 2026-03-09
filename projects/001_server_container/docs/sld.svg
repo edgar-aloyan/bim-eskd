@@ -85,6 +85,9 @@
 
   <rect width="420" height="297" fill="url(#mm5)"/>
 
+  <!-- Сдвиг всей схемы вниз -->
+  <g transform="translate(0, 15)">
+
   <!-- Корпуса (элемент схемы, не часть УГО) -->
   <rect x="50" y="205" width="25" height="45" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>
   <rect x="105" y="45" width="20" height="30" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>
@@ -298,5 +301,7 @@
     <text x="70" y="252" font-size="2.5" text-anchor="middle" stroke="none" fill="black">PEN — совмещённый проводник</text>
     <text x="110" y="252" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ Р 50462</text>
   </g>
+
+  </g><!-- конец сдвига -->
 
 </svg>

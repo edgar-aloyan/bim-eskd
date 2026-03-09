@@ -15,7 +15,7 @@
 
     <!-- УГО: Узел (точка соединения), ГОСТ 2.721 -->
     <symbol id="ugo-node" overflow="visible">
-      <rect x="0" y="-5" width="5" height="5" fill="none" stroke="red" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+      <rect x="-5" y="-5" width="10" height="10" fill="none" stroke="red" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
       <circle cx="0" cy="0" r="0.7" fill="black" stroke="none"/>
     </symbol>
 
@@ -105,8 +105,7 @@
     <line x1="95" y1="70" x2="95" y2="85" stroke="#0000CC" stroke-dasharray="2,4" stroke-dashoffset="2"/>
   </g>
 
-  <!-- Узел (95,85): N + PEN + ответвление PE -->
-  <use href="#ugo-node" x="95" y="85"/>
+  <!-- Узел (95,85) не нужен — заземлитель уже обозначает точку -->
 
   <!-- PE (защитное заземление) — жёлто-зелёный пунктир -->
   <g stroke-width="0.7">
@@ -117,10 +116,8 @@
     <line x1="75" y1="75" x2="85" y2="75" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="80" y1="75" x2="80" y2="90" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
-  <!-- Узлы: PE-провод × грани корпусов + Т-соединение -->
-  <use href="#ugo-node" x="75" y="75"/>
+  <!-- Узел: Т-соединение PE -->
   <use href="#ugo-node" x="80" y="75"/>
-  <use href="#ugo-node" x="85" y="75"/>
 
   <!-- Размещение УГО на схеме -->
   <use href="#ugo-generator" x="95" y="50"/>

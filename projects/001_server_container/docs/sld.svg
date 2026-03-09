@@ -28,6 +28,15 @@
       </g>
     </symbol>
 
+    <!-- УГО: Контакт замыкающий, ГОСТ 2.755 -->
+    <symbol id="ugo-contact" overflow="visible">
+      <g stroke="black" stroke-width="0.5" fill="none">
+        <line x1="0" y1="0" x2="0" y2="5"/>
+        <line x1="0" y1="10" x2="3" y2="6"/>
+        <line x1="0" y1="10" x2="0" y2="15"/>
+      </g>
+    </symbol>
+
     <!-- УГО: Обмотка генератора (двухполюсная), ГОСТ 2.723, d=10мм -->
     <symbol id="ugo-generator" overflow="visible">
       <g stroke="black" stroke-width="0.5" fill="none">
@@ -56,10 +65,15 @@
   <rect x="55" y="45" width="20" height="30" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>
   <rect x="85" y="45" width="20" height="30" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>
 
-  <!-- L (фаза) — коричневый -->
+  <!-- L (фаза) — коричневый, с контактом на x=80 -->
   <g stroke="#8B4513" stroke-width="0.5">
-    <line x1="65" y1="50" x2="95" y2="50"/>
+    <line x1="65" y1="50" x2="80" y2="50"/>
+    <line x1="80" y1="50" x2="80" y2="40"/>
+    <line x1="80" y1="25" x2="80" y2="20"/>
+    <line x1="80" y1="20" x2="95" y2="20"/>
+    <line x1="95" y1="20" x2="95" y2="50"/>
   </g>
+  <use href="#ugo-contact" x="80" y="25"/>
 
   <!-- N (нейтраль) — синий -->
   <g stroke="#0000CC" stroke-width="0.5">
@@ -88,11 +102,12 @@
   <!-- Размещение УГО на схеме -->
   <use href="#ugo-generator" x="95" y="50"/>
   <use href="#ugo-lamp" x="65" y="50"/>
+  <use href="#ugo-contact" x="80" y="25"/>
   <use href="#ugo-ground" x="95" y="80"/>
   <use href="#ugo-ground" x="80" y="85"/>
 
   <!-- Таблица УГО (перечень условных графических обозначений) -->
-  <g transform="translate(50, 110)" stroke="black" stroke-width="0.3" font-family="sans-serif">
+  <g transform="translate(50, 120)" stroke="black" stroke-width="0.3" font-family="sans-serif">
     <!-- Заголовок -->
     <text x="60" y="-3" font-size="3.5" font-weight="bold" text-anchor="middle" stroke="none" fill="black">Условные графические обозначения</text>
 
@@ -112,39 +127,47 @@
     <text x="70" y="22" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Заземлитель</text>
     <text x="110" y="22" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.751</text>
 
-    <!-- Строка 2: Обмотка генератора (символ 20мм, строка 30мм) -->
-    <rect x="0" y="30" width="120" height="30" fill="none" stroke="black"/>
-    <line x1="40" y1="30" x2="40" y2="60"/>
-    <line x1="100" y1="30" x2="100" y2="60"/>
-    <use href="#ugo-generator" x="20" y="35"/>
-    <text x="70" y="45" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Обмотка генератора</text>
-    <text x="70" y="49" font-size="2.5" text-anchor="middle" stroke="none" fill="black">однофазная</text>
-    <text x="110" y="47" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.723</text>
+    <!-- Строка 2: Контакт замыкающий (символ 15мм, строка 20мм) -->
+    <rect x="0" y="30" width="120" height="20" fill="none" stroke="black"/>
+    <line x1="40" y1="30" x2="40" y2="50"/>
+    <line x1="100" y1="30" x2="100" y2="50"/>
+    <use href="#ugo-contact" x="20" y="32"/>
+    <text x="70" y="42" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Контакт замыкающий</text>
+    <text x="110" y="42" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.755</text>
 
-    <!-- Строка 3: Лампочка (символ 20мм, строка 30мм) -->
-    <rect x="0" y="60" width="120" height="30" fill="none" stroke="black"/>
-    <line x1="40" y1="60" x2="40" y2="90"/>
-    <line x1="100" y1="60" x2="100" y2="90"/>
-    <use href="#ugo-lamp" x="20" y="65"/>
-    <text x="70" y="75" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Лампа накаливания</text>
-    <text x="70" y="79" font-size="2.5" text-anchor="middle" stroke="none" fill="black">осветительная</text>
-    <text x="110" y="77" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.732</text>
+    <!-- Строка 3: Обмотка генератора (символ 20мм, строка 30мм) -->
+    <rect x="0" y="50" width="120" height="30" fill="none" stroke="black"/>
+    <line x1="40" y1="50" x2="40" y2="80"/>
+    <line x1="100" y1="50" x2="100" y2="80"/>
+    <use href="#ugo-generator" x="20" y="55"/>
+    <text x="70" y="65" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Обмотка генератора</text>
+    <text x="70" y="69" font-size="2.5" text-anchor="middle" stroke="none" fill="black">однофазная</text>
+    <text x="110" y="67" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.723</text>
 
-    <!-- Строка 4: Корпус (строка 20мм) -->
-    <rect x="0" y="90" width="120" height="20" fill="none" stroke="black"/>
-    <line x1="40" y1="90" x2="40" y2="110"/>
-    <line x1="100" y1="90" x2="100" y2="110"/>
-    <rect x="10" y="95" width="20" height="10" fill="none" stroke="black" stroke-dasharray="2,1"/>
-    <text x="70" y="102" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Корпус (оболочка)</text>
-    <text x="110" y="102" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.721</text>
+    <!-- Строка 4: Лампочка (символ 20мм, строка 30мм) -->
+    <rect x="0" y="80" width="120" height="30" fill="none" stroke="black"/>
+    <line x1="40" y1="80" x2="40" y2="110"/>
+    <line x1="100" y1="80" x2="100" y2="110"/>
+    <use href="#ugo-lamp" x="20" y="85"/>
+    <text x="70" y="95" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Лампа накаливания</text>
+    <text x="70" y="99" font-size="2.5" text-anchor="middle" stroke="none" fill="black">осветительная</text>
+    <text x="110" y="97" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.732</text>
 
-    <!-- Строка 5: Узел (строка 10мм) -->
-    <rect x="0" y="110" width="120" height="10" fill="none" stroke="black"/>
-    <line x1="40" y1="110" x2="40" y2="120"/>
-    <line x1="100" y1="110" x2="100" y2="120"/>
-    <use href="#ugo-node" x="20" y="115"/>
-    <text x="70" y="117" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Узел (точка соединения)</text>
-    <text x="110" y="117" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.721</text>
+    <!-- Строка 5: Корпус (строка 20мм) -->
+    <rect x="0" y="110" width="120" height="20" fill="none" stroke="black"/>
+    <line x1="40" y1="110" x2="40" y2="130"/>
+    <line x1="100" y1="110" x2="100" y2="130"/>
+    <rect x="10" y="115" width="20" height="10" fill="none" stroke="black" stroke-dasharray="2,1"/>
+    <text x="70" y="122" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Корпус (оболочка)</text>
+    <text x="110" y="122" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.721</text>
+
+    <!-- Строка 6: Узел (строка 10мм) -->
+    <rect x="0" y="130" width="120" height="10" fill="none" stroke="black"/>
+    <line x1="40" y1="130" x2="40" y2="140"/>
+    <line x1="100" y1="130" x2="100" y2="140"/>
+    <use href="#ugo-node" x="20" y="135"/>
+    <text x="70" y="137" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Узел (точка соединения)</text>
+    <text x="110" y="137" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.721</text>
   </g>
 
 </svg>

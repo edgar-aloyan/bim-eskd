@@ -63,10 +63,17 @@
   <!-- Точка на пересечении (95,80): провод + ответвление заземлителя -->
   <circle cx="95" cy="80" r="0.7" fill="black" stroke="none"/>
 
+  <!-- PE-провод: корпуса → заземлитель -->
+  <g stroke="black" stroke-width="0.5">
+    <line x1="75" y1="75" x2="85" y2="75"/>
+    <line x1="80" y1="75" x2="80" y2="85"/>
+  </g>
+
   <!-- Размещение УГО на схеме -->
   <use href="#ugo-generator" x="95" y="50"/>
   <use href="#ugo-lamp" x="65" y="50"/>
   <use href="#ugo-ground" x="95" y="80"/>
+  <use href="#ugo-ground" x="80" y="85"/>
 
   <!-- Таблица УГО (перечень условных графических обозначений) -->
   <g transform="translate(50, 110)" stroke="black" stroke-width="0.3" font-family="sans-serif">

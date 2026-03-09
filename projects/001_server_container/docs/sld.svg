@@ -95,16 +95,16 @@
 
   <!-- Корпуса (элемент схемы, не часть УГО) -->
   <rect x="50" y="220" width="25" height="45" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>
-  <rect x="100" y="50" width="25" height="40" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>
+  <rect x="100" y="220" width="25" height="45" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>
 
   <!-- L (фаза) — коричневый -->
   <g stroke="#8B4513" stroke-width="0.5">
     <!-- АВ от L шины -->
     <line x1="65" y1="15" x2="65" y2="35"/>
     <!-- Генератор от L шины → верхняя муфта -->
-    <line x1="115" y1="15" x2="115" y2="35"/>
+    <line x1="115" y1="15" x2="115" y2="95"/>
     <!-- Нижняя муфта → генератор -->
-    <line x1="115" y1="55" x2="115" y2="65"/>
+    <line x1="115" y1="225" x2="115" y2="235"/>
     <!-- АВ → контакт: между VB'ами -->
     <line x1="65" y1="55" x2="65" y2="60"/>
     <!-- Контакт → муфта: прямо вниз по оси кабеля -->
@@ -123,9 +123,9 @@
   </g>
 
   <!-- Кабель генератора: муфта верхняя → кабель → муфта нижняя -->
-  <use href="#ugo-mufta" x="115" y="35"/>
-  <line x1="115" y1="40" x2="115" y2="50" stroke="black" stroke-width="0.5"/>
-  <g transform="translate(115, 55) scale(1, -1)">
+  <use href="#ugo-mufta" x="115" y="95"/>
+  <line x1="115" y1="100" x2="115" y2="220" stroke="black" stroke-width="0.5"/>
+  <g transform="translate(115, 225) scale(1, -1)">
     <use href="#ugo-mufta"/>
   </g>
 
@@ -140,12 +140,12 @@
     <line x1="55" y1="260" x2="65" y2="260"/>
     <line x1="65" y1="260" x2="65" y2="255"/>
     <!-- Генератор сверху: N шина → вниз → диагональ 1:2 в верхнюю муфту -->
-    <line x1="120" y1="20" x2="120" y2="25"/>
-    <line x1="120" y1="25" x2="115" y2="35"/>
+    <line x1="120" y1="20" x2="120" y2="85"/>
+    <line x1="120" y1="85" x2="115" y2="95"/>
     <!-- Генератор снизу: нижняя муфта → диагональ 1:1 → вниз → генератор -->
-    <line x1="115" y1="55" x2="105" y2="65"/>
-    <line x1="105" y1="65" x2="105" y2="85"/>
-    <line x1="105" y1="85" x2="115" y2="85"/>
+    <line x1="115" y1="225" x2="105" y2="235"/>
+    <line x1="105" y1="235" x2="105" y2="255"/>
+    <line x1="105" y1="255" x2="115" y2="255"/>
   </g>
 
 
@@ -158,22 +158,24 @@
     <line x1="75" y1="85" x2="75" y2="25" stroke="#228B22"/>
     <!-- Лампа снизу: муфта → диагональ 1:1 → правая стенка корпуса -->
     <line x1="65" y1="225" x2="75" y2="235" stroke="#228B22"/>
-    <!-- Генератор сверху: PE шина → диагональ 1:1 → верхняя муфта -->
-    <line x1="125" y1="25" x2="115" y2="35" stroke="#228B22"/>
+    <!-- Генератор сверху: PE шина → вниз → диагональ 1:1 → верхняя муфта -->
+    <line x1="125" y1="25" x2="125" y2="85" stroke="#228B22"/>
+    <line x1="125" y1="85" x2="115" y2="95" stroke="#228B22"/>
     <!-- Генератор снизу: нижняя муфта → диагональ 1:1 → правая стенка корпуса -->
-    <line x1="115" y1="55" x2="125" y2="65" stroke="#228B22"/>
+    <line x1="115" y1="225" x2="125" y2="235" stroke="#228B22"/>
     <!-- Жёлтый пунктир поверх -->
     <line x1="65" y1="95" x2="75" y2="85" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="75" y1="85" x2="75" y2="25" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="65" y1="225" x2="75" y2="235" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="125" y1="25" x2="115" y2="35" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="115" y1="55" x2="125" y2="65" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="125" y1="25" x2="125" y2="85" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="125" y1="85" x2="115" y2="95" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="115" y1="225" x2="125" y2="235" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
   <!-- Узлы PE -->
   <use href="#ugo-node" x="75" y="235"/>
   <use href="#ugo-node" x="75" y="25"/>
   <use href="#ugo-node" x="125" y="25"/>
-  <use href="#ugo-node" x="125" y="65"/>
+  <use href="#ugo-node" x="125" y="235"/>
 
   <!-- Узлы на L шине -->
   <use href="#ugo-node" x="65" y="15"/>
@@ -183,7 +185,7 @@
   <use href="#ugo-node" x="120" y="20"/>
 
   <!-- Размещение УГО на схеме -->
-  <use href="#ugo-generator" x="115" y="65"/>
+  <use href="#ugo-generator" x="115" y="235"/>
   <use href="#ugo-lamp" x="65" y="235"/>
   <use href="#ugo-ground" x="270" y="25"/>
 

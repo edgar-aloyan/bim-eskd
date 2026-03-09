@@ -91,55 +91,55 @@
   <!-- Основная надпись (форма 1), 185×55мм -->
   <g stroke="black" stroke-width="0.3" font-family="sans-serif" fill="none">
     <!-- Внешний контур -->
-    <rect x="230" y="237" width="185" height="55" stroke-width="0.7"/>
+    <rect x="230" y="236" width="185" height="55" stroke-width="0.7"/>
     <!-- Горизонтальные линии (снизу вверх от y=292) -->
-    <line x1="230" y1="287" x2="415" y2="287"/>
-    <line x1="230" y1="282" x2="415" y2="282"/>
-    <line x1="230" y1="277" x2="415" y2="277"/>
-    <line x1="230" y1="272" x2="415" y2="272"/>
-    <line x1="230" y1="267" x2="415" y2="267"/>
-    <line x1="230" y1="262" x2="353" y2="262"/>
-    <line x1="230" y1="252" x2="353" y2="252"/>
+    <line x1="230" y1="286" x2="415" y2="286"/>
+    <line x1="230" y1="281" x2="415" y2="281"/>
+    <line x1="230" y1="276" x2="415" y2="276"/>
+    <line x1="230" y1="271" x2="415" y2="271"/>
+    <line x1="230" y1="266" x2="415" y2="266"/>
+    <line x1="230" y1="261" x2="353" y2="261"/>
+    <line x1="230" y1="251" x2="353" y2="251"/>
     <!-- Вертикальные линии -->
-    <line x1="237" y1="267" x2="237" y2="292"/>
-    <line x1="247" y1="267" x2="247" y2="292"/>
-    <line x1="270" y1="267" x2="270" y2="292"/>
-    <line x1="281" y1="267" x2="281" y2="292"/>
-    <line x1="295" y1="267" x2="295" y2="292"/>
-    <line x1="353" y1="237" x2="353" y2="292"/>
-    <line x1="368" y1="237" x2="368" y2="252"/>
-    <line x1="375" y1="237" x2="375" y2="252"/>
-    <line x1="383" y1="237" x2="383" y2="252"/>
-    <line x1="393" y1="237" x2="393" y2="252"/>
+    <line x1="237" y1="266" x2="237" y2="291"/>
+    <line x1="247" y1="266" x2="247" y2="291"/>
+    <line x1="270" y1="266" x2="270" y2="291"/>
+    <line x1="281" y1="266" x2="281" y2="291"/>
+    <line x1="295" y1="266" x2="295" y2="291"/>
+    <line x1="353" y1="236" x2="353" y2="291"/>
+    <line x1="368" y1="236" x2="368" y2="251"/>
+    <line x1="375" y1="236" x2="375" y2="251"/>
+    <line x1="383" y1="236" x2="383" y2="251"/>
+    <line x1="393" y1="236" x2="393" y2="251"/>
     <!-- Текст заголовков -->
     <g font-size="1.8" fill="black" stroke="none">
-      <text x="231" y="291">Изм.</text>
-      <text x="238" y="291">Лист</text>
-      <text x="248" y="291">№ докум.</text>
-      <text x="271" y="291">Подп.</text>
-      <text x="282" y="291">Дата</text>
+      <text x="231" y="290">Изм.</text>
+      <text x="238" y="290">Лист</text>
+      <text x="248" y="290">№ докум.</text>
+      <text x="271" y="290">Подп.</text>
+      <text x="282" y="290">Дата</text>
     </g>
     <!-- Текст строк -->
     <g font-size="2.2" fill="black" stroke="none">
-      <text x="231" y="286">Разраб.</text>
-      <text x="231" y="281">Пров.</text>
-      <text x="231" y="271">Н. контр.</text>
-      <text x="231" y="276">Т. контр.</text>
-      <text x="231" y="266">Утв.</text>
+      <text x="231" y="285">Разраб.</text>
+      <text x="231" y="280">Пров.</text>
+      <text x="231" y="270">Н. контр.</text>
+      <text x="231" y="275">Т. контр.</text>
+      <text x="231" y="265">Утв.</text>
     </g>
     <!-- Название документа -->
-    <text x="391.5" y="260" font-size="5" fill="black" stroke="none" text-anchor="middle" font-weight="bold">Однолинейная схема</text>
-    <text x="391.5" y="266" font-size="5" fill="black" stroke="none" text-anchor="middle" font-weight="bold">электроснабжения</text>
+    <text x="391.5" y="259" font-size="5" fill="black" stroke="none" text-anchor="middle" font-weight="bold">Однолинейная схема</text>
+    <text x="391.5" y="265" font-size="5" fill="black" stroke="none" text-anchor="middle" font-weight="bold">электроснабжения</text>
     <!-- Литера, масса, масштаб -->
     <g font-size="1.8" fill="black" stroke="none">
-      <text x="354" y="251">Лит.</text>
-      <text x="376" y="251">Масса</text>
-      <text x="384" y="251">Масштаб</text>
+      <text x="354" y="250">Лит.</text>
+      <text x="376" y="250">Масса</text>
+      <text x="384" y="250">Масштаб</text>
     </g>
     <!-- Лист / Листов -->
     <g font-size="1.8" fill="black" stroke="none">
-      <text x="394" y="251">Лист</text>
-      <text x="394" y="244" text-anchor="middle">1</text>
+      <text x="394" y="250">Лист</text>
+      <text x="394" y="243" text-anchor="middle">1</text>
     </g>
   </g>
 

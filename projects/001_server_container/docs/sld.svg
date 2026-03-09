@@ -134,7 +134,7 @@
       <text x="238" y="255">Утв.</text>
     </g>
     <!-- Заголовки колонок изменений (нижняя строка) -->
-    <g font-size="1.8" fill="black" stroke="none">
+    <g font-size="2.5" fill="black" stroke="none">
       <text x="231" y="290">Изм.</text>
       <text x="238" y="290">Лист</text>
       <text x="248" y="290">№ докум.</text>
@@ -143,18 +143,18 @@
     </g>
 
     <!-- Наименование (графа 1): x=295-415, y=236-251, 120×15мм -->
-    <text x="355" y="244" font-size="5" fill="black" stroke="none" text-anchor="middle" font-weight="bold">Однолинейная схема</text>
-    <text x="355" y="250" font-size="5" fill="black" stroke="none" text-anchor="middle" font-weight="bold">электроснабжения</text>
+    <text x="355" y="244" font-size="7" fill="black" stroke="none" text-anchor="middle" font-weight="bold">Однолинейная схема</text>
+    <text x="355" y="251" font-size="7" fill="black" stroke="none" text-anchor="middle" font-weight="bold">электроснабжения</text>
 
     <!-- Полоска Лит./Масса/Масштаб (y=251-256) -->
-    <g font-size="1.8" fill="#666" stroke="none">
+    <g font-size="2.5" fill="#666" stroke="none">
       <text x="296" y="255">Лит.</text>
       <text x="391" y="255">Масса</text>
       <text x="401" y="255">Масштаб</text>
     </g>
 
     <!-- Нижняя строка: правая часть — метки -->
-    <g font-size="1.8" fill="#666" stroke="none">
+    <g font-size="2.5" fill="#666" stroke="none">
       <text x="296" y="288">Организация</text>
       <text x="366" y="288">Масшт.</text>
       <text x="376" y="288">Лист</text>
@@ -162,7 +162,7 @@
       <text x="406" y="288">Масса</text>
     </g>
     <!-- Данные: номер листа -->
-    <text x="382.5" y="290.5" font-size="3.5" fill="black" stroke="none" text-anchor="middle">1</text>
+    <text x="382.5" y="290" font-size="5" fill="black" stroke="none" text-anchor="middle">1</text>
   </g>
 
   <!-- Корпус РУ (шины + АВ + муфты) -->
@@ -323,7 +323,7 @@
   <use href="#ugo-ground" x="215" y="236"/>
 
   <!-- Обозначения (ГОСТ 2.710-81) -->
-  <g font-family="GOST type B" font-size="2.5" fill="black">
+  <g font-family="GOST type B" font-size="3.5" fill="black">
     <!-- Шины -->
     <text x="57" y="17.5" text-anchor="end">L</text>
     <text x="57" y="22.5" text-anchor="end">N</text>

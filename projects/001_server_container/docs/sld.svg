@@ -183,6 +183,7 @@
   <use href="#ugo-node" x="125" y="25"/>
   <use href="#ugo-node" x="125" y="235"/>
   <use href="#ugo-node" x="165" y="25"/>
+  <use href="#ugo-node" x="165" y="100"/>
 
   <!-- Узлы на L шине -->
   <use href="#ugo-node" x="65" y="15"/>

@@ -31,7 +31,7 @@
     <!-- УГО: Контакт нормально разомкнутый, ГОСТ 2.755, выводы 5мм + зазор 10мм = 20мм, угол 30° -->
     <symbol id="ugo-contact" overflow="visible">
       <g stroke="black" stroke-width="0.5" fill="none">
-        <line x1="0" y1="0" x2="0" y2="8"/>
+        <line x1="0" y1="0" x2="0" y2="9"/>
         <line x1="0" y1="15" x2="-5" y2="6"/>
         <line x1="0" y1="15" x2="0" y2="20"/>
       </g>

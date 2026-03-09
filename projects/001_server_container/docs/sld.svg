@@ -49,6 +49,18 @@
       </g>
     </symbol>
 
+    <!-- УГО: АВ неподвижным контактом вниз (в сторону сети/источника) -->
+    <symbol id="ugo-breaker-down" overflow="visible">
+      <g stroke="black" stroke-width="0.5" fill="none">
+        <line x1="0" y1="0" x2="0" y2="5"/>
+        <line x1="0" y1="5" x2="-5" y2="14"/>
+        <rect x="-2" y="-1.5" width="2" height="3" fill="none" stroke="black" stroke-width="0.5" transform="translate(-2.5, 9.5) rotate(30)"/>
+        <line x1="-1" y1="12" x2="1" y2="14"/>
+        <line x1="-1" y1="14" x2="1" y2="12"/>
+        <line x1="0" y1="13" x2="0" y2="20"/>
+      </g>
+    </symbol>
+
     <!-- УГО: Обмотка генератора (двухполюсная), ГОСТ 2.723, d=10мм -->
     <symbol id="ugo-generator" overflow="visible">
       <g stroke="black" stroke-width="0.5" fill="none">
@@ -85,9 +97,7 @@
     <line x1="95" y1="40" x2="95" y2="50"/>
   </g>
   <use href="#ugo-contact" x="80" y="20"/>
-  <g transform="translate(95, 30) scale(1, -1) translate(-95, -30)">
-    <use href="#ugo-breaker" x="95" y="20"/>
-  </g>
+  <use href="#ugo-breaker-down" x="95" y="20"/>
 
   <!-- N (нейтраль) — синий -->
   <g stroke="#0000CC" stroke-width="0.5">

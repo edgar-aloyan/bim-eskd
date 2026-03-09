@@ -322,127 +322,103 @@
     <text x="152" y="225">EL2</text>
   </g>
 
-  <!-- Таблица УГО (перечень условных графических обозначений) -->
-  <g transform="translate(295, 21)" stroke="black" stroke-width="0.3" font-family="sans-serif">
-    <!-- Заголовок -->
-    <text x="60" y="-3" font-size="3.5" font-weight="bold" text-anchor="middle" stroke="none" fill="black">Условные графические обозначения</text>
+  <!-- Таблица УГО (продолжение основной надписи вверх), 185×110мм -->
+  <!-- x=230–415, y=126–236; столбцы: Обозначение(40) | Наименование(100) | ГОСТ(45) -->
+  <g stroke="black" stroke-width="0.3" font-family="sans-serif">
+    <!-- Контур и разделители -->
+    <rect x="230" y="126" width="185" height="110" fill="none"/>
+    <line x1="270" y1="126" x2="270" y2="236"/>
+    <line x1="370" y1="126" x2="370" y2="236"/>
+    <!-- Горизонтали -->
+    <line x1="230" y1="231" x2="415" y2="231"/>
+    <line x1="230" y1="221" x2="415" y2="221"/>
+    <line x1="230" y1="211" x2="415" y2="211"/>
+    <line x1="230" y1="201" x2="415" y2="201"/>
+    <line x1="230" y1="191" x2="415" y2="191"/>
+    <line x1="230" y1="181" x2="415" y2="181"/>
+    <line x1="230" y1="171" x2="415" y2="171"/>
+    <line x1="230" y1="161" x2="415" y2="161"/>
+    <line x1="230" y1="151" x2="415" y2="151"/>
+    <line x1="230" y1="146" x2="415" y2="146"/>
+    <line x1="230" y1="141" x2="415" y2="141"/>
+    <line x1="230" y1="136" x2="415" y2="136"/>
+    <line x1="230" y1="131" x2="415" y2="131"/>
 
-    <!-- Шапка таблицы -->
-    <rect x="0" y="0" width="120" height="10" fill="#eee" stroke="black"/>
-    <text x="20" y="7" font-size="2.8" text-anchor="middle" stroke="none" fill="black" font-weight="bold">Обозначение</text>
-    <text x="70" y="7" font-size="2.8" text-anchor="middle" stroke="none" fill="black" font-weight="bold">Наименование</text>
-    <text x="110" y="7" font-size="2.8" text-anchor="middle" stroke="none" fill="black" font-weight="bold">ГОСТ</text>
-    <line x1="40" y1="0" x2="40" y2="10"/>
-    <line x1="100" y1="0" x2="100" y2="10"/>
+    <!-- Шапка (231–236) -->
+    <rect x="230" y="231" width="185" height="5" fill="#eee"/>
+    <g font-size="2.5" fill="black" stroke="none" font-weight="bold">
+      <text x="250" y="235" text-anchor="middle">Обозначение</text>
+      <text x="320" y="235" text-anchor="middle">Наименование</text>
+      <text x="392.5" y="235" text-anchor="middle">ГОСТ</text>
+    </g>
 
-    <!-- Строка 1: Заземлитель (символ 9мм, строка 20мм) -->
-    <rect x="0" y="10" width="120" height="20" fill="none" stroke="black"/>
-    <line x1="40" y1="10" x2="40" y2="30"/>
-    <line x1="100" y1="10" x2="100" y2="30"/>
-    <use href="#ugo-ground" x="20" y="15"/>
-    <text x="70" y="22" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Заземлитель</text>
-    <text x="110" y="22" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.751</text>
+    <!-- Заземлитель (221–231) -->
+    <use href="#ugo-ground" x="250" y="221"/>
+    <text x="272" y="228" font-size="2.5" fill="black" stroke="none">Заземлитель</text>
+    <text x="392.5" y="228" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.751</text>
 
-    <!-- Строка 2: Контакт нормально разомкнутый (символ 20мм, строка 30мм) -->
-    <rect x="0" y="30" width="120" height="30" fill="none" stroke="black"/>
-    <line x1="40" y1="30" x2="40" y2="60"/>
-    <line x1="100" y1="30" x2="100" y2="60"/>
-    <use href="#ugo-contact" x="20" y="35"/>
-    <text x="70" y="47" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Контакт нормально разомкнутый</text>
-    <text x="110" y="47" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.755</text>
+    <!-- Контакт н.р. (211–221), повёрнут –90° -->
+    <g transform="translate(250, 216) rotate(-90)"><use href="#ugo-contact" y="-10"/></g>
+    <text x="272" y="218" font-size="2.5" fill="black" stroke="none">Контакт нормально разомкнутый</text>
+    <text x="392.5" y="218" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.755</text>
 
-    <!-- Строка 3: Автоматический выключатель (символ 20мм, строка 30мм) -->
-    <rect x="0" y="60" width="120" height="30" fill="none" stroke="black"/>
-    <line x1="40" y1="60" x2="40" y2="90"/>
-    <line x1="100" y1="60" x2="100" y2="90"/>
-    <use href="#ugo-breaker" x="20" y="65"/>
-    <text x="70" y="77" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Автоматический выключатель</text>
-    <text x="110" y="77" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.755</text>
+    <!-- Автоматический выключатель (201–211), повёрнут –90° -->
+    <g transform="translate(250, 206) rotate(-90)"><use href="#ugo-breaker" y="-10"/></g>
+    <text x="272" y="208" font-size="2.5" fill="black" stroke="none">Автоматический выключатель</text>
+    <text x="392.5" y="208" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.755</text>
 
-    <!-- Строка 4: Обмотка генератора (символ 20мм, строка 30мм) -->
-    <rect x="0" y="90" width="120" height="30" fill="none" stroke="black"/>
-    <line x1="40" y1="90" x2="40" y2="120"/>
-    <line x1="100" y1="90" x2="100" y2="120"/>
-    <use href="#ugo-generator" x="20" y="95"/>
-    <text x="70" y="105" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Обмотка генератора</text>
-    <text x="70" y="109" font-size="2.5" text-anchor="middle" stroke="none" fill="black">однофазная</text>
-    <text x="110" y="107" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.723</text>
+    <!-- Генератор однофазный (191–201), повёрнут –90° -->
+    <g transform="translate(250, 196) rotate(-90)"><use href="#ugo-generator" y="-10"/></g>
+    <text x="272" y="198" font-size="2.5" fill="black" stroke="none">Обмотка генератора однофазная</text>
+    <text x="392.5" y="198" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.723</text>
 
-    <!-- Строка 5: Лампочка (символ 20мм, строка 30мм) -->
-    <rect x="0" y="120" width="120" height="30" fill="none" stroke="black"/>
-    <line x1="40" y1="120" x2="40" y2="150"/>
-    <line x1="100" y1="120" x2="100" y2="150"/>
-    <use href="#ugo-lamp" x="20" y="125"/>
-    <text x="70" y="135" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Лампа накаливания</text>
-    <text x="70" y="139" font-size="2.5" text-anchor="middle" stroke="none" fill="black">осветительная</text>
-    <text x="110" y="137" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.732</text>
+    <!-- Лампа накаливания (181–191), повёрнут –90° -->
+    <g transform="translate(250, 186) rotate(-90)"><use href="#ugo-lamp" y="-10"/></g>
+    <text x="272" y="188" font-size="2.5" fill="black" stroke="none">Лампа накаливания осветительная</text>
+    <text x="392.5" y="188" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.732</text>
 
-    <!-- Строка 6: Корпус (строка 20мм) -->
-    <rect x="0" y="150" width="120" height="20" fill="none" stroke="black"/>
-    <line x1="40" y1="150" x2="40" y2="170"/>
-    <line x1="100" y1="150" x2="100" y2="170"/>
-    <rect x="10" y="155" width="20" height="10" fill="none" stroke="black" stroke-dasharray="2,1"/>
-    <text x="70" y="162" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Корпус (оболочка)</text>
-    <text x="110" y="162" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.721</text>
+    <!-- Корпус (171–181) -->
+    <rect x="242" y="174" width="16" height="5" fill="none" stroke="black" stroke-dasharray="2,1"/>
+    <text x="272" y="178" font-size="2.5" fill="black" stroke="none">Корпус (оболочка)</text>
+    <text x="392.5" y="178" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.721</text>
 
-    <!-- Строка 7: Муфта (строка 15мм) -->
-    <rect x="0" y="170" width="120" height="15" fill="none" stroke="black"/>
-    <line x1="40" y1="170" x2="40" y2="185"/>
-    <line x1="100" y1="170" x2="100" y2="185"/>
-    <use href="#ugo-mufta" x="20" y="175"/>
-    <text x="70" y="180" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Муфта (кабельный разветвитель)</text>
-    <text x="110" y="180" font-size="2" text-anchor="middle" stroke="none" fill="black">—</text>
+    <!-- Муфта (161–171) -->
+    <use href="#ugo-mufta" x="250" y="163.5"/>
+    <text x="272" y="168" font-size="2.5" fill="black" stroke="none">Муфта (кабельный разветвитель)</text>
+    <text x="392.5" y="168" font-size="2" fill="black" stroke="none" text-anchor="middle">—</text>
 
-    <!-- Строка 8: Узел (строка 20мм) -->
-    <rect x="0" y="185" width="120" height="20" fill="none" stroke="black"/>
-    <line x1="40" y1="185" x2="40" y2="205"/>
-    <line x1="100" y1="185" x2="100" y2="205"/>
-    <use href="#ugo-node" x="20" y="195"/>
-    <text x="70" y="197" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Узел (точка соединения)</text>
-    <text x="110" y="197" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.721</text>
+    <!-- Узел (151–161) -->
+    <use href="#ugo-node" x="250" y="156"/>
+    <text x="272" y="158" font-size="2.5" fill="black" stroke="none">Узел (точка соединения)</text>
+    <text x="392.5" y="158" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.721</text>
 
-    <!-- Строка 9: Кабель (строка 10мм) -->
-    <rect x="0" y="205" width="120" height="10" fill="none" stroke="black"/>
-    <line x1="40" y1="205" x2="40" y2="215"/>
-    <line x1="100" y1="205" x2="100" y2="215"/>
-    <line x1="10" y1="210" x2="30" y2="210" stroke="black" stroke-width="0.5"/>
-    <text x="70" y="212" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Кабель</text>
-    <text x="110" y="212" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ Р 50462</text>
+    <!-- Кабель (146–151) -->
+    <line x1="240" y1="148.5" x2="260" y2="148.5" stroke="black" stroke-width="0.5"/>
+    <text x="272" y="150" font-size="2.5" fill="black" stroke="none">Кабель</text>
+    <text x="392.5" y="150" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- Строка 10: L проводник (строка 10мм) -->
-    <rect x="0" y="215" width="120" height="10" fill="none" stroke="black"/>
-    <line x1="40" y1="215" x2="40" y2="225"/>
-    <line x1="100" y1="215" x2="100" y2="225"/>
-    <line x1="10" y1="220" x2="30" y2="220" stroke="#8B4513" stroke-width="0.5"/>
-    <text x="70" y="222" font-size="2.5" text-anchor="middle" stroke="none" fill="black">L — фазный проводник</text>
-    <text x="110" y="222" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ Р 50462</text>
+    <!-- L — фазный (141–146) -->
+    <line x1="240" y1="143.5" x2="260" y2="143.5" stroke="#8B4513" stroke-width="0.5"/>
+    <text x="272" y="145" font-size="2.5" fill="black" stroke="none">L — фазный проводник</text>
+    <text x="392.5" y="145" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- Строка 11: N проводник (строка 10мм) -->
-    <rect x="0" y="225" width="120" height="10" fill="none" stroke="black"/>
-    <line x1="40" y1="225" x2="40" y2="235"/>
-    <line x1="100" y1="225" x2="100" y2="235"/>
-    <line x1="10" y1="230" x2="30" y2="230" stroke="#0000CC" stroke-width="0.5"/>
-    <text x="70" y="232" font-size="2.5" text-anchor="middle" stroke="none" fill="black">N — нейтральный проводник</text>
-    <text x="110" y="232" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ Р 50462</text>
+    <!-- N — нейтральный (136–141) -->
+    <line x1="240" y1="138.5" x2="260" y2="138.5" stroke="#0000CC" stroke-width="0.5"/>
+    <text x="272" y="140" font-size="2.5" fill="black" stroke="none">N — нейтральный проводник</text>
+    <text x="392.5" y="140" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- Строка 12: PE проводник (строка 10мм) -->
-    <rect x="0" y="235" width="120" height="10" fill="none" stroke="black"/>
-    <line x1="40" y1="235" x2="40" y2="245"/>
-    <line x1="100" y1="235" x2="100" y2="245"/>
-    <line x1="10" y1="240" x2="30" y2="240" stroke="#228B22" stroke-width="0.7"/>
-    <line x1="10" y1="240" x2="30" y2="240" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,2"/>
-    <text x="70" y="242" font-size="2.5" text-anchor="middle" stroke="none" fill="black">PE — защитный проводник</text>
-    <text x="110" y="242" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ Р 50462</text>
+    <!-- PE — защитный (131–136) -->
+    <line x1="240" y1="133.5" x2="260" y2="133.5" stroke="#228B22" stroke-width="0.7"/>
+    <line x1="240" y1="133.5" x2="260" y2="133.5" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,2"/>
+    <text x="272" y="135" font-size="2.5" fill="black" stroke="none">PE — защитный проводник</text>
+    <text x="392.5" y="135" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- Строка 13: PEN проводник (строка 10мм) -->
-    <rect x="0" y="245" width="120" height="10" fill="none" stroke="black"/>
-    <line x1="40" y1="245" x2="40" y2="255"/>
-    <line x1="100" y1="245" x2="100" y2="255"/>
-    <line x1="10" y1="250" x2="30" y2="250" stroke="#228B22" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="0"/>
-    <line x1="10" y1="250" x2="30" y2="250" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="4"/>
-    <line x1="10" y1="250" x2="30" y2="250" stroke="#0000CC" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="2"/>
-    <text x="70" y="252" font-size="2.5" text-anchor="middle" stroke="none" fill="black">PEN — совмещённый проводник</text>
-    <text x="110" y="252" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ Р 50462</text>
+    <!-- PEN — совмещённый (126–131) -->
+    <line x1="240" y1="128.5" x2="260" y2="128.5" stroke="#228B22" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="0"/>
+    <line x1="240" y1="128.5" x2="260" y2="128.5" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="4"/>
+    <line x1="240" y1="128.5" x2="260" y2="128.5" stroke="#0000CC" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="2"/>
+    <text x="272" y="130" font-size="2.5" fill="black" stroke="none">PEN — совмещённый проводник</text>
+    <text x="392.5" y="130" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
   </g>
 
 </svg>

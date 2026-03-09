@@ -93,11 +93,11 @@
     <line x1="65" y1="70" x2="65" y2="80"/>
   </g>
 
-  <!-- PEN (от генератора до узла) — жёлто-зелёно-синий пунктир -->
+  <!-- PEN (от генератора до узла) — жёлто-зелёно-синий, 2мм каждый цвет -->
   <g stroke-width="0.7">
-    <line x1="95" y1="70" x2="95" y2="80" stroke="#228B22"/>
-    <line x1="95" y1="70" x2="95" y2="80" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="95" y1="70" x2="95" y2="80" stroke="#0000CC" stroke-dasharray="1,3" stroke-dashoffset="2"/>
+    <line x1="95" y1="70" x2="95" y2="80" stroke="#228B22" stroke-dasharray="2,4" stroke-dashoffset="0"/>
+    <line x1="95" y1="70" x2="95" y2="80" stroke="#FFD700" stroke-dasharray="2,4" stroke-dashoffset="4"/>
+    <line x1="95" y1="70" x2="95" y2="80" stroke="#0000CC" stroke-dasharray="2,4" stroke-dashoffset="2"/>
   </g>
 
   <!-- Узел (95,80): N + PEN + ответвление PE -->

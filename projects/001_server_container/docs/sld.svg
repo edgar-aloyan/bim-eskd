@@ -117,6 +117,14 @@
     <text x="70" y="75" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Лампа накаливания</text>
     <text x="70" y="79" font-size="2.5" text-anchor="middle" stroke="none" fill="black">осветительная</text>
     <text x="110" y="77" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.732</text>
+
+    <!-- Строка 4: Корпус (строка 20мм) -->
+    <rect x="0" y="90" width="120" height="20" fill="none" stroke="black"/>
+    <line x1="40" y1="90" x2="40" y2="110"/>
+    <line x1="100" y1="90" x2="100" y2="110"/>
+    <rect x="10" y="95" width="20" height="10" fill="none" stroke="black" stroke-dasharray="2,1"/>
+    <text x="70" y="102" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Корпус (оболочка)</text>
+    <text x="110" y="102" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.721</text>
   </g>
 
 </svg>

@@ -85,7 +85,9 @@
     <line x1="95" y1="40" x2="95" y2="50"/>
   </g>
   <use href="#ugo-contact" x="80" y="20"/>
-  <use href="#ugo-breaker" x="95" y="20"/>
+  <g transform="translate(95, 30) scale(1, -1) translate(-95, -30)">
+    <use href="#ugo-breaker" x="95" y="20"/>
+  </g>
 
   <!-- N (нейтраль) — синий -->
   <g stroke="#0000CC" stroke-width="0.5">

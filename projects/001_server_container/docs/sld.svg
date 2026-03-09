@@ -109,11 +109,10 @@
   <!-- Узел (115,105): T-пересечение PEN + N -->
   <use href="#ugo-node" x="115" y="105"/>
 
-  <!-- PEN от узла до заземлителя -->
+  <!-- PE от узла до заземлителя (ниже узла N отделился, остался только PE) -->
   <g stroke-width="0.7">
-    <line x1="115" y1="105" x2="115" y2="125" stroke="#228B22" stroke-dasharray="2,4" stroke-dashoffset="0"/>
-    <line x1="115" y1="105" x2="115" y2="125" stroke="#FFD700" stroke-dasharray="2,4" stroke-dashoffset="4"/>
-    <line x1="115" y1="105" x2="115" y2="125" stroke="#0000CC" stroke-dasharray="2,4" stroke-dashoffset="2"/>
+    <line x1="115" y1="105" x2="115" y2="125" stroke="#228B22"/>
+    <line x1="115" y1="105" x2="115" y2="125" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
 
   <!-- PE (защитное заземление) — жёлто-зелёный -->

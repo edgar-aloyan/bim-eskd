@@ -42,7 +42,7 @@
       <g stroke="black" stroke-width="0.5" fill="none">
         <line x1="0" y1="0" x2="0" y2="5"/>
         <line x1="0" y1="15" x2="-3" y2="6"/>
-        <rect x="-2.5" y="9.5" width="2" height="2" fill="black" stroke="none"/>
+        <rect x="-2.5" y="9.5" width="1" height="2" fill="black" stroke="none"/>
         <line x1="0" y1="15" x2="0" y2="20"/>
       </g>
     </symbol>

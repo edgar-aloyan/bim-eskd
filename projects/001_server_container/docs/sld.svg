@@ -101,34 +101,38 @@
 
   <!-- PEN (от генератора до узла N) — жёлто-зелёно-синий, 2мм каждый цвет -->
   <g stroke-width="0.7">
-    <line x1="115" y1="70" x2="115" y2="110" stroke="#228B22" stroke-dasharray="2,4" stroke-dashoffset="0"/>
-    <line x1="115" y1="70" x2="115" y2="110" stroke="#FFD700" stroke-dasharray="2,4" stroke-dashoffset="4"/>
-    <line x1="115" y1="70" x2="115" y2="110" stroke="#0000CC" stroke-dasharray="2,4" stroke-dashoffset="2"/>
+    <line x1="115" y1="70" x2="115" y2="105" stroke="#228B22" stroke-dasharray="2,4" stroke-dashoffset="0"/>
+    <line x1="115" y1="70" x2="115" y2="105" stroke="#FFD700" stroke-dasharray="2,4" stroke-dashoffset="4"/>
+    <line x1="115" y1="70" x2="115" y2="105" stroke="#0000CC" stroke-dasharray="2,4" stroke-dashoffset="2"/>
   </g>
 
-  <!-- Узел (115,110): PEN + N -->
-  <use href="#ugo-node" x="115" y="110"/>
+  <!-- Узел (115,105): T-пересечение PEN + N -->
+  <use href="#ugo-node" x="115" y="105"/>
 
   <!-- PEN от узла до заземлителя -->
   <g stroke-width="0.7">
-    <line x1="115" y1="110" x2="115" y2="125" stroke="#228B22" stroke-dasharray="2,4" stroke-dashoffset="0"/>
-    <line x1="115" y1="110" x2="115" y2="125" stroke="#FFD700" stroke-dasharray="2,4" stroke-dashoffset="4"/>
-    <line x1="115" y1="110" x2="115" y2="125" stroke="#0000CC" stroke-dasharray="2,4" stroke-dashoffset="2"/>
+    <line x1="115" y1="105" x2="115" y2="125" stroke="#228B22" stroke-dasharray="2,4" stroke-dashoffset="0"/>
+    <line x1="115" y1="105" x2="115" y2="125" stroke="#FFD700" stroke-dasharray="2,4" stroke-dashoffset="4"/>
+    <line x1="115" y1="105" x2="115" y2="125" stroke="#0000CC" stroke-dasharray="2,4" stroke-dashoffset="2"/>
   </g>
 
-  <!-- PE (защитное заземление) — жёлто-зелёный пунктир -->
+  <!-- PE (защитное заземление) — жёлто-зелёный -->
   <g stroke-width="0.7">
     <!-- Зелёная основа -->
+    <line x1="75" y1="90" x2="75" y2="95" stroke="#228B22"/>
     <line x1="75" y1="95" x2="105" y2="95" stroke="#228B22"/>
+    <line x1="105" y1="95" x2="105" y2="75" stroke="#228B22"/>
     <line x1="90" y1="95" x2="90" y2="110" stroke="#228B22"/>
     <!-- Жёлтый пунктир поверх -->
+    <line x1="75" y1="90" x2="75" y2="95" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="75" y1="95" x2="105" y2="95" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="105" y1="95" x2="105" y2="75" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="90" y1="95" x2="90" y2="110" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
-  <!-- Узлы PE: корпус лампы, Т-соединение, корпус генератора -->
-  <use href="#ugo-node" x="75" y="95"/>
+  <!-- Узлы PE: T на корпусе лампы (75,90), T к заземлителю (90,95), T на корпусе генератора (105,75) -->
+  <use href="#ugo-node" x="75" y="90"/>
   <use href="#ugo-node" x="90" y="95"/>
-  <use href="#ugo-node" x="105" y="95"/>
+  <use href="#ugo-node" x="105" y="75"/>
 
   <!-- Размещение УГО на схеме -->
   <use href="#ugo-generator" x="115" y="50"/>

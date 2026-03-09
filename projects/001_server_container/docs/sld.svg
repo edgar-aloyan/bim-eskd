@@ -338,12 +338,12 @@
     <line x1="230" y1="116" x2="415" y2="116"/>
     <line x1="230" y1="136" x2="415" y2="136"/>
     <line x1="230" y1="151" x2="415" y2="151"/>
+    <line x1="230" y1="161" x2="415" y2="161"/>
     <line x1="230" y1="171" x2="415" y2="171"/>
     <line x1="230" y1="181" x2="415" y2="181"/>
     <line x1="230" y1="191" x2="415" y2="191"/>
     <line x1="230" y1="201" x2="415" y2="201"/>
     <line x1="230" y1="211" x2="415" y2="211"/>
-    <line x1="230" y1="221" x2="415" y2="221"/>
 
     <!-- Заголовок (6–16, 10мм) -->
     <text x="322.5" y="13" font-size="3.5" fill="black" stroke="none" font-weight="bold" text-anchor="middle">Условные графические обозначения</text>
@@ -381,7 +381,7 @@
     <text x="392.5" y="108" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.732</text>
 
     <!-- 6. Корпус (116–136, 20мм), VB 121–131 -->
-    <rect x="241" y="121" width="20" height="10" fill="none" stroke="black" stroke-dasharray="2,1"/>
+    <rect x="240" y="121" width="20" height="10" fill="none" stroke="black" stroke-dasharray="2,1"/>
     <text x="272" y="128" font-size="2.5" fill="black" stroke="none">Корпус (оболочка)</text>
     <text x="392.5" y="128" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.721</text>
 
@@ -390,40 +390,40 @@
     <text x="272" y="146" font-size="2.5" fill="black" stroke="none">Муфта кабельная</text>
     <text x="392.5" y="146" font-size="2" fill="black" stroke="none" text-anchor="middle">—</text>
 
-    <!-- 8. Узел (151–171, 20мм), VB 156–166 -->
-    <use href="#ugo-node" x="250" y="161"/>
-    <text x="272" y="163" font-size="2.5" fill="black" stroke="none">Узел (точка соединения)</text>
-    <text x="392.5" y="163" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.721</text>
+    <!-- 8. Узел (151–161, 10мм) -->
+    <use href="#ugo-node" x="250" y="156"/>
+    <text x="272" y="158" font-size="2.5" fill="black" stroke="none">Узел (точка соединения)</text>
+    <text x="392.5" y="158" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.721</text>
 
-    <!-- 9. Кабель (171–181, 10мм) -->
-    <line x1="241" y1="176" x2="261" y2="176" stroke="black" stroke-width="0.5"/>
-    <text x="272" y="178" font-size="2.5" fill="black" stroke="none">Кабель</text>
+    <!-- 9. Кабель (161–171, 10мм) -->
+    <line x1="240" y1="166" x2="260" y2="166" stroke="black" stroke-width="0.5"/>
+    <text x="272" y="168" font-size="2.5" fill="black" stroke="none">Кабель</text>
+    <text x="392.5" y="168" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
+
+    <!-- 10. L — фазный (171–181, 10мм) -->
+    <line x1="240" y1="176" x2="260" y2="176" stroke="#8B4513" stroke-width="0.5"/>
+    <text x="272" y="178" font-size="2.5" fill="black" stroke="none">L — фазный проводник</text>
     <text x="392.5" y="178" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- 10. L — фазный (181–191, 10мм) -->
-    <line x1="241" y1="186" x2="261" y2="186" stroke="#8B4513" stroke-width="0.5"/>
-    <text x="272" y="188" font-size="2.5" fill="black" stroke="none">L — фазный проводник</text>
+    <!-- 11. N — нейтральный (181–191, 10мм) -->
+    <line x1="240" y1="186" x2="260" y2="186" stroke="#0000CC" stroke-width="0.5"/>
+    <text x="272" y="188" font-size="2.5" fill="black" stroke="none">N — нейтральный проводник</text>
     <text x="392.5" y="188" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- 11. N — нейтральный (191–201, 10мм) -->
-    <line x1="241" y1="196" x2="261" y2="196" stroke="#0000CC" stroke-width="0.5"/>
-    <text x="272" y="198" font-size="2.5" fill="black" stroke="none">N — нейтральный проводник</text>
+    <!-- 12. PE — защитный (191–201, 10мм) -->
+    <line x1="240" y1="196" x2="260" y2="196" stroke="#228B22" stroke-width="0.7"/>
+    <line x1="240" y1="196" x2="260" y2="196" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,2"/>
+    <text x="272" y="198" font-size="2.5" fill="black" stroke="none">PE — защитный проводник</text>
     <text x="392.5" y="198" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- 12. PE — защитный (201–211, 10мм) -->
-    <line x1="241" y1="206" x2="261" y2="206" stroke="#228B22" stroke-width="0.7"/>
-    <line x1="241" y1="206" x2="261" y2="206" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,2"/>
-    <text x="272" y="208" font-size="2.5" fill="black" stroke="none">PE — защитный проводник</text>
+    <!-- 13. PEN — совмещённый (201–211, 10мм) -->
+    <line x1="240" y1="206" x2="260" y2="206" stroke="#228B22" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="0"/>
+    <line x1="240" y1="206" x2="260" y2="206" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="4"/>
+    <line x1="240" y1="206" x2="260" y2="206" stroke="#0000CC" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="2"/>
+    <text x="272" y="208" font-size="2.5" fill="black" stroke="none">PEN — совмещённый проводник</text>
     <text x="392.5" y="208" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- 13. PEN — совмещённый (211–221, 10мм) -->
-    <line x1="241" y1="216" x2="261" y2="216" stroke="#228B22" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="0"/>
-    <line x1="241" y1="216" x2="261" y2="216" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="4"/>
-    <line x1="241" y1="216" x2="261" y2="216" stroke="#0000CC" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="2"/>
-    <text x="272" y="218" font-size="2.5" fill="black" stroke="none">PEN — совмещённый проводник</text>
-    <text x="392.5" y="218" font-size="2" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
-
-    <!-- Пустая строка (221–236, 15мм) -->
+    <!-- Пустая строка (211–236, 25мм) -->
   </g>
 
 </svg>

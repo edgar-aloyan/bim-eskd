@@ -13,6 +13,11 @@
       <line x1="0" y1="0" x2="5" y2="0" stroke="#90b0d0" stroke-width="0.15"/>
     </pattern>
 
+    <!-- УГО: Узел (точка соединения), ГОСТ 2.721 -->
+    <symbol id="ugo-node" overflow="visible">
+      <circle cx="0" cy="0" r="0.7" fill="black" stroke="none"/>
+    </symbol>
+
     <!-- УГО: Заземлитель (однополюсный), ГОСТ 2.751 -->
     <symbol id="ugo-ground" overflow="visible">
       <g stroke="black" stroke-width="0.5">
@@ -63,8 +68,8 @@
     <line x1="95" y1="70" x2="95" y2="80"/>
   </g>
 
-  <!-- Точка на пересечении (95,80): N + ответвление заземлителя -->
-  <circle cx="95" cy="80" r="0.7" fill="#0000CC" stroke="none"/>
+  <!-- Узел (95,80): N + ответвление заземлителя -->
+  <use href="#ugo-node" x="95" y="80"/>
 
   <!-- PE (защитное заземление) — жёлто-зелёный пунктир -->
   <g stroke-width="0.7">
@@ -75,10 +80,10 @@
     <line x1="75" y1="75" x2="85" y2="75" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="80" y1="75" x2="80" y2="85" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
-  <!-- Точки: PE-провод × грани корпусов + Т-соединение -->
-  <circle cx="75" cy="75" r="0.7" fill="#228B22" stroke="none"/>
-  <circle cx="80" cy="75" r="0.7" fill="#228B22" stroke="none"/>
-  <circle cx="85" cy="75" r="0.7" fill="#228B22" stroke="none"/>
+  <!-- Узлы: PE-провод × грани корпусов + Т-соединение -->
+  <use href="#ugo-node" x="75" y="75"/>
+  <use href="#ugo-node" x="80" y="75"/>
+  <use href="#ugo-node" x="85" y="75"/>
 
   <!-- Размещение УГО на схеме -->
   <use href="#ugo-generator" x="95" y="50"/>
@@ -132,6 +137,14 @@
     <rect x="10" y="95" width="20" height="10" fill="none" stroke="black" stroke-dasharray="2,1"/>
     <text x="70" y="102" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Корпус (оболочка)</text>
     <text x="110" y="102" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.721</text>
+
+    <!-- Строка 5: Узел (строка 10мм) -->
+    <rect x="0" y="110" width="120" height="10" fill="none" stroke="black"/>
+    <line x1="40" y1="110" x2="40" y2="120"/>
+    <line x1="100" y1="110" x2="100" y2="120"/>
+    <use href="#ugo-node" x="20" y="115"/>
+    <text x="70" y="117" font-size="2.5" text-anchor="middle" stroke="none" fill="black">Узел (точка соединения)</text>
+    <text x="110" y="117" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ 2.721</text>
   </g>
 
 </svg>

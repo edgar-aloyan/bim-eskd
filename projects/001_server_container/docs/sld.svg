@@ -131,7 +131,7 @@
   <use href="#ugo-ground" x="80" y="85"/>
 
   <!-- Таблица УГО (перечень условных графических обозначений) -->
-  <g transform="translate(50, 120)" stroke="black" stroke-width="0.3" font-family="sans-serif">
+  <g transform="translate(295, 5)" stroke="black" stroke-width="0.3" font-family="sans-serif">
     <!-- Заголовок -->
     <text x="60" y="-3" font-size="3.5" font-weight="bold" text-anchor="middle" stroke="none" fill="black">Условные графические обозначения</text>
 

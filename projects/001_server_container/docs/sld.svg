@@ -32,7 +32,7 @@
 
     <!-- УГО: Контакт нормально разомкнутый, ГОСТ 2.755, выводы 5мм + зазор 10мм = 20мм, угол 30° -->
     <symbol id="ugo-contact" overflow="visible">
-      <rect x="-5" y="0" width="10" height="20" fill="none" stroke="red" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+      <rect x="-5" y="0" width="5" height="20" fill="none" stroke="red" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
       <g stroke="black" stroke-width="0.5" fill="none">
         <line x1="0" y1="0" x2="0" y2="8"/>
         <line x1="0" y1="15" x2="-5" y2="6"/>
@@ -42,7 +42,7 @@
 
     <!-- УГО: Автоматический выключатель, ГОСТ 2.755 (п.5 табл.1 — прямоугольник на рычаге) -->
     <symbol id="ugo-breaker" overflow="visible">
-      <rect x="-5" y="0" width="10" height="20" fill="none" stroke="red" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+      <rect x="-5" y="0" width="5" height="20" fill="none" stroke="red" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
       <g stroke="black" stroke-width="0.5" fill="none">
         <line x1="0" y1="0" x2="0" y2="7"/>
         <line x1="-1" y1="6" x2="1" y2="8"/>

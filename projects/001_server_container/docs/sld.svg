@@ -143,6 +143,7 @@
     </g>
   </g>
 
+  <g transform="translate(0,1)">
   <!-- Корпус РУ (шины + АВ + муфты) -->
   <rect x="50" y="10" width="175" height="90" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>
 
@@ -443,6 +444,7 @@
     <line x1="10" y1="250" x2="30" y2="250" stroke="#0000CC" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="2"/>
     <text x="70" y="252" font-size="2.5" text-anchor="middle" stroke="none" fill="black">PEN — совмещённый проводник</text>
     <text x="110" y="252" font-size="2" text-anchor="middle" stroke="none" fill="black">ГОСТ Р 50462</text>
+  </g>
   </g>
 
 </svg>

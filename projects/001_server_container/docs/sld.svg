@@ -166,7 +166,7 @@
   </g>
 
   <!-- Корпус РУ (шины + АВ + муфты) -->
-  <rect x="50" y="11" width="175" height="90" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>
+  <rect x="50" y="11" width="175" height="90" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>
 
   <!-- Питающие проводники (горизонтальные, внутри корпуса) -->
   <line x1="60" y1="16" x2="220" y2="16" stroke="#8B4513" stroke-width="0.5"/>
@@ -177,9 +177,9 @@
   </g>
 
   <!-- Корпуса приёмников -->
-  <rect x="50" y="221" width="25" height="45" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>
-  <rect x="100" y="221" width="25" height="45" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>
-  <rect x="150" y="221" width="25" height="45" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,1"/>
+  <rect x="50" y="221" width="25" height="35" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>
+  <rect x="100" y="221" width="25" height="35" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>
+  <rect x="150" y="221" width="25" height="35" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>
 
   <!-- L (фаза) — коричневый -->
   <g stroke="#8B4513" stroke-width="0.5">
@@ -188,7 +188,7 @@
     <!-- Генератор: АВ → муфта -->
     <line x1="65" y1="56" x2="65" y2="96"/>
     <!-- Генератор: нижняя муфта → генератор -->
-    <line x1="65" y1="226" x2="65" y2="236"/>
+    <line x1="65" y1="226" x2="65" y2="231"/>
     <!-- Лампа: АВ от L шины -->
     <line x1="115" y1="16" x2="115" y2="36"/>
     <!-- Лампа: АВ → контакт -->
@@ -196,7 +196,7 @@
     <!-- Лампа: контакт → муфта -->
     <line x1="115" y1="81" x2="115" y2="96"/>
     <!-- Лампа: нижняя муфта → лампа -->
-    <line x1="115" y1="226" x2="115" y2="236"/>
+    <line x1="115" y1="226" x2="115" y2="231"/>
     <!-- Лампа 2: АВ от L шины -->
     <line x1="165" y1="16" x2="165" y2="36"/>
     <!-- Лампа 2: АВ → контакт -->
@@ -204,7 +204,7 @@
     <!-- Лампа 2: контакт → муфта -->
     <line x1="165" y1="81" x2="165" y2="96"/>
     <!-- Лампа 2: нижняя муфта → лампа -->
-    <line x1="165" y1="226" x2="165" y2="236"/>
+    <line x1="165" y1="226" x2="165" y2="231"/>
   </g>
   <use href="#ugo-breaker" x="65" y="36"/>
   <use href="#ugo-breaker" x="115" y="36"/>
@@ -238,25 +238,24 @@
     <!-- Сверху: N шина → вниз → диагональ 1:2 в верхнюю муфту -->
     <line x1="70" y1="21" x2="70" y2="86"/>
     <line x1="70" y1="86" x2="65" y2="96"/>
-    <!-- Снизу генератора: нижняя муфта → диагональ → внутри корпуса → генератор -->
-    <line x1="65" y1="226" x2="55" y2="236"/>
-    <line x1="55" y1="236" x2="55" y2="261"/>
-    <line x1="55" y1="261" x2="65" y2="261"/>
-    <line x1="65" y1="261" x2="65" y2="256"/>
+    <!-- Снизу генератора: диагональ 1:2 → вниз → генератор -->
+    <line x1="65" y1="226" x2="55" y2="231"/>
+    <line x1="55" y1="231" x2="55" y2="251"/>
+    <line x1="55" y1="251" x2="65" y2="251"/>
     <!-- Лампа сверху: N шина → вниз → диагональ 1:2 в верхнюю муфту -->
     <line x1="120" y1="21" x2="120" y2="86"/>
     <line x1="120" y1="86" x2="115" y2="96"/>
     <!-- Лампа 1 снизу: нижняя муфта → диагональ 1:1 → вниз → лампа -->
-    <line x1="115" y1="226" x2="105" y2="236"/>
-    <line x1="105" y1="236" x2="105" y2="256"/>
-    <line x1="105" y1="256" x2="115" y2="256"/>
+    <line x1="115" y1="226" x2="105" y2="231"/>
+    <line x1="105" y1="231" x2="105" y2="251"/>
+    <line x1="105" y1="251" x2="115" y2="251"/>
     <!-- Лампа 2 сверху: N шина → вниз → диагональ 1:2 в верхнюю муфту -->
     <line x1="170" y1="21" x2="170" y2="86"/>
     <line x1="170" y1="86" x2="165" y2="96"/>
     <!-- Лампа 2 снизу: нижняя муфта → диагональ 1:1 → вниз → лампа -->
-    <line x1="165" y1="226" x2="155" y2="236"/>
-    <line x1="155" y1="236" x2="155" y2="256"/>
-    <line x1="155" y1="256" x2="165" y2="256"/>
+    <line x1="165" y1="226" x2="155" y2="231"/>
+    <line x1="155" y1="231" x2="155" y2="251"/>
+    <line x1="155" y1="251" x2="165" y2="251"/>
   </g>
 
 
@@ -268,17 +267,17 @@
     <line x1="65" y1="96" x2="75" y2="86" stroke="#228B22"/>
     <line x1="75" y1="86" x2="75" y2="26" stroke="#228B22"/>
     <!-- Генератор снизу: муфта → диагональ 1:1 → правая стенка корпуса -->
-    <line x1="65" y1="226" x2="75" y2="236" stroke="#228B22"/>
+    <line x1="65" y1="226" x2="75" y2="231" stroke="#228B22"/>
     <!-- Лампа сверху: PE шина → вниз → диагональ 1:1 → верхняя муфта -->
     <line x1="125" y1="26" x2="125" y2="86" stroke="#228B22"/>
     <line x1="125" y1="86" x2="115" y2="96" stroke="#228B22"/>
     <!-- Лампа 1 снизу: нижняя муфта → диагональ 1:1 → правая стенка корпуса -->
-    <line x1="115" y1="226" x2="125" y2="236" stroke="#228B22"/>
+    <line x1="115" y1="226" x2="125" y2="231" stroke="#228B22"/>
     <!-- Лампа 2 сверху: PE шина → вниз → диагональ 1:1 → верхняя муфта -->
     <line x1="175" y1="26" x2="175" y2="86" stroke="#228B22"/>
     <line x1="175" y1="86" x2="165" y2="96" stroke="#228B22"/>
     <!-- Лампа 2 снизу: нижняя муфта → диагональ 1:1 → правая стенка корпуса -->
-    <line x1="165" y1="226" x2="175" y2="236" stroke="#228B22"/>
+    <line x1="165" y1="226" x2="175" y2="231" stroke="#228B22"/>
     <!-- Перемычка PE → N -->
     <line x1="215" y1="26" x2="215" y2="21" stroke="#228B22"/>
     <!-- Заземлитель: PE шина → вниз -->
@@ -286,23 +285,23 @@
     <!-- Жёлтый пунктир поверх -->
     <line x1="65" y1="96" x2="75" y2="86" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="75" y1="86" x2="75" y2="26" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="65" y1="226" x2="75" y2="236" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="65" y1="226" x2="75" y2="231" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="125" y1="26" x2="125" y2="86" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="125" y1="86" x2="115" y2="96" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="115" y1="226" x2="125" y2="236" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="115" y1="226" x2="125" y2="231" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="175" y1="26" x2="175" y2="86" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="175" y1="86" x2="165" y2="96" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="165" y1="226" x2="175" y2="236" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="165" y1="226" x2="175" y2="231" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="215" y1="26" x2="215" y2="21" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="215" y1="26" x2="215" y2="236" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
   <!-- Узлы PE -->
-  <use href="#ugo-node" x="75" y="236"/>
+  <use href="#ugo-node" x="75" y="231"/>
   <use href="#ugo-node" x="75" y="26"/>
   <use href="#ugo-node" x="125" y="26"/>
-  <use href="#ugo-node" x="125" y="236"/>
+  <use href="#ugo-node" x="125" y="231"/>
   <use href="#ugo-node" x="175" y="26"/>
-  <use href="#ugo-node" x="175" y="236"/>
+  <use href="#ugo-node" x="175" y="231"/>
   <use href="#ugo-node" x="215" y="26"/>
   <use href="#ugo-node" x="215" y="101"/>
 
@@ -317,9 +316,9 @@
   <use href="#ugo-node" x="215" y="21"/>
 
   <!-- Размещение УГО на схеме -->
-  <use href="#ugo-generator" x="65" y="236"/>
-  <use href="#ugo-lamp" x="115" y="236"/>
-  <use href="#ugo-lamp" x="165" y="236"/>
+  <use href="#ugo-generator" x="65" y="231"/>
+  <use href="#ugo-lamp" x="115" y="231"/>
+  <use href="#ugo-lamp" x="165" y="231"/>
   <use href="#ugo-ground" x="215" y="236"/>
 
   <!-- Обозначения (ГОСТ 2.710-81) -->
@@ -403,7 +402,7 @@
     <text x="392.5" y="108" font-size="2.5" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.732</text>
 
     <!-- 6. Корпус (116–136, 20мм), VB 121–131 -->
-    <rect x="240" y="121" width="20" height="10" fill="none" stroke="black" stroke-dasharray="2,1"/>
+    <rect x="240" y="121" width="20" height="10" fill="none" stroke="black" stroke-dasharray="2,2"/>
     <text x="272" y="128" font-size="2.5" fill="black" stroke="none">Корпус (оболочка)</text>
     <text x="392.5" y="128" font-size="2.5" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.721</text>
 

@@ -191,6 +191,36 @@
   <line x1="20.5" y1="116" x2="414.5" y2="116" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
   <line x1="20.5" y1="166" x2="414.5" y2="166" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
 
+  <!-- Таблица: первый столбец (подписи строк) -->
+  <g stroke="black" stroke-width="0.3" font-family="GOST type B" font-size="2.5" fill="black">
+    <rect x="20.5" y="16" width="59.5" height="150" fill="none"/>
+    <line x1="20.5" y1="26" x2="80" y2="26"/>
+    <line x1="20.5" y1="56" x2="80" y2="56"/>
+    <line x1="20.5" y1="96" x2="80" y2="96"/>
+    <line x1="20.5" y1="116" x2="80" y2="116"/>
+    <text x="50.25" y="22" text-anchor="middle">Шины</text>
+    <text x="50.25" y="42" text-anchor="middle">Коммутационные</text>
+    <text x="50.25" y="46" text-anchor="middle">аппараты</text>
+    <text x="50.25" y="78" text-anchor="middle">Контакторы, муфты</text>
+    <text x="50.25" y="108" text-anchor="middle">Кабельные линии</text>
+    <text x="50.25" y="142" text-anchor="middle">Электроприёмники</text>
+  </g>
+
+  <!-- Таблица: нижняя строка (параметры по секциям) -->
+  <g stroke="black" stroke-width="0.3" font-family="GOST type B" font-size="2.5" fill="black">
+    <rect x="80" y="166" width="145" height="125.5" fill="none"/>
+    <line x1="115" y1="166" x2="115" y2="291.5"/>
+    <line x1="150" y1="166" x2="150" y2="291.5"/>
+    <line x1="185" y1="166" x2="185" y2="291.5"/>
+    <line x1="205" y1="166" x2="205" y2="291.5"/>
+    <line x1="225" y1="166" x2="225" y2="291.5"/>
+    <text x="97.5" y="174" text-anchor="middle">Генератор</text>
+    <text x="132.5" y="174" text-anchor="middle">Лампа 1</text>
+    <text x="167.5" y="174" text-anchor="middle">Лампа 2</text>
+    <text x="195" y="174" text-anchor="middle">ЗУ</text>
+    <text x="215" y="174" text-anchor="middle">PE</text>
+  </g>
+
   <!-- Корпуса приёмников -->
   <rect x="85" y="121" width="25" height="40" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>
   <rect x="120" y="121" width="25" height="40" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>

@@ -176,6 +176,13 @@
     <line x1="95" y1="26" x2="220" y2="26" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
 
+  <!-- Разделители секций -->
+  <line x1="80" y1="5.5" x2="80" y2="291.5" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+  <line x1="115" y1="5.5" x2="115" y2="291.5" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+  <line x1="150" y1="5.5" x2="150" y2="291.5" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+  <line x1="185" y1="5.5" x2="185" y2="291.5" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+  <line x1="205" y1="5.5" x2="205" y2="291.5" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+
   <!-- Корпуса приёмников -->
   <rect x="85" y="121" width="25" height="40" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>
   <rect x="120" y="121" width="25" height="40" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>

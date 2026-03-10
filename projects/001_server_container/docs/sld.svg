@@ -182,6 +182,14 @@
   <line x1="150" y1="5.5" x2="150" y2="291.5" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
   <line x1="185" y1="5.5" x2="185" y2="291.5" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
   <line x1="205" y1="5.5" x2="205" y2="291.5" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+  <line x1="225" y1="5.5" x2="225" y2="291.5" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+  <!-- Горизонтальные разделители -->
+  <line x1="20.5" y1="16" x2="414.5" y2="16" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+  <line x1="20.5" y1="26" x2="414.5" y2="26" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+  <line x1="20.5" y1="56" x2="414.5" y2="56" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+  <line x1="20.5" y1="96" x2="414.5" y2="96" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+  <line x1="20.5" y1="116" x2="414.5" y2="116" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+  <line x1="20.5" y1="166" x2="414.5" y2="166" stroke="green" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
 
   <!-- Корпуса приёмников -->
   <rect x="85" y="121" width="25" height="40" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>

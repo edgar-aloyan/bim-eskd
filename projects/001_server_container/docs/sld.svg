@@ -166,14 +166,14 @@
   </g>
 
   <!-- Корпус РУ (шины + АВ + муфты) -->
-  <rect x="50" y="11" width="130" height="80" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>
+  <rect x="50" y="11" width="140" height="80" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>
 
   <!-- Питающие проводники (горизонтальные, внутри корпуса) -->
-  <line x1="60" y1="16" x2="175" y2="16" stroke="#8B4513" stroke-width="0.5"/>
-  <line x1="60" y1="21" x2="175" y2="21" stroke="#0000CC" stroke-width="0.5"/>
+  <line x1="60" y1="16" x2="185" y2="16" stroke="#8B4513" stroke-width="0.5"/>
+  <line x1="60" y1="21" x2="185" y2="21" stroke="#0000CC" stroke-width="0.5"/>
   <g stroke-width="0.7">
-    <line x1="60" y1="26" x2="175" y2="26" stroke="#228B22"/>
-    <line x1="60" y1="26" x2="175" y2="26" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="60" y1="26" x2="185" y2="26" stroke="#228B22"/>
+    <line x1="60" y1="26" x2="185" y2="26" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
 
   <!-- Корпуса приёмников -->
@@ -281,10 +281,10 @@
     <!-- Перемычка PE → N -->
     <line x1="155" y1="26" x2="155" y2="21" stroke="#228B22"/>
     <!-- Заземлитель: PE шина → вниз -->
-    <line x1="155" y1="26" x2="155" y2="141" stroke="#228B22"/>
+    <line x1="160" y1="26" x2="160" y2="121" stroke="#228B22"/>
     <!-- Нижняя шинка PE: отдельный проводник от PE шины РУ -->
-    <line x1="170" y1="26" x2="170" y2="146" stroke="#228B22"/>
-    <line x1="165" y1="146" x2="175" y2="146" stroke="#228B22"/>
+    <line x1="180" y1="26" x2="180" y2="121" stroke="#228B22"/>
+    <line x1="175" y1="121" x2="185" y2="121" stroke="#228B22"/>
     <!-- Жёлтый пунктир поверх -->
     <line x1="65" y1="81" x2="75" y2="76" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="75" y1="76" x2="75" y2="26" stroke="#FFD700" stroke-dasharray="2,2"/>
@@ -296,9 +296,9 @@
     <line x1="145" y1="76" x2="135" y2="81" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="135" y1="131" x2="145" y2="136" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="155" y1="26" x2="155" y2="21" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="155" y1="26" x2="155" y2="141" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="170" y1="26" x2="170" y2="146" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="165" y1="146" x2="175" y2="146" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="160" y1="26" x2="160" y2="121" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="180" y1="26" x2="180" y2="121" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="175" y1="121" x2="185" y2="121" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
   <!-- Узлы PE -->
   <use href="#ugo-node" x="75" y="136"/>
@@ -308,9 +308,10 @@
   <use href="#ugo-node" x="145" y="26"/>
   <use href="#ugo-node" x="145" y="136"/>
   <use href="#ugo-node" x="155" y="26"/>
-  <use href="#ugo-node" x="155" y="91"/>
-  <use href="#ugo-node" x="170" y="26"/>
-  <use href="#ugo-node" x="170" y="146"/>
+  <use href="#ugo-node" x="160" y="26"/>
+  <use href="#ugo-node" x="160" y="91"/>
+  <use href="#ugo-node" x="180" y="26"/>
+  <use href="#ugo-node" x="180" y="121"/>
 
   <!-- Узлы на L шине -->
   <use href="#ugo-node" x="65" y="16"/>
@@ -326,7 +327,7 @@
   <use href="#ugo-generator" x="65" y="136"/>
   <use href="#ugo-lamp" x="100" y="136"/>
   <use href="#ugo-lamp" x="135" y="136"/>
-  <use href="#ugo-ground" x="155" y="141"/>
+  <use href="#ugo-ground" x="160" y="121"/>
 
   <!-- Обозначения (ГОСТ 2.710-81) -->
   <g font-family="GOST type B" font-size="3.5" fill="black">

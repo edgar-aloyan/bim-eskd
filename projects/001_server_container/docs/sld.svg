@@ -70,15 +70,15 @@
       </g>
     </symbol>
 
-    <!-- УГО: Лампочка (двухполюсная), ГОСТ 2.732, d=10мм -->
+    <!-- УГО: Лампочка (двухполюсная), ГОСТ 2.732, d=8мм -->
     <symbol id="ugo-lamp" overflow="visible">
       <rect x="-5" y="0" width="10" height="20" fill="none" stroke="red" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
       <g stroke="black" stroke-width="0.5" fill="none">
-        <line x1="0" y1="0" x2="0" y2="5"/>
-        <circle cx="0" cy="10" r="5"/>
-        <line x1="-3.5" y1="6.5" x2="3.5" y2="13.5"/>
-        <line x1="3.5" y1="6.5" x2="-3.5" y2="13.5"/>
-        <line x1="0" y1="15" x2="0" y2="20"/>
+        <line x1="0" y1="0" x2="0" y2="6"/>
+        <circle cx="0" cy="10" r="4"/>
+        <line x1="-2.8" y1="7.2" x2="2.8" y2="12.8"/>
+        <line x1="2.8" y1="7.2" x2="-2.8" y2="12.8"/>
+        <line x1="0" y1="14" x2="0" y2="20"/>
       </g>
     </symbol>
 

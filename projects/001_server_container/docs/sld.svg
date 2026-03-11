@@ -455,7 +455,7 @@
     <line x1="230" y1="155" x2="415" y2="155"/>
     <line x1="230" y1="165" x2="415" y2="165"/>
     <!-- разделители от кабеля до PEN убраны -->
-    <line x1="230" y1="210" x2="415" y2="210"/>
+    <line x1="230" y1="225" x2="415" y2="225"/>
 
     <!-- Заголовок (6–16, 10мм) -->
     <text x="322.5" y="17" font-size="3.5" fill="black" stroke="none" font-weight="bold" text-anchor="middle">Условные графические обозначения</text>
@@ -550,7 +550,13 @@
     <text x="272" y="207" font-size="2.5" fill="black" stroke="none">L3 — проводник фазы C</text>
     <text x="392.5" y="207" font-size="2.5" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- Пустая строка (210–240) -->
+    <line x1="230" y1="210" x2="415" y2="210"/>
+    <!-- 17. Фаза (210–225, 15мм) -->
+    <use href="#ugo-phase" x="250" y="215"/>
+    <text x="272" y="220" font-size="2.5" fill="black" stroke="none">Фаза (однофазный)</text>
+    <text x="392.5" y="220" font-size="2.5" fill="black" stroke="none" text-anchor="middle">ГОСТ 2.709</text>
+
+    <!-- Пустая строка (225–240) -->
   </g>
 
   <!-- ═══════════════ ЛИСТ 2 (y=297–594) ═══════════════ -->

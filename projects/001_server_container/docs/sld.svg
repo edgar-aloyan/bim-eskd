@@ -602,14 +602,14 @@
   <!-- ── Содержимое листа 2 ── -->
 
   <!-- Шины -->
-  <line x1="50" y1="320" x2="360" y2="320" stroke="#8B4513" stroke-width="0.5"/>
-  <line x1="50" y1="325" x2="360" y2="325" stroke="#0000CC" stroke-width="0.5"/>
+  <line x1="50" y1="320" x2="395" y2="320" stroke="#8B4513" stroke-width="0.5"/>
+  <line x1="50" y1="325" x2="395" y2="325" stroke="#0000CC" stroke-width="0.5"/>
   <g stroke-width="0.7">
-    <line x1="50" y1="330" x2="360" y2="330" stroke="#228B22"/>
-    <line x1="50" y1="330" x2="360" y2="330" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="50" y1="330" x2="395" y2="330" stroke="#228B22"/>
+    <line x1="50" y1="330" x2="395" y2="330" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
   <!-- Шинка L панели автотрансформатора -->
-  <line x1="50" y1="315" x2="360" y2="315" stroke="#8B4513" stroke-width="0.5"/>
+  <line x1="50" y1="315" x2="395" y2="315" stroke="#8B4513" stroke-width="0.5"/>
   <g font-family="GOST type B" font-size="3.5" fill="black" stroke="none">
     <text x="48" y="316.5" text-anchor="end">L1/L2/L3</text>
     <text x="48" y="321.5" text-anchor="end">L1'/L2'/L3'</text>
@@ -628,9 +628,12 @@
     <line x1="190" y1="320" x2="190" y2="380"/>
     <line x1="200" y1="315" x2="200" y2="340"/><line x1="200" y1="360" x2="200" y2="380"/><line x1="200" y1="430" x2="200" y2="435"/>
     <line x1="200" y1="460" x2="185" y2="460"/><line x1="185" y1="460" x2="185" y2="435"/><line x1="185" y1="435" x2="190" y2="430"/>
-    <line x1="280" y1="315" x2="280" y2="340" stroke="#FFD700"/><line x1="280" y1="360" x2="280" y2="375"/><line x1="280" y1="375" x2="285" y2="380"/><line x1="285" y1="430" x2="285" y2="435"/>
-    <line x1="310" y1="315" x2="310" y2="340" stroke="#008000"/><line x1="310" y1="360" x2="310" y2="375"/><line x1="310" y1="375" x2="315" y2="380"/><line x1="315" y1="430" x2="315" y2="435"/>
-    <line x1="340" y1="315" x2="340" y2="340" stroke="#CC0000"/><line x1="340" y1="360" x2="340" y2="375"/><line x1="340" y1="375" x2="345" y2="380"/><line x1="345" y1="430" x2="345" y2="435"/>
+    <line x1="225" y1="315" x2="225" y2="340" stroke="#FFD700"/><line x1="225" y1="360" x2="225" y2="375"/><line x1="225" y1="375" x2="230" y2="380"/><line x1="230" y1="430" x2="230" y2="435"/>
+    <line x1="255" y1="315" x2="255" y2="340" stroke="#008000"/><line x1="255" y1="360" x2="255" y2="375"/><line x1="255" y1="375" x2="260" y2="380"/><line x1="260" y1="430" x2="260" y2="435"/>
+    <line x1="285" y1="315" x2="285" y2="340" stroke="#CC0000"/><line x1="285" y1="360" x2="285" y2="375"/><line x1="285" y1="375" x2="290" y2="380"/><line x1="290" y1="430" x2="290" y2="435"/>
+    <line x1="315" y1="315" x2="315" y2="340" stroke="#FFD700"/><line x1="315" y1="360" x2="315" y2="375"/><line x1="315" y1="375" x2="320" y2="380"/><line x1="320" y1="430" x2="320" y2="435"/>
+    <line x1="345" y1="315" x2="345" y2="340" stroke="#008000"/><line x1="345" y1="360" x2="345" y2="375"/><line x1="345" y1="375" x2="350" y2="380"/><line x1="350" y1="430" x2="350" y2="435"/>
+    <line x1="375" y1="315" x2="375" y2="340" stroke="#CC0000"/><line x1="375" y1="360" x2="375" y2="375"/><line x1="375" y1="375" x2="380" y2="380"/><line x1="380" y1="430" x2="380" y2="435"/>
   </g>
 
   <!-- Фазы на первых трёх панелях -->
@@ -646,21 +649,33 @@
   <use href="#ugo-phase-3" x="190" y="330"/>
   <use href="#ugo-phase-3" x="200" y="330"/>
 
-  <!-- Фазы на последних трёх панелях -->
-  <use href="#ugo-phase" x="280" y="330"/>
-  <text x="278" y="334" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L1</text>
-  <use href="#ugo-phase" x="310" y="330"/>
-  <text x="308" y="334" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L2</text>
-  <use href="#ugo-phase" x="340" y="330"/>
-  <text x="338" y="334" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L3</text>
+  <!-- Фазы на панелях верхней шины -->
+  <use href="#ugo-phase" x="225" y="330"/>
+  <text x="223" y="334" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L1</text>
+  <use href="#ugo-phase" x="255" y="330"/>
+  <text x="253" y="334" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L2</text>
+  <use href="#ugo-phase" x="285" y="330"/>
+  <text x="283" y="334" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L3</text>
+  <use href="#ugo-phase" x="315" y="330"/>
+  <text x="313" y="334" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L1</text>
+  <use href="#ugo-phase" x="345" y="330"/>
+  <text x="343" y="334" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L2</text>
+  <use href="#ugo-phase" x="375" y="330"/>
+  <text x="373" y="334" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L3</text>
 
-  <!-- Фазы на N последних трёх панелей -->
-  <use href="#ugo-phase" x="290" y="335"/>
-  <text x="288" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L1'</text>
-  <use href="#ugo-phase" x="320" y="335"/>
-  <text x="318" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L2'</text>
-  <use href="#ugo-phase" x="350" y="335"/>
-  <text x="348" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L3'</text>
+  <!-- Фазы на N панелей верхней шины -->
+  <use href="#ugo-phase" x="235" y="335"/>
+  <text x="233" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L1'</text>
+  <use href="#ugo-phase" x="265" y="335"/>
+  <text x="263" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L2'</text>
+  <use href="#ugo-phase" x="295" y="335"/>
+  <text x="293" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L3'</text>
+  <use href="#ugo-phase" x="325" y="335"/>
+  <text x="323" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L1'</text>
+  <use href="#ugo-phase" x="355" y="335"/>
+  <text x="353" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L2'</text>
+  <use href="#ugo-phase" x="385" y="335"/>
+  <text x="383" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L3'</text>
 
   <!-- Фазы на панели 4 (под муфтой) -->
   <use href="#ugo-phase" x="145" y="440"/>
@@ -672,10 +687,10 @@
 
   <!-- Автоматы -->
   <use href="#ugo-breaker" x="55" y="340"/><use href="#ugo-breaker" x="85" y="340"/><use href="#ugo-breaker" x="115" y="340"/><use href="#ugo-breaker" x="155" y="340"/>
-  <use href="#ugo-breaker" x="200" y="340"/><use href="#ugo-breaker" x="280" y="340"/><use href="#ugo-breaker" x="310" y="340"/><use href="#ugo-breaker" x="340" y="340"/>
+  <use href="#ugo-breaker" x="200" y="340"/><use href="#ugo-breaker" x="225" y="340"/><use href="#ugo-breaker" x="255" y="340"/><use href="#ugo-breaker" x="285" y="340"/><use href="#ugo-breaker" x="315" y="340"/><use href="#ugo-breaker" x="345" y="340"/><use href="#ugo-breaker" x="375" y="340"/>
 
   <!-- Контакты на N последних трёх панелей -->
-  <use href="#ugo-contact" x="290" y="340"/><use href="#ugo-contact" x="320" y="340"/><use href="#ugo-contact" x="350" y="340"/>
+  <use href="#ugo-contact" x="235" y="340"/><use href="#ugo-contact" x="265" y="340"/><use href="#ugo-contact" x="295" y="340"/><use href="#ugo-contact" x="325" y="340"/><use href="#ugo-contact" x="355" y="340"/><use href="#ugo-contact" x="385" y="340"/>
 
   <!-- N сверху: cx+5 → диагональ 1:1 в муфту -->
   <g stroke="#0000CC" stroke-width="0.5">
@@ -684,9 +699,12 @@
     <line x1="120" y1="325" x2="120" y2="375"/><line x1="120" y1="375" x2="115" y2="380"/>
     <line x1="160" y1="325" x2="160" y2="375"/><line x1="160" y1="375" x2="155" y2="380"/>
     <line x1="185" y1="325" x2="185" y2="375"/><line x1="185" y1="375" x2="190" y2="380"/>
-    <line x1="290" y1="320" x2="290" y2="340" stroke="#FFD700"/><line x1="290" y1="360" x2="290" y2="375"/><line x1="290" y1="375" x2="285" y2="380"/>
-    <line x1="320" y1="320" x2="320" y2="340" stroke="#008000"/><line x1="320" y1="360" x2="320" y2="375"/><line x1="320" y1="375" x2="315" y2="380"/>
-    <line x1="350" y1="320" x2="350" y2="340" stroke="#CC0000"/><line x1="350" y1="360" x2="350" y2="375"/><line x1="350" y1="375" x2="345" y2="380"/>
+    <line x1="235" y1="320" x2="235" y2="340" stroke="#FFD700"/><line x1="235" y1="360" x2="235" y2="375"/><line x1="235" y1="375" x2="230" y2="380"/>
+    <line x1="265" y1="320" x2="265" y2="340" stroke="#008000"/><line x1="265" y1="360" x2="265" y2="375"/><line x1="265" y1="375" x2="260" y2="380"/>
+    <line x1="295" y1="320" x2="295" y2="340" stroke="#CC0000"/><line x1="295" y1="360" x2="295" y2="375"/><line x1="295" y1="375" x2="290" y2="380"/>
+    <line x1="325" y1="320" x2="325" y2="340" stroke="#FFD700"/><line x1="325" y1="360" x2="325" y2="375"/><line x1="325" y1="375" x2="320" y2="380"/>
+    <line x1="355" y1="320" x2="355" y2="340" stroke="#008000"/><line x1="355" y1="360" x2="355" y2="375"/><line x1="355" y1="375" x2="350" y2="380"/>
+    <line x1="385" y1="320" x2="385" y2="340" stroke="#CC0000"/><line x1="385" y1="360" x2="385" y2="375"/><line x1="385" y1="375" x2="380" y2="380"/>
   </g>
 
   <!-- PE сверху: cx+10 → диагональ 1:2 в муфту -->
@@ -696,22 +714,28 @@
     <line x1="125" y1="330" x2="125" y2="375" stroke="#228B22"/><line x1="125" y1="375" x2="115" y2="380" stroke="#228B22"/>
     <line x1="165" y1="330" x2="165" y2="375" stroke="#228B22"/><line x1="165" y1="375" x2="155" y2="380" stroke="#228B22"/>
     <line x1="205" y1="330" x2="205" y2="375" stroke="#228B22"/><line x1="205" y1="375" x2="200" y2="380" stroke="#228B22"/>
-    <line x1="295" y1="330" x2="295" y2="375" stroke="#228B22"/><line x1="295" y1="375" x2="285" y2="380" stroke="#228B22"/>
-    <line x1="325" y1="330" x2="325" y2="375" stroke="#228B22"/><line x1="325" y1="375" x2="315" y2="380" stroke="#228B22"/>
-    <line x1="355" y1="330" x2="355" y2="375" stroke="#228B22"/><line x1="355" y1="375" x2="345" y2="380" stroke="#228B22"/>
+    <line x1="240" y1="330" x2="240" y2="375" stroke="#228B22"/><line x1="240" y1="375" x2="230" y2="380" stroke="#228B22"/>
+    <line x1="270" y1="330" x2="270" y2="375" stroke="#228B22"/><line x1="270" y1="375" x2="260" y2="380" stroke="#228B22"/>
+    <line x1="300" y1="330" x2="300" y2="375" stroke="#228B22"/><line x1="300" y1="375" x2="290" y2="380" stroke="#228B22"/>
+    <line x1="330" y1="330" x2="330" y2="375" stroke="#228B22"/><line x1="330" y1="375" x2="320" y2="380" stroke="#228B22"/>
+    <line x1="360" y1="330" x2="360" y2="375" stroke="#228B22"/><line x1="360" y1="375" x2="350" y2="380" stroke="#228B22"/>
+    <line x1="390" y1="330" x2="390" y2="375" stroke="#228B22"/><line x1="390" y1="375" x2="380" y2="380" stroke="#228B22"/>
     <line x1="65" y1="330" x2="65" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="65" y1="375" x2="55" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="95" y1="330" x2="95" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="95" y1="375" x2="85" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="125" y1="330" x2="125" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="125" y1="375" x2="115" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="165" y1="330" x2="165" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="165" y1="375" x2="155" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="205" y1="330" x2="205" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="205" y1="375" x2="200" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="295" y1="330" x2="295" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="295" y1="375" x2="285" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="325" y1="330" x2="325" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="325" y1="375" x2="315" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="355" y1="330" x2="355" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="355" y1="375" x2="345" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="240" y1="330" x2="240" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="240" y1="375" x2="230" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="270" y1="330" x2="270" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="270" y1="375" x2="260" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="300" y1="330" x2="300" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="300" y1="375" x2="290" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="330" y1="330" x2="330" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="330" y1="375" x2="320" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="360" y1="330" x2="360" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="360" y1="375" x2="350" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="390" y1="330" x2="390" y2="375" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="390" y1="375" x2="380" y2="380" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
 
   <!-- Муфты верхние -->
   <use href="#ugo-mufta" x="55" y="380"/><use href="#ugo-mufta" x="85" y="380"/><use href="#ugo-mufta" x="115" y="380"/><use href="#ugo-mufta" x="155" y="380"/>
-  <use href="#ugo-mufta" x="190" y="380"/><use href="#ugo-mufta" x="200" y="380"/><use href="#ugo-mufta" x="285" y="380"/><use href="#ugo-mufta" x="315" y="380"/><use href="#ugo-mufta" x="345" y="380"/>
+  <use href="#ugo-mufta" x="190" y="380"/><use href="#ugo-mufta" x="200" y="380"/><use href="#ugo-mufta" x="230" y="380"/><use href="#ugo-mufta" x="260" y="380"/><use href="#ugo-mufta" x="290" y="380"/><use href="#ugo-mufta" x="320" y="380"/><use href="#ugo-mufta" x="350" y="380"/><use href="#ugo-mufta" x="380" y="380"/>
 
   <!-- Кабели -->
   <g stroke="black" stroke-width="0.5">
@@ -721,9 +745,12 @@
     <line x1="155" y1="385" x2="155" y2="425"/>
     <line x1="190" y1="385" x2="190" y2="425"/>
     <line x1="200" y1="385" x2="200" y2="425"/>
-    <line x1="285" y1="385" x2="285" y2="425"/>
-    <line x1="315" y1="385" x2="315" y2="425"/>
-    <line x1="345" y1="385" x2="345" y2="425"/>
+    <line x1="230" y1="385" x2="230" y2="425"/>
+    <line x1="260" y1="385" x2="260" y2="425"/>
+    <line x1="290" y1="385" x2="290" y2="425"/>
+    <line x1="320" y1="385" x2="320" y2="425"/>
+    <line x1="350" y1="385" x2="350" y2="425"/>
+    <line x1="380" y1="385" x2="380" y2="425"/>
   </g>
 
   <!-- Муфты нижние -->
@@ -733,9 +760,12 @@
   <g transform="translate(155, 430) scale(1, -1)"><use href="#ugo-mufta"/></g>
   <g transform="translate(190, 430) scale(1, -1)"><use href="#ugo-mufta"/></g>
   <g transform="translate(200, 430) scale(1, -1)"><use href="#ugo-mufta"/></g>
-  <g transform="translate(285, 430) scale(1, -1)"><use href="#ugo-mufta"/></g>
-  <g transform="translate(315, 430) scale(1, -1)"><use href="#ugo-mufta"/></g>
-  <g transform="translate(345, 430) scale(1, -1)"><use href="#ugo-mufta"/></g>
+  <g transform="translate(230, 430) scale(1, -1)"><use href="#ugo-mufta"/></g>
+  <g transform="translate(260, 430) scale(1, -1)"><use href="#ugo-mufta"/></g>
+  <g transform="translate(290, 430) scale(1, -1)"><use href="#ugo-mufta"/></g>
+  <g transform="translate(320, 430) scale(1, -1)"><use href="#ugo-mufta"/></g>
+  <g transform="translate(350, 430) scale(1, -1)"><use href="#ugo-mufta"/></g>
+  <g transform="translate(380, 430) scale(1, -1)"><use href="#ugo-mufta"/></g>
 
   <!-- N снизу: диагональ 1:2 влево → вертикаль → полка к лампе -->
   <g stroke="#0000CC" stroke-width="0.5">
@@ -745,9 +775,12 @@
     <line x1="155" y1="430" x2="145" y2="435"/><line x1="145" y1="435" x2="135" y2="435"/><line x1="135" y1="435" x2="135" y2="470"/><line x1="135" y1="470" x2="165" y2="470"/><line x1="145" y1="470" x2="145" y2="465"/><line x1="155" y1="470" x2="155" y2="465"/><line x1="165" y1="470" x2="165" y2="465"/>
 
     <line x1="190" y1="430" x2="190" y2="450"/>
-    <line x1="285" y1="430" x2="275" y2="435"/><line x1="275" y1="435" x2="275" y2="455"/><line x1="275" y1="455" x2="285" y2="455"/>
-    <line x1="315" y1="430" x2="305" y2="435"/><line x1="305" y1="435" x2="305" y2="455"/><line x1="305" y1="455" x2="315" y2="455"/>
-    <line x1="345" y1="430" x2="335" y2="435"/><line x1="335" y1="435" x2="335" y2="455"/><line x1="335" y1="455" x2="345" y2="455"/>
+    <line x1="230" y1="430" x2="220" y2="435"/><line x1="220" y1="435" x2="220" y2="455"/><line x1="220" y1="455" x2="230" y2="455"/>
+    <line x1="260" y1="430" x2="250" y2="435"/><line x1="250" y1="435" x2="250" y2="455"/><line x1="250" y1="455" x2="260" y2="455"/>
+    <line x1="290" y1="430" x2="280" y2="435"/><line x1="280" y1="435" x2="280" y2="455"/><line x1="280" y1="455" x2="290" y2="455"/>
+    <line x1="320" y1="430" x2="310" y2="435"/><line x1="310" y1="435" x2="310" y2="455"/><line x1="310" y1="455" x2="320" y2="455"/>
+    <line x1="350" y1="430" x2="340" y2="435"/><line x1="340" y1="435" x2="340" y2="455"/><line x1="340" y1="455" x2="350" y2="455"/>
+    <line x1="380" y1="430" x2="370" y2="435"/><line x1="370" y1="435" x2="370" y2="455"/><line x1="370" y1="455" x2="380" y2="455"/>
   </g>
 
   <!-- PE снизу: диагональ 1:2 вправо → корпус -->
@@ -757,17 +790,23 @@
     <line x1="115" y1="430" x2="125" y2="435" stroke="#228B22"/>
     <line x1="155" y1="430" x2="165" y2="435" stroke="#228B22"/><line x1="165" y1="435" x2="175" y2="435" stroke="#228B22"/>
     <line x1="200" y1="430" x2="210" y2="435" stroke="#228B22"/>
-    <line x1="285" y1="430" x2="295" y2="435" stroke="#228B22"/>
-    <line x1="315" y1="430" x2="325" y2="435" stroke="#228B22"/>
-    <line x1="345" y1="430" x2="355" y2="435" stroke="#228B22"/>
+    <line x1="230" y1="430" x2="240" y2="435" stroke="#228B22"/>
+    <line x1="260" y1="430" x2="270" y2="435" stroke="#228B22"/>
+    <line x1="290" y1="430" x2="300" y2="435" stroke="#228B22"/>
+    <line x1="320" y1="430" x2="330" y2="435" stroke="#228B22"/>
+    <line x1="350" y1="430" x2="360" y2="435" stroke="#228B22"/>
+    <line x1="380" y1="430" x2="390" y2="435" stroke="#228B22"/>
     <line x1="55" y1="430" x2="65" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="85" y1="430" x2="95" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="115" y1="430" x2="125" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="155" y1="430" x2="165" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/><line x1="165" y1="435" x2="175" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
     <line x1="200" y1="430" x2="210" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="285" y1="430" x2="295" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="315" y1="430" x2="325" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
-    <line x1="345" y1="430" x2="355" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="230" y1="430" x2="240" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="260" y1="430" x2="270" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="290" y1="430" x2="300" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="320" y1="430" x2="330" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="350" y1="430" x2="360" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
+    <line x1="380" y1="430" x2="390" y2="435" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
 
   <!-- Узлы PE на корпусе -->
@@ -775,25 +814,25 @@
   <use href="#ugo-node" x="175" y="435"/>
   <use href="#ugo-node" x="145" y="470"/><use href="#ugo-node" x="155" y="470"/>
   <use href="#ugo-node" x="210" y="435"/>
-  <use href="#ugo-node" x="295" y="435"/><use href="#ugo-node" x="325" y="435"/><use href="#ugo-node" x="355" y="435"/>
+  <use href="#ugo-node" x="240" y="435"/><use href="#ugo-node" x="270" y="435"/><use href="#ugo-node" x="300" y="435"/><use href="#ugo-node" x="330" y="435"/><use href="#ugo-node" x="360" y="435"/><use href="#ugo-node" x="390" y="435"/>
 
   <!-- Узлы на L шине (y=320) -->
   <use href="#ugo-node" x="55" y="320"/><use href="#ugo-node" x="85" y="320"/><use href="#ugo-node" x="115" y="320"/>
   <use href="#ugo-node" x="155" y="320"/>
   <use href="#ugo-node" x="190" y="320"/><use href="#ugo-node" x="200" y="315"/>
-  <use href="#ugo-node" x="280" y="315"/><use href="#ugo-node" x="310" y="315"/><use href="#ugo-node" x="340" y="315"/>
+  <use href="#ugo-node" x="225" y="315"/><use href="#ugo-node" x="255" y="315"/><use href="#ugo-node" x="285" y="315"/><use href="#ugo-node" x="315" y="315"/><use href="#ugo-node" x="345" y="315"/><use href="#ugo-node" x="375" y="315"/>
 
   <!-- Узлы на N шине (y=325) -->
   <use href="#ugo-node" x="60" y="325"/><use href="#ugo-node" x="90" y="325"/><use href="#ugo-node" x="120" y="325"/>
   <use href="#ugo-node" x="160" y="325"/>
   <use href="#ugo-node" x="185" y="325"/>
-  <use href="#ugo-node" x="290" y="320"/><use href="#ugo-node" x="320" y="320"/><use href="#ugo-node" x="350" y="320"/>
+  <use href="#ugo-node" x="235" y="320"/><use href="#ugo-node" x="265" y="320"/><use href="#ugo-node" x="295" y="320"/><use href="#ugo-node" x="325" y="320"/><use href="#ugo-node" x="355" y="320"/><use href="#ugo-node" x="385" y="320"/>
 
   <!-- Узлы на PE шине (y=330) -->
   <use href="#ugo-node" x="65" y="330"/><use href="#ugo-node" x="95" y="330"/><use href="#ugo-node" x="125" y="330"/>
   <use href="#ugo-node" x="165" y="330"/>
   <use href="#ugo-node" x="205" y="330"/>
-  <use href="#ugo-node" x="295" y="330"/><use href="#ugo-node" x="325" y="330"/><use href="#ugo-node" x="355" y="330"/>
+  <use href="#ugo-node" x="240" y="330"/><use href="#ugo-node" x="270" y="330"/><use href="#ugo-node" x="300" y="330"/><use href="#ugo-node" x="330" y="330"/><use href="#ugo-node" x="360" y="330"/><use href="#ugo-node" x="390" y="330"/>
 
   <!-- Корпуса светильников (cx-15 to cx+10, 25×40мм, 5мм зазор над муфтой) -->
   <g fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2">
@@ -802,15 +841,18 @@
     <rect x="100" y="420" width="25" height="40"/>
     <rect x="130" y="420" width="45" height="55"/>
     <rect x="180" y="420" width="30" height="45"/>
-    <rect x="270" y="420" width="25" height="40"/>
-    <rect x="300" y="420" width="25" height="40"/>
-    <rect x="330" y="420" width="25" height="40"/>
+    <rect x="215" y="420" width="25" height="40"/>
+    <rect x="245" y="420" width="25" height="40"/>
+    <rect x="275" y="420" width="25" height="40"/>
+    <rect x="305" y="420" width="25" height="40"/>
+    <rect x="335" y="420" width="25" height="40"/>
+    <rect x="365" y="420" width="25" height="40"/>
   </g>
 
   <!-- Лампы -->
   <use href="#ugo-lamp" x="55" y="435"/><use href="#ugo-lamp" x="85" y="435"/><use href="#ugo-lamp" x="115" y="435"/><use href="#ugo-lamp" x="145" y="445"/><use href="#ugo-lamp" x="155" y="445"/><use href="#ugo-lamp" x="165" y="445"/>
   <use href="#ugo-autotransformer" x="200" y="435"/>
-  <use href="#ugo-lamp" x="285" y="435"/><use href="#ugo-lamp" x="315" y="435"/><use href="#ugo-lamp" x="345" y="435"/>
+  <use href="#ugo-lamp" x="230" y="435"/><use href="#ugo-lamp" x="260" y="435"/><use href="#ugo-lamp" x="290" y="435"/><use href="#ugo-lamp" x="320" y="435"/><use href="#ugo-lamp" x="350" y="435"/><use href="#ugo-lamp" x="380" y="435"/>
 
   <!-- Основная надпись (форма 2а), ГОСТ 2.104-2006, 185×15мм -->
   <g stroke="black" stroke-width="0.3" font-family="GOST type B" fill="none">

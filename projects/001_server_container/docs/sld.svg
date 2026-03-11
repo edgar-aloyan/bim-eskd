@@ -547,6 +547,16 @@
   <!-- Рамка ГОСТ 2.104-2006, A3 альбомная, лист 2 -->
   <rect x="20.5" y="309.5" width="394" height="286" fill="none" stroke="black" stroke-width="1"/>
 
+  <!-- ── Содержимое листа 2 ── -->
+
+  <!-- Шины (горизонтальные) -->
+  <line x1="95" y1="320" x2="320" y2="320" stroke="#8B4513" stroke-width="0.5"/>
+  <line x1="95" y1="325" x2="320" y2="325" stroke="#0000CC" stroke-width="0.5"/>
+  <g stroke-width="0.7">
+    <line x1="95" y1="330" x2="320" y2="330" stroke="#228B22"/>
+    <line x1="95" y1="330" x2="320" y2="330" stroke="#FFD700" stroke-dasharray="2,2"/>
+  </g>
+
   <!-- Основная надпись (форма 2а), ГОСТ 2.104-2006, 185×15мм -->
   <g stroke="black" stroke-width="0.3" font-family="GOST type B" fill="none">
     <rect x="230" y="580" width="184.5" height="15" stroke-width="0.7"/>

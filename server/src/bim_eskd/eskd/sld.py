@@ -4,30 +4,18 @@ IFC -> pandapower -> switchgear tree -> SVG.
 Horizontal busbars, vertical panel columns (ячейки РУ).
 Symbols: ГОСТ 2.702/2.721/2.723/2.727/2.755.
 Designations: ГОСТ 2.710-81.
-Element list: ГОСТ 2.702-2011 п.5.3.18.
 """
 
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
 
-from lxml import etree
-
-from . import symbols
 from .pp_converter import ifc_to_pandapower
-from .sld_elem_list import collect_items, draw_elem_table, elem_table_rows
-from .svg_primitives import (
-    FONT_LABEL, FONT_SMALL, NSMAP, THICK_W,
-    line, line_v, rect, text,
-)
+from .sld_elem_list import collect_items, elem_table_rows
+from .sld_layout import compute_layout
+from .sld_render import render_sld
 
 logger = logging.getLogger(__name__)
-
-# Layout (mm)
-DIAGRAM_W = 280
-COL_W = 60
-BUS_GAP = 4
-BUS_PAD = 15
 
 
 # ── Data structures ───────────────────────────────────────────────
@@ -65,23 +53,8 @@ def create_single_line_diagram(ifc_file) -> str:
     """Generate SVG single-line diagram from IFC model."""
     net = ifc_to_pandapower(ifc_file)
     sg = _build_tree(net)
-
-    root = etree.Element("svg", nsmap=NSMAP)
-    rect(root, 0, 0, DIAGRAM_W, 999, fill="white", stroke="none")
-    text(root, DIAGRAM_W / 2, 7, "Однолинейная схема электроснабжения",
-         font_size=5, font_weight="bold", text_anchor="middle")
-
-    y = _render_sg(root, sg, DIAGRAM_W / 2, 14)
-
-    rows = elem_table_rows(collect_items(sg))
-    ty = y + 10
-    draw_elem_table(root, rows, 5, ty)
-    total_h = ty + 8 + len(rows) * 5 + 2
-
-    root.set("width", f"{DIAGRAM_W}mm")
-    root.set("height", f"{total_h}mm")
-    root.set("viewBox", f"0 0 {DIAGRAM_W} {total_h}")
-    return etree.tostring(root, pretty_print=True, encoding="unicode")
+    layout = compute_layout(sg)
+    return render_sld(sg, layout, net)
 
 
 def get_element_list(ifc_file) -> list[dict]:
@@ -243,88 +216,5 @@ def _fv(v):
         return f"{kv:.0f}кВ" if kv == int(kv) else f"{kv:.1f}кВ"
     return f"{v:.0f}В"
 
-
-# ── Rendering ─────────────────────────────────────────────────────
-
-
-def _render_sg(root, sg, cx, y) -> float:
-    """Render switchgear tree recursively. Returns y_bottom."""
-    # Incoming feeder — vertical chain at cx
-    for item in sg.incoming:
-        y = _draw_item(root, item, cx, y)
-
-    n = len(sg.panels)
-    if n == 0:
-        symbols.draw_busbar(root, cx, y, sg.name, _fv(sg.voltage_kv * 1000))
-        return y + 10
-
-    # Panel column X positions, centered on cx
-    col_xs = [cx + (i - (n - 1) / 2) * COL_W for i in range(n)]
-
-    # Busbar
-    bus_x1 = min(col_xs) - BUS_PAD
-    bus_x2 = max(col_xs) + BUS_PAD
-    bus_y = y
-    if sg.incoming:
-        line_v(root, cx, y - symbols.SYMBOL_GAP, bus_y)
-    line(root, bus_x1, bus_y, bus_x2, bus_y, stroke_width=THICK_W * 2)
-    text(root, bus_x2 + 2, bus_y + 1, sg.name, font_size=FONT_LABEL)
-    text(root, bus_x2 + 2, bus_y + 1 + FONT_SMALL + 1,
-         _fv(sg.voltage_kv * 1000), font_size=FONT_SMALL, fill="#444")
-
-    # Panel columns
-    ptop = bus_y + BUS_GAP
-    max_y = ptop
-    for panel, col_x in zip(sg.panels, col_xs):
-        line_v(root, col_x, bus_y, ptop)
-        py = ptop
-        for item in panel.items:
-            py = _draw_item(root, item, col_x, py)
-        if panel.child:
-            panel.child.incoming = []
-            py = _render_sg(root, panel.child, col_x, py)
-        max_y = max(max_y, py)
-
-    return max_y
-
-
-def _draw_item(root, item, cx, y) -> float:
-    k = item.kind
-    if k == "transformer":
-        return symbols.draw_transformer(root, cx, y, item.label, item.sub)
-    if k == "autotransformer":
-        return symbols.draw_autotransformer(root, cx, y, item.label, item.sub)
-    if k == "circuit_breaker":
-        return symbols.draw_circuit_breaker(root, cx, y, item.label, item.sub)
-    if k == "cable":
-        h = 12
-        line_v(root, cx, y, y + h, dash="2,1")
-        text(root, cx + 3, y + h / 2, item.label, font_size=FONT_LABEL)
-        if item.sub:
-            text(root, cx + 3, y + h / 2 + FONT_SMALL + 1, item.sub,
-                 font_size=FONT_SMALL, fill="#444")
-        return y + h + symbols.SYMBOL_GAP
-    if k == "fuse":
-        return symbols.draw_fuse(root, cx, y, item.label, item.sub)
-    if k == "disconnector":
-        return symbols.draw_disconnector(root, cx, y, item.label, item.sub)
-    if k == "motor":
-        return symbols.draw_motor(root, cx, y, item.label, item.sub)
-    if k == "surge_arrester":
-        # sym-opn includes ground (20mm height)
-        symbols.draw_surge_arrester(root, cx, y, item.label, item.sub)
-        return y + 24
-    if k == "load":
-        w, h = 35, 12
-        line_v(root, cx, y, y + 2)
-        ry = y + 2
-        rect(root, cx - w / 2, ry, w, h, fill="#f5f5f5")
-        text(root, cx, ry + h / 2 - 1, item.label,
-             font_size=FONT_LABEL, text_anchor="middle")
-        if item.sub:
-            text(root, cx, ry + h / 2 + FONT_SMALL, item.sub,
-                 font_size=FONT_SMALL, text_anchor="middle", fill="#444")
-        return ry + h + 4
-    return y
 
 

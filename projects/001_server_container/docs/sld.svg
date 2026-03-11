@@ -628,9 +628,9 @@
     <line x1="60" y1="465" x2="405" y2="465" stroke="#FFD700" stroke-dasharray="2,2"/>
   </g>
   <!-- Шинка L ВН (вход трансформатора) -->
-  <line x1="205" y1="320" x2="215" y2="320" stroke="#8B4513" stroke-width="0.5"/>
-  <use href="#ugo-node" x="210" y="320"/>
-  <text x="210" y="318" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="middle">Линия 35кВ</text>
+  <line x1="205" y1="315" x2="215" y2="315" stroke="#8B4513" stroke-width="0.5"/>
+  <use href="#ugo-node" x="210" y="315"/>
+  <text x="210" y="313" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="middle">Линия 35кВ</text>
   <!-- Шинка L панели автотрансформатора -->
   <line x1="60" y1="450" x2="405" y2="450" stroke="#8B4513" stroke-width="0.5"/>
   <g font-family="GOST type B" font-size="2.5" fill="black" stroke="none">
@@ -649,7 +649,7 @@
     <line x1="165" y1="545" x2="155" y2="555" stroke="#FFD700"/><line x1="155" y1="555" x2="155" y2="560" stroke="#FFD700"/>
     <line x1="165" y1="545" x2="175" y2="555" stroke="#CC0000"/><line x1="175" y1="555" x2="175" y2="560" stroke="#CC0000"/>
     <line x1="200" y1="455" x2="200" y2="505"/>
-    <line x1="210" y1="320" x2="210" y2="335"/><line x1="210" y1="355" x2="210" y2="365"/><line x1="210" y1="390" x2="210" y2="400"/><line x1="210" y1="420" x2="210" y2="475"/><line x1="210" y1="495" x2="210" y2="505"/><line x1="210" y1="545" x2="210" y2="550"/>
+    <line x1="210" y1="315" x2="210" y2="330"/><line x1="210" y1="350" x2="210" y2="355"/><line x1="210" y1="380" x2="210" y2="390"/><line x1="210" y1="410" x2="210" y2="415"/><line x1="210" y1="440" x2="210" y2="475"/><line x1="210" y1="495" x2="210" y2="505"/><line x1="210" y1="545" x2="210" y2="550"/>
     <line x1="210" y1="575" x2="195" y2="575"/><line x1="195" y1="575" x2="195" y2="550"/><line x1="195" y1="550" x2="200" y2="545"/>
     <line x1="235" y1="450" x2="235" y2="475" stroke="#FFD700"/><line x1="235" y1="495" x2="235" y2="500"/><line x1="235" y1="500" x2="240" y2="505"/><line x1="240" y1="545" x2="240" y2="550"/>
     <line x1="265" y1="450" x2="265" y2="475" stroke="#008000"/><line x1="265" y1="495" x2="265" y2="500"/><line x1="265" y1="500" x2="270" y2="505"/><line x1="270" y1="545" x2="270" y2="550"/>
@@ -710,7 +710,7 @@
 
   <!-- Автоматы -->
   <use href="#ugo-breaker" x="65" y="475"/><use href="#ugo-breaker" x="95" y="475"/><use href="#ugo-breaker" x="125" y="475"/><use href="#ugo-breaker" x="165" y="475"/>
-  <use href="#ugo-breaker" x="210" y="400"/><use href="#ugo-breaker" x="210" y="475"/><use href="#ugo-breaker" x="235" y="475"/><use href="#ugo-breaker" x="265" y="475"/><use href="#ugo-breaker" x="295" y="475"/><use href="#ugo-breaker" x="325" y="475"/><use href="#ugo-breaker" x="355" y="475"/><use href="#ugo-breaker" x="385" y="475"/>
+  <use href="#ugo-breaker" x="210" y="390"/><use href="#ugo-breaker" x="210" y="475"/><use href="#ugo-breaker" x="235" y="475"/><use href="#ugo-breaker" x="265" y="475"/><use href="#ugo-breaker" x="295" y="475"/><use href="#ugo-breaker" x="325" y="475"/><use href="#ugo-breaker" x="355" y="475"/><use href="#ugo-breaker" x="385" y="475"/>
 
   <!-- Контакты на N последних трёх панелей -->
   <use href="#ugo-contact" x="245" y="475"/><use href="#ugo-contact" x="275" y="475"/><use href="#ugo-contact" x="305" y="475"/><use href="#ugo-contact" x="335" y="475"/><use href="#ugo-contact" x="365" y="475"/><use href="#ugo-contact" x="395" y="475"/>
@@ -865,7 +865,7 @@
   <use href="#ugo-ground" x="220" y="520"/>
 
   <!-- Корпус РУ -->
-  <rect x="50" y="445" width="360" height="70" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>
+  <rect x="50" y="430" width="360" height="85" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>
 
   <!-- Корпуса светильников (cx-15 to cx+10, 25×40мм, 5мм зазор над муфтой) -->
   <g fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2">
@@ -884,22 +884,39 @@
 
   <!-- Лампы -->
   <use href="#ugo-lamp" x="65" y="550"/><use href="#ugo-lamp" x="95" y="550"/><use href="#ugo-lamp" x="125" y="550"/><use href="#ugo-lamp" x="155" y="560"/><use href="#ugo-lamp" x="165" y="560"/><use href="#ugo-lamp" x="175" y="560"/>
-  <use href="#ugo-phase-3" x="210" y="325"/>
-  <use href="#ugo-breaker" x="210" y="335"/>
-  <use href="#ugo-transformer-2w" x="210" y="365"/>
-  <use href="#ugo-phase-3" x="210" y="390"/>
+  <rect x="200" y="325" width="30" height="100" fill="none" stroke="black" stroke-width="0.3" stroke-dasharray="2,2"/>
+  <use href="#ugo-phase-3" x="210" y="315"/>
+  <use href="#ugo-breaker" x="210" y="330"/>
+  <use href="#ugo-transformer-2w" x="210" y="355"/>
+  <use href="#ugo-phase-3" x="210" y="380"/>
   <!-- PEN: нейтраль трансформатора → PE шина -->
-  <line x1="225" y1="380" x2="220" y2="380" stroke="#0000CC" stroke-width="0.5"/>
-  <line x1="225" y1="380" x2="240" y2="380" stroke="#228B22" stroke-width="0.7"/>
-  <line x1="225" y1="380" x2="240" y2="380" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,2"/>
-  <line x1="240" y1="380" x2="240" y2="385" stroke="#228B22" stroke-width="0.7"/>
-  <line x1="240" y1="380" x2="240" y2="385" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,2"/>
-  <use href="#ugo-ground" x="240" y="385"/>
-  <use href="#ugo-node" x="225" y="380"/>
-  <line x1="225" y1="380" x2="225" y2="465" stroke="#228B22" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="0"/>
-  <line x1="225" y1="380" x2="225" y2="465" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="4"/>
-  <line x1="225" y1="380" x2="225" y2="465" stroke="#0000CC" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="2"/>
-  <use href="#ugo-node" x="225" y="465"/>
+  <line x1="225" y1="370" x2="220" y2="370" stroke="#0000CC" stroke-width="0.5"/>
+  <line x1="225" y1="370" x2="240" y2="370" stroke="#228B22" stroke-width="0.7"/>
+  <line x1="225" y1="370" x2="240" y2="370" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,2"/>
+  <line x1="240" y1="370" x2="240" y2="375" stroke="#228B22" stroke-width="0.7"/>
+  <line x1="240" y1="370" x2="240" y2="375" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,2"/>
+  <use href="#ugo-ground" x="240" y="375"/>
+  <use href="#ugo-node" x="225" y="370"/>
+  <use href="#ugo-node" x="230" y="370"/>
+  <!-- Муфты и кабель между трансформатором и РУ -->
+  <use href="#ugo-mufta" x="210" y="415"/>
+  <line x1="210" y1="420" x2="210" y2="435" stroke="black" stroke-width="0.5"/>
+  <g transform="translate(210, 440) scale(1, -1)"><use href="#ugo-mufta"/></g>
+  <!-- PEN верх: вертикаль + диагональ 1:1 в муфту -->
+  <line x1="225" y1="370" x2="225" y2="400" stroke="#228B22" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="0"/>
+  <line x1="225" y1="400" x2="210" y2="415" stroke="#228B22" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="0"/>
+  <line x1="225" y1="370" x2="225" y2="400" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="4"/>
+  <line x1="225" y1="400" x2="210" y2="415" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="4"/>
+  <line x1="225" y1="370" x2="225" y2="400" stroke="#0000CC" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="2"/>
+  <line x1="225" y1="400" x2="210" y2="415" stroke="#0000CC" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="2"/>
+  <!-- PEN низ: диагональ 1:1 из муфты + вертикаль -->
+  <line x1="210" y1="440" x2="215" y2="445" stroke="#228B22" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="0"/>
+  <line x1="215" y1="445" x2="215" y2="465" stroke="#228B22" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="0"/>
+  <line x1="210" y1="440" x2="215" y2="445" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="4"/>
+  <line x1="215" y1="445" x2="215" y2="465" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="4"/>
+  <line x1="210" y1="440" x2="215" y2="445" stroke="#0000CC" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="2"/>
+  <line x1="215" y1="445" x2="215" y2="465" stroke="#0000CC" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="2"/>
+  <use href="#ugo-node" x="215" y="465"/>
   <!-- Перемычка PE → N -->
   <line x1="230" y1="465" x2="230" y2="460" stroke="#228B22" stroke-width="0.7"/>
   <line x1="230" y1="465" x2="230" y2="460" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,2"/>

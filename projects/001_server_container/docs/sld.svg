@@ -628,35 +628,51 @@
     <line x1="190" y1="320" x2="190" y2="380"/>
     <line x1="200" y1="315" x2="200" y2="340"/><line x1="200" y1="360" x2="200" y2="380"/><line x1="200" y1="430" x2="200" y2="435"/>
     <line x1="200" y1="460" x2="185" y2="460"/><line x1="185" y1="460" x2="185" y2="435"/><line x1="185" y1="435" x2="190" y2="430"/>
-    <line x1="285" y1="320" x2="285" y2="340"/><line x1="285" y1="360" x2="285" y2="380"/><line x1="285" y1="430" x2="285" y2="435"/>
-    <line x1="315" y1="320" x2="315" y2="340"/><line x1="315" y1="360" x2="315" y2="380"/><line x1="315" y1="430" x2="315" y2="435"/>
-    <line x1="345" y1="320" x2="345" y2="340"/><line x1="345" y1="360" x2="345" y2="380"/><line x1="345" y1="430" x2="345" y2="435"/>
+    <line x1="280" y1="315" x2="280" y2="340" stroke="#FFD700"/><line x1="280" y1="360" x2="280" y2="375"/><line x1="280" y1="375" x2="285" y2="380"/><line x1="285" y1="430" x2="285" y2="435"/>
+    <line x1="310" y1="315" x2="310" y2="340" stroke="#008000"/><line x1="310" y1="360" x2="310" y2="375"/><line x1="310" y1="375" x2="315" y2="380"/><line x1="315" y1="430" x2="315" y2="435"/>
+    <line x1="340" y1="315" x2="340" y2="340" stroke="#CC0000"/><line x1="340" y1="360" x2="340" y2="375"/><line x1="340" y1="375" x2="345" y2="380"/><line x1="345" y1="430" x2="345" y2="435"/>
   </g>
 
   <!-- Фазы на первых трёх панелях -->
   <use href="#ugo-phase" x="55" y="335"/>
-  <text x="52" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L1</text>
+  <text x="53" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L1'</text>
   <use href="#ugo-phase" x="85" y="335"/>
-  <text x="82" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L2</text>
+  <text x="83" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L2'</text>
   <use href="#ugo-phase" x="115" y="335"/>
-  <text x="112" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L3</text>
+  <text x="113" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L3'</text>
 
   <!-- Фазы над автоматами (трёхфазные) -->
   <use href="#ugo-phase-3" x="155" y="330"/>
   <use href="#ugo-phase-3" x="190" y="330"/>
   <use href="#ugo-phase-3" x="200" y="330"/>
 
+  <!-- Фазы на последних трёх панелях -->
+  <use href="#ugo-phase" x="280" y="330"/>
+  <text x="278" y="334" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L1</text>
+  <use href="#ugo-phase" x="310" y="330"/>
+  <text x="308" y="334" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L2</text>
+  <use href="#ugo-phase" x="340" y="330"/>
+  <text x="338" y="334" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L3</text>
+
+  <!-- Фазы на N последних трёх панелей -->
+  <use href="#ugo-phase" x="290" y="335"/>
+  <text x="288" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L1'</text>
+  <use href="#ugo-phase" x="320" y="335"/>
+  <text x="318" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L2'</text>
+  <use href="#ugo-phase" x="350" y="335"/>
+  <text x="348" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L3'</text>
+
   <!-- Фазы на панели 4 (под муфтой) -->
   <use href="#ugo-phase" x="145" y="440"/>
-  <text x="142" y="444" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L1</text>
+  <text x="143" y="444" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L1'</text>
   <use href="#ugo-phase" x="155" y="440"/>
-  <text x="152" y="444" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L2</text>
+  <text x="153" y="444" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L2'</text>
   <use href="#ugo-phase" x="165" y="440"/>
-  <text x="162" y="444" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L3</text>
+  <text x="163" y="444" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L3'</text>
 
   <!-- Автоматы -->
   <use href="#ugo-breaker" x="55" y="340"/><use href="#ugo-breaker" x="85" y="340"/><use href="#ugo-breaker" x="115" y="340"/><use href="#ugo-breaker" x="155" y="340"/>
-  <use href="#ugo-breaker" x="200" y="340"/><use href="#ugo-breaker" x="285" y="340"/><use href="#ugo-breaker" x="315" y="340"/><use href="#ugo-breaker" x="345" y="340"/>
+  <use href="#ugo-breaker" x="200" y="340"/><use href="#ugo-breaker" x="280" y="340"/><use href="#ugo-breaker" x="310" y="340"/><use href="#ugo-breaker" x="340" y="340"/>
 
   <!-- N сверху: cx+5 → диагональ 1:1 в муфту -->
   <g stroke="#0000CC" stroke-width="0.5">
@@ -665,9 +681,9 @@
     <line x1="120" y1="325" x2="120" y2="375"/><line x1="120" y1="375" x2="115" y2="380"/>
     <line x1="160" y1="325" x2="160" y2="375"/><line x1="160" y1="375" x2="155" y2="380"/>
     <line x1="185" y1="325" x2="185" y2="375"/><line x1="185" y1="375" x2="190" y2="380"/>
-    <line x1="290" y1="325" x2="290" y2="375"/><line x1="290" y1="375" x2="285" y2="380"/>
-    <line x1="320" y1="325" x2="320" y2="375"/><line x1="320" y1="375" x2="315" y2="380"/>
-    <line x1="350" y1="325" x2="350" y2="375"/><line x1="350" y1="375" x2="345" y2="380"/>
+    <line x1="290" y1="320" x2="290" y2="375"/><line x1="290" y1="375" x2="285" y2="380"/>
+    <line x1="320" y1="320" x2="320" y2="375"/><line x1="320" y1="375" x2="315" y2="380"/>
+    <line x1="350" y1="320" x2="350" y2="375"/><line x1="350" y1="375" x2="345" y2="380"/>
   </g>
 
   <!-- PE сверху: cx+10 → диагональ 1:2 в муфту -->
@@ -762,13 +778,13 @@
   <use href="#ugo-node" x="55" y="320"/><use href="#ugo-node" x="85" y="320"/><use href="#ugo-node" x="115" y="320"/>
   <use href="#ugo-node" x="155" y="320"/>
   <use href="#ugo-node" x="190" y="320"/><use href="#ugo-node" x="200" y="315"/>
-  <use href="#ugo-node" x="285" y="320"/><use href="#ugo-node" x="315" y="320"/><use href="#ugo-node" x="345" y="320"/>
+  <use href="#ugo-node" x="280" y="315"/><use href="#ugo-node" x="310" y="315"/><use href="#ugo-node" x="340" y="315"/>
 
   <!-- Узлы на N шине (y=325) -->
   <use href="#ugo-node" x="60" y="325"/><use href="#ugo-node" x="90" y="325"/><use href="#ugo-node" x="120" y="325"/>
   <use href="#ugo-node" x="160" y="325"/>
   <use href="#ugo-node" x="185" y="325"/>
-  <use href="#ugo-node" x="290" y="325"/><use href="#ugo-node" x="320" y="325"/><use href="#ugo-node" x="350" y="325"/>
+  <use href="#ugo-node" x="290" y="320"/><use href="#ugo-node" x="320" y="320"/><use href="#ugo-node" x="350" y="320"/>
 
   <!-- Узлы на PE шине (y=330) -->
   <use href="#ugo-node" x="65" y="330"/><use href="#ugo-node" x="95" y="330"/><use href="#ugo-node" x="125" y="330"/>

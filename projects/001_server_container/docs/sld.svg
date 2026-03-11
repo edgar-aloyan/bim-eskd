@@ -90,6 +90,11 @@
       <rect x="-5" y="0" width="10" height="5" fill="none" stroke="red" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
       <polygon points="-3,0 3,0 0,5" stroke="black" stroke-width="0.5" fill="none"/>
     </symbol>
+    <!-- УГО: Фаза (однофазный), 10×5мм, диагональ -->
+    <symbol id="ugo-phase" overflow="visible">
+      <rect x="-5" y="0" width="10" height="5" fill="none" stroke="red" stroke-width="0.15" stroke-dasharray="1,1" opacity="0.5"/>
+      <line x1="-1.8" y1="3.4" x2="1.8" y2="1.6" stroke="black" stroke-width="0.5"/>
+    </symbol>
   </defs>
 
   <rect x="21" y="10" width="393" height="285" fill="url(#mm5)"/>
@@ -449,11 +454,8 @@
     <line x1="230" y1="140" x2="415" y2="140"/>
     <line x1="230" y1="155" x2="415" y2="155"/>
     <line x1="230" y1="165" x2="415" y2="165"/>
-    <line x1="230" y1="175" x2="415" y2="175"/>
-    <line x1="230" y1="185" x2="415" y2="185"/>
-    <line x1="230" y1="195" x2="415" y2="195"/>
-    <line x1="230" y1="205" x2="415" y2="205"/>
-    <line x1="230" y1="215" x2="415" y2="215"/>
+    <!-- разделители от кабеля до PEN убраны -->
+    <line x1="230" y1="210" x2="415" y2="210"/>
 
     <!-- Заголовок (6–16, 10мм) -->
     <text x="322.5" y="17" font-size="3.5" fill="black" stroke="none" font-weight="bold" text-anchor="middle">Условные графические обозначения</text>
@@ -510,30 +512,45 @@
     <text x="272" y="172" font-size="2.5" fill="black" stroke="none">Кабель</text>
     <text x="392.5" y="172" font-size="2.5" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- 10. L — фазный (171–181, 10мм) -->
-    <line x1="240" y1="180" x2="260" y2="180" stroke="#8B4513" stroke-width="0.5"/>
-    <text x="272" y="182" font-size="2.5" fill="black" stroke="none">L — фазный проводник</text>
+    <!-- 10. L — фазный -->
+    <line x1="240" y1="175" x2="260" y2="175" stroke="#8B4513" stroke-width="0.5"/>
+    <text x="272" y="177" font-size="2.5" fill="black" stroke="none">L — проводник любой фазы</text>
+    <text x="392.5" y="177" font-size="2.5" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
+
+    <!-- 11. N — нейтральный -->
+    <line x1="240" y1="180" x2="260" y2="180" stroke="#0000CC" stroke-width="0.5"/>
+    <text x="272" y="182" font-size="2.5" fill="black" stroke="none">N — рабочий заземляющий проводник</text>
     <text x="392.5" y="182" font-size="2.5" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- 11. N — нейтральный (181–191, 10мм) -->
-    <line x1="240" y1="190" x2="260" y2="190" stroke="#0000CC" stroke-width="0.5"/>
-    <text x="272" y="192" font-size="2.5" fill="black" stroke="none">N — нейтральный проводник</text>
+    <!-- 12. PE — защитный -->
+    <line x1="240" y1="185" x2="260" y2="185" stroke="#228B22" stroke-width="0.7"/>
+    <line x1="240" y1="185" x2="260" y2="185" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,2"/>
+    <text x="272" y="187" font-size="2.5" fill="black" stroke="none">PE — защитный заземляющий проводник</text>
+    <text x="392.5" y="187" font-size="2.5" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
+
+    <!-- 13. PEN — совмещённый -->
+    <line x1="240" y1="190" x2="260" y2="190" stroke="#228B22" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="0"/>
+    <line x1="240" y1="190" x2="260" y2="190" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="4"/>
+    <line x1="240" y1="190" x2="260" y2="190" stroke="#0000CC" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="2"/>
+    <text x="272" y="192" font-size="2.5" fill="black" stroke="none">PEN — совмещённый заземляющий проводник</text>
     <text x="392.5" y="192" font-size="2.5" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- 12. PE — защитный (191–201, 10мм) -->
-    <line x1="240" y1="200" x2="260" y2="200" stroke="#228B22" stroke-width="0.7"/>
-    <line x1="240" y1="200" x2="260" y2="200" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,2"/>
-    <text x="272" y="202" font-size="2.5" fill="black" stroke="none">PE — защитный проводник</text>
+    <!-- 14. Ж — фаза A -->
+    <line x1="240" y1="195" x2="260" y2="195" stroke="#FFD700" stroke-width="0.5"/>
+    <text x="272" y="197" font-size="2.5" fill="black" stroke="none">L1 — проводник фазы A</text>
+    <text x="392.5" y="197" font-size="2.5" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
+
+    <!-- 15. З — фаза B -->
+    <line x1="240" y1="200" x2="260" y2="200" stroke="#008000" stroke-width="0.5"/>
+    <text x="272" y="202" font-size="2.5" fill="black" stroke="none">L2 — проводник фазы B</text>
     <text x="392.5" y="202" font-size="2.5" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- 13. PEN — совмещённый (201–211, 10мм) -->
-    <line x1="240" y1="210" x2="260" y2="210" stroke="#228B22" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="0"/>
-    <line x1="240" y1="210" x2="260" y2="210" stroke="#FFD700" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="4"/>
-    <line x1="240" y1="210" x2="260" y2="210" stroke="#0000CC" stroke-width="0.7" stroke-dasharray="2,4" stroke-dashoffset="2"/>
-    <text x="272" y="212" font-size="2.5" fill="black" stroke="none">PEN — совмещённый проводник</text>
-    <text x="392.5" y="212" font-size="2.5" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
+    <!-- 16. К — фаза C -->
+    <line x1="240" y1="205" x2="260" y2="205" stroke="#CC0000" stroke-width="0.5"/>
+    <text x="272" y="207" font-size="2.5" fill="black" stroke="none">L3 — проводник фазы C</text>
+    <text x="392.5" y="207" font-size="2.5" fill="black" stroke="none" text-anchor="middle">ГОСТ Р 50462</text>
 
-    <!-- Пустая строка (211–236, 25мм) -->
+    <!-- Пустая строка (210–240) -->
   </g>
 
   <!-- ═══════════════ ЛИСТ 2 (y=297–594) ═══════════════ -->
@@ -559,9 +576,9 @@
 
   <!-- L проводники -->
   <g stroke="#8B4513" stroke-width="0.5">
-    <line x1="55" y1="320" x2="55" y2="340"/><line x1="55" y1="360" x2="55" y2="380"/><line x1="55" y1="430" x2="55" y2="435"/>
-    <line x1="85" y1="320" x2="85" y2="340"/><line x1="85" y1="360" x2="85" y2="380"/><line x1="85" y1="430" x2="85" y2="435"/>
-    <line x1="115" y1="320" x2="115" y2="340"/><line x1="115" y1="360" x2="115" y2="380"/><line x1="115" y1="430" x2="115" y2="435"/>
+    <line x1="55" y1="320" x2="55" y2="340" stroke="#FFD700"/><line x1="55" y1="360" x2="55" y2="380"/><line x1="55" y1="430" x2="55" y2="435"/>
+    <line x1="85" y1="320" x2="85" y2="340" stroke="#008000"/><line x1="85" y1="360" x2="85" y2="380"/><line x1="85" y1="430" x2="85" y2="435"/>
+    <line x1="115" y1="320" x2="115" y2="340" stroke="#CC0000"/><line x1="115" y1="360" x2="115" y2="380"/><line x1="115" y1="430" x2="115" y2="435"/>
     <line x1="145" y1="320" x2="145" y2="340"/><line x1="145" y1="360" x2="145" y2="380"/><line x1="145" y1="430" x2="145" y2="435"/>
     <line x1="175" y1="320" x2="175" y2="340"/><line x1="175" y1="360" x2="175" y2="380"/><line x1="175" y1="430" x2="175" y2="435"/>
     <line x1="205" y1="320" x2="205" y2="340"/><line x1="205" y1="360" x2="205" y2="380"/><line x1="205" y1="430" x2="205" y2="435"/>
@@ -572,6 +589,14 @@
     <line x1="355" y1="320" x2="355" y2="340"/><line x1="355" y1="360" x2="355" y2="380"/><line x1="355" y1="430" x2="355" y2="435"/>
     <line x1="385" y1="320" x2="385" y2="340"/><line x1="385" y1="360" x2="385" y2="380"/><line x1="385" y1="430" x2="385" y2="435"/>
   </g>
+
+  <!-- Фазы на первых трёх панелях -->
+  <use href="#ugo-phase" x="55" y="335"/>
+  <text x="48" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L1</text>
+  <use href="#ugo-phase" x="85" y="335"/>
+  <text x="78" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L2</text>
+  <use href="#ugo-phase" x="115" y="335"/>
+  <text x="108" y="339" font-family="GOST type B" font-size="2.5" fill="black" stroke="none" text-anchor="end">L3</text>
 
   <!-- Автоматы -->
   <use href="#ugo-breaker" x="55" y="340"/><use href="#ugo-breaker" x="85" y="340"/><use href="#ugo-breaker" x="115" y="340"/><use href="#ugo-breaker" x="145" y="340"/><use href="#ugo-breaker" x="175" y="340"/><use href="#ugo-breaker" x="205" y="340"/>
